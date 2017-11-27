@@ -347,6 +347,7 @@ class Mailer {
                 switch (true) {
                 case $recipient instanceof TicketOwner:
                 case $recipient instanceof Collaborator:
+                case $recipient instanceof Staff:
                     $entry = $thread->getLastEmailMessage(array(
                                 'user_id' => $recipient->getUserId()));
                     break;
@@ -547,6 +548,12 @@ class Mailer {
             }
 
             $result = $mail->send($to, $headers, $body);
+            Signal::send('MXVP_LOG',array(
+                'type'=>'mail',
+                'to'=>$to,
+                'headers'=>$headers,
+                'body'=>$body,
+            ));
             if(!PEAR::isError($result))
                 return $messageId;
 
@@ -567,6 +574,12 @@ class Mailer {
         // Ensure the To: header is properly encoded.
         $to = $headers['To'];
         $result = $mail->send($to, $headers, $body);
+        Signal::send('MXVP_LOG',array(
+            'type'=>'mail2',
+            'to'=>$to,
+            'headers'=>$headers,
+            'body'=>$body,
+        ));
         if(!PEAR::isError($result))
             return $messageId;
 

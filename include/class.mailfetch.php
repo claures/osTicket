@@ -303,6 +303,12 @@ class MailFetcher {
         Signal::send('mail.decoded', $this, $info);
 
         $sender=$headerinfo->from[0];
+        //MIXvoip To add:
+        $mailTo = '';
+        foreach($headerinfo->to as $parts){
+          $mailTo .= $parts->mailbox.'@'.$parts->host.';';
+        }
+        $mailTo = substr($mailTo,0,-1);
         //Just what we need...
         $header=array('name'  => $this->mime_decode(@$sender->personal),
                       'email'  => trim(strtolower($sender->mailbox).'@'.$sender->host),
@@ -311,6 +317,7 @@ class MailFetcher {
                       'header' => $raw_header,
                       'in-reply-to' => $headerinfo->in_reply_to,
                       'references' => $headerinfo->references,
+                      'mail-to'=>$mailTo,
                       );
 
         if ($replyto = $headerinfo->reply_to) {
@@ -332,8 +339,8 @@ class MailFetcher {
             if (($delivered_to = Mail_Parse::parseAddressList($dt)))
                 $tolist['delivered-to'] = $delivered_to;
         }
-
         $header['recipients'] = array();
+
         foreach($tolist as $source => $list) {
             foreach($list as $addr) {
                 if (!($emailId=Email::getIdByEmail(strtolower($addr->mailbox).'@'.$addr->host))) {

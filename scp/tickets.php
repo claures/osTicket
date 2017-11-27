@@ -382,6 +382,12 @@ if($cfg->showAnsweredTickets()) {
                                'href'=>'tickets.php?status=open',
                                'iconclass'=>'Ticket'),
                             ((!$_REQUEST['status'] && !isset($_SESSION['advsearch'])) || $_REQUEST['status']=='open'));
+
+        $nav->addSubMenu(array('desc'=>__('Unassigned'),
+                                'title'=>__('Unassigned Tickets'),
+                                'href'=>'tickets.php?status=unassigned',
+                                'iconclass'=>'Ticket'),
+                            ($_REQUEST['status']=='unassigned'));
     }
 
     if($stats['answered']) {
@@ -444,8 +450,8 @@ if ($thisstaff->hasPerm(TicketModel::PERM_CREATE, false)) {
 }
 
 
-$ost->addExtraHeader('<script type="text/javascript" src="js/ticket.js"></script>');
-$ost->addExtraHeader('<script type="text/javascript" src="js/thread.js"></script>');
+$ost->addExtraHeader('<script type="text/javascript" src="js/ticket.js?9ae093d"></script>');
+$ost->addExtraHeader('<script type="text/javascript" src="js/thread.js?9ae093d"></script>');
 $ost->addExtraHeader('<meta name="tip-namespace" content="tickets.queue" />',
     "$('#content').data('tipNamespace', 'tickets.queue');");
 

@@ -18,3 +18,7 @@ stage
 include/mpdf/ttfontdata
 include/mpdf/tmp
 nbproject/
+
+# Jebrains files
+.idea/
+*.iml

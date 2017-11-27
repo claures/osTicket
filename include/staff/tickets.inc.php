@@ -45,7 +45,7 @@ $queue_columns = array(
             'sort_col' => 'created',
             ),
         'subject' => array(
-            'width' => '29.8%',
+            'width' => '19.8%',
             'heading' => __('Subject'),
             'sort_col' => 'cdata__subject',
             ),
@@ -72,8 +72,12 @@ $queue_columns = array(
             'width' => '16%',
             'heading' => __('Department'),
             'sort_col'  => 'dept__name',
-            ),
-        );
+        ),
+        'team' => array(
+            'width' => '10%',
+            'heading' => __('Team'),
+        ),
+);
 
 $use_subquery = true;
 
@@ -116,6 +120,24 @@ case 'answered':
     $queue_sort_options = array('answered', 'priority,updated', 'updated',
         'priority,created', 'priority,due', 'due', 'number', 'hot');
     break;
+
+    case 'unassigned':
+        $status='open';
+        $staffId=$thisstaff->getId();
+        $results_type=__('Unassigned Tickets');
+        $tickets->filter(Q::any(array(
+            'staff_id'=>0,
+            Q::any(array('staff_id' => 2)),
+        )));
+        $queue_sort_options = array('updated', 'priority,updated',
+            'priority,created', 'priority,due', 'due', 'answered', 'number',
+            'hot');
+        break;
+
+    case 'mxvp':
+        require_once (INCLUDE_DIR.'mxvpticketfilters.php');
+        break;
+
 default:
 case 'search':
     $queue_sort_options = array('priority,updated', 'priority,created',
@@ -504,6 +526,8 @@ return false;">
         $total=0;
         $ids=($errors && $_POST['tids'] && is_array($_POST['tids']))?$_POST['tids']:null;
         foreach ($tickets as $T) {
+            $teamName = Team::getLocalById($T['team_id'], 'name', $T['team__name']);
+            if(!isset($teamName)) $teamName = '';
             $total += 1;
                 $tag=$T['staff_id']?'assigned':'openticket';
                 $flag=null;
@@ -573,10 +597,9 @@ return false;">
                     if ($T['collab_count'])
                         echo '<span class="pull-right faded-more" data-toggle="tooltip" title="'
                             .$T['collab_count'].'"><i class="icon-group"></i></span>';
-                    ?><span class="truncate" style="max-width:<?php
-                        echo $T['collab_count'] ? '150px' : '170px'; ?>"><?php
+                    ?><span class="truncate" style=""><?php
                     $un = new UsersName($T['user__name']);
-                        echo Format::htmlchars($un);
+                        echo Format::htmlchars($un).' &lt;'.Format::htmlchars($T['user__default_email__address']).'&gt;';
                     ?></span></div></td>
                 <?php
                 if($search && !$status){
@@ -592,7 +615,18 @@ return false;">
                 }
                 ?>
                 <td nowrap><span class="truncate" style="max-width: 169px"><?php
-                    echo Format::htmlchars($lc); ?></span></td>
+                    echo Format::htmlchars($lc); ?></span>
+                </td>
+                <?php if(isset($queue_columns['dept'])&&$showassigned) {
+                    $lc2 = Dept::getLocalById($T['dept_id'], 'name', $T['dept__name']);
+                    ?>
+                    <td nowrap><span class="truncate" style="max-width: 169px">
+                        <?php echo Format::htmlchars($lc2); ?></span>
+                    </td>
+                <?php }?>
+                <td nowrap>
+                    <?=$teamName?>
+                </td>
             </tr>
             <?php
             } //end of foreach
@@ -602,7 +636,7 @@ return false;">
     </tbody>
     <tfoot>
      <tr>
-        <td colspan="7">
+        <td colspan="9">
             <?php if($total && $thisstaff->canManageTickets()){ ?>
             <?php echo __('Select');?>:&nbsp;
             <a id="selectAll" href="#ckb"><?php echo __('All');?></a>&nbsp;&nbsp;
