@@ -665,7 +665,7 @@ if ($errors['err'] && isset($_POST['a'])) {
                 </div>
                 </td>
             </tr>
-            <tr>
+            <tr style="display: none">
                 <td width="120">
                     <label for="signature" class="left"><?php echo __('Signature');?>:</label>
                 </td>
