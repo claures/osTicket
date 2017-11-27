@@ -53,6 +53,9 @@ if (count($ext_bks)) { ?>
 <div id="poweredBy"><?php echo __('Powered by'); ?>
     <a href="http://www.osticket.com" target="_blank">
         <img alt="osTicket" src="images/osticket-grey.png" class="osticket-logo">
+    </a><br>
+    <a href="http://www.mixvoip.com" target="_blank">
+        and MIXvoip
     </a>
 </div>
     <script>

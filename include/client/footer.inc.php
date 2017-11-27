@@ -3,6 +3,7 @@
     <div id="footer">
         <p>Copyright &copy; <?php echo date('Y'); ?> <?php echo (string) $ost->company ?: 'osTicket.com'; ?> - All rights reserved.</p>
         <a id="poweredBy" href="http://osticket.com" target="_blank"><?php echo __('Helpdesk software - powered by osTicket'); ?></a>
+        <a href="http://mixvoip.com" target="_blank">and MIXvoip</a>
     </div>
 <div id="overlay"></div>
 <div id="loading">
