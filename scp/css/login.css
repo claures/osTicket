@@ -261,6 +261,7 @@ input.submit:hover, input.submit:active {
 }
 
 #poweredBy {
+    display: none;
     font-size:0.8em;
     color:#ccc;
     padding:5px 15px;
