@@ -487,7 +487,7 @@ return false;">
             <?php
             // Swap some columns based on the queue.
             if ($showassigned ) {
-                unset($queue_columns['dept']);
+                //unset($queue_columns['dept']);
                 if (!strcasecmp($status,'closed'))
                     $queue_columns['assignee']['heading'] =  __('Closed By');
                 else
