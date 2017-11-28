@@ -3,6 +3,6 @@ $(document).on('click','#mxvp_departmentselect li',function (evt) {
     $(this).addClass('depSelected');
 });
 
-$(document).on('click','#sub_nav li',function (evt) {
+$(document).on('click','#nav li, #sub_nav li',function (evt) {
     $('.depSelected').removeClass('depSelected');
 });
