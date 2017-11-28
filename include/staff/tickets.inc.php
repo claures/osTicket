@@ -36,45 +36,36 @@ $sort_options = array(
 
 $queue_columns = array(
         'number' => array(
-            'width' => '7.4%',
             'heading' => __('Number'),
             ),
         'date' => array(
-            'width' => '14.6%',
             'heading' => __('Date Created'),
             'sort_col' => 'created',
             ),
         'subject' => array(
-            'width' => '19.8%',
             'heading' => __('Subject'),
             'sort_col' => 'cdata__subject',
             ),
         'name' => array(
-            'width' => '18.1%',
             'heading' => __('From'),
             'sort_col' =>  'user__name',
             ),
         'status' => array(
-            'width' => '8.4%',
             'heading' => __('Status'),
             'sort_col' => 'status_id',
             ),
         'priority' => array(
-            'width' => '8.4%',
             'heading' => __('Priority'),
             'sort_col' => 'cdata__:priority__priority_urgency',
             ),
         'assignee' => array(
-            'width' => '16%',
             'heading' => __('Agent'),
             ),
         'dept' => array(
-            'width' => '16%',
             'heading' => __('Department'),
             'sort_col'  => 'dept__name',
         ),
         'team' => array(
-            'width' => '10%',
             'heading' => __('Team'),
         ),
 );
@@ -134,8 +125,34 @@ case 'answered':
             'hot');
         break;
 
+    //Our custom filters
     case 'mxvp':
-        require_once (INCLUDE_DIR.'mxvpticketfilters.php');
+        if (!isset($_REQUEST['mxvptype'])) {
+            if (!isset($_REQUEST['mxvpid'])) {
+                $user_id = $ost->session->backend->data->ht['user_id'];
+                $mxvpuser = Staff::lookup($user_id);
+                if (isset($mxvpuser)) {
+                    $_REQUEST['mxvpid'] = reset($mxvpuser->getDepts());
+                } else {
+                    $_REQUEST['mxvpid'] = 1;
+                }
+            }
+            $_REQUEST['mxvptype'] = 'dept';
+        }
+        switch ($_REQUEST['mxvptype']) {
+            //Department filters:
+            case 'dept':
+                $status = 'open';
+                $depts = Dept::getDepartments();
+                $results_type = __('Department :: ') . $depts[$_REQUEST['mxvpid']];
+                $tickets->filter(Q::any(array(
+                    'dept_id' => $_REQUEST['mxvpid'],
+                )));
+                $queue_sort_options = array('updated', 'priority,updated',
+                    'priority,created', 'priority,due', 'due', 'answered', 'number',
+                    'hot');
+                break;
+        }
         break;
 
 default:
@@ -476,15 +493,16 @@ return false;">
  <input type="hidden" name="do" id="action" value="" >
  <input type="hidden" name="status" value="<?php echo
  Format::htmlchars($_REQUEST['status'], true); ?>" >
- <table class="list" border="0" cellspacing="1" cellpadding="2" width="940">
+ <table class="list table table-hover table-striped table-bordered table-sm">
     <thead>
         <tr>
             <?php
             if ($thisstaff->canManageTickets()) { ?>
-	        <th width="2%">&nbsp;</th>
+	        <th max-width="1.5em">&nbsp;</th>
             <?php } ?>
 
             <?php
+            $colNum = 10;
             // Swap some columns based on the queue.
             if ($showassigned ) {
                 //unset($queue_columns['dept']);
@@ -495,17 +513,23 @@ return false;">
             } else {
                 unset($queue_columns['assignee']);
             }
-            if ($search && !$status)
+            /*if ($search && !$status)
                 unset($queue_columns['priority']);
             else
                 unset($queue_columns['status']);
+            */
 
+            //Hide Department when we are in it.
+            if(isset($_REQUEST['mxvptype'])){
+                unset($queue_columns['dept']);
+                $colNum--;
+            }
             // Query string
             unset($args['sort'], $args['dir'], $args['_pjax']);
             $qstr = Http::build_query($args);
             // Show headers
             foreach ($queue_columns as $k => $column) {
-                echo sprintf( '<th width="%s"><a href="?sort=%s&dir=%s&%s"
+                echo sprintf( '<th %s><a href="?sort=%s&dir=%s&%s"
                         class="%s">%s</a></th>',
                         $column['width'],
                         $column['sort'] ?: $k,
@@ -571,20 +595,17 @@ return false;">
                     href="tickets.php?id=<?php echo $T['ticket_id']; ?>"
                     data-preview="#tickets/<?php echo $T['ticket_id']; ?>/preview"
                     ><?php echo $tid; ?></a></td>
-                <td align="center" nowrap><?php echo Format::datetime($T[$date_col ?: 'lastupdate']) ?: $date_fallback; ?></td>
-                <td><div style="max-width: <?php
-                    $base = 279;
-                    // Make room for the paperclip and some extra
-                    if ($T['attachment_count']) $base -= 18;
-                    // Assume about 8px per digit character
-                    if ($threadcount > 1) $base -= 20 + ((int) log($threadcount, 10) + 1) * 8;
-                    // Make room for overdue flag and friends
-                    if ($flag) $base -= 20;
-                    echo $base; ?>px; max-height: 1.2em"
+                <td align="center" nowrap>
+                    <?php
+                        echo Format::datetime($T[$date_col ?: 'lastupdate']) ?: $date_fallback;
+                    ?>
+                </td>
+                <td><div style="max-height: 1.2em"
                     class="<?php if ($flag) { ?>Icon <?php echo $flag; ?>Ticket <?php } ?>link truncate"
                     <?php if ($flag) { ?> title="<?php echo ucfirst($flag); ?> Ticket" <?php } ?>
                     href="tickets.php?id=<?php echo $T['ticket_id']; ?>"><?php echo $subject; ?></div>
-<?php               if ($T['attachment_count'])
+                    <?php
+                    if ($T['attachment_count'])
                         echo '<i class="small icon-paperclip icon-flip-horizontal" data-toggle="tooltip" title="'
                             .$T['attachment_count'].'"></i>';
                     if ($threadcount > 1) { ?>
@@ -593,7 +614,7 @@ return false;">
                         </span>
                     <?php } ?>
                 </td>
-                <td nowrap><div><?php
+                <td nowrap><div class="ticket-subject"><?php
                     if ($T['collab_count'])
                         echo '<span class="pull-right faded-more" data-toggle="tooltip" title="'
                             .$T['collab_count'].'"><i class="icon-group"></i></span>';
@@ -602,30 +623,30 @@ return false;">
                         echo Format::htmlchars($un).' &lt;'.Format::htmlchars($T['user__default_email__address']).'&gt;';
                     ?></span></div></td>
                 <?php
-                if($search && !$status){
-                    $displaystatus=TicketStatus::getLocalById($T['status_id'], 'value', $T['status__name']);
-                    if(!strcasecmp($T['status__state'],'open'))
-                        $displaystatus="<b>$displaystatus</b>";
-                    echo "<td>$displaystatus</td>";
-                } else { ?>
+                $displaystatus = TicketStatus::getLocalById($T['status_id'], 'value', $T['status__name']);
+                $ticketState = $T['status__name'];
+                if ($T['isanswered'] && $T['status_id'] < 2) {
+                    $displaystatus = 'Answered';
+                }
+                if (!strcasecmp($T['status__state'], 'open'))
+                    $displaystatus = "<b>$displaystatus</b>";
+                echo "<td>$displaystatus</td>";
+                ?>
                 <td class="nohover" align="center"
                     style="background-color:<?php echo $T['cdata__:priority__priority_color']; ?>;">
                     <?php echo $T['cdata__:priority__priority_desc']; ?></td>
-                <?php
-                }
-                ?>
                 <td nowrap><span class="truncate" style="max-width: 169px"><?php
-                    echo Format::htmlchars($lc); ?></span>
+                        echo Format::htmlchars($lc); ?></span>
                 </td>
-                <?php if(isset($queue_columns['dept'])&&$showassigned) {
+                <?php if (isset($queue_columns['dept']) && $showassigned) {
                     $lc2 = Dept::getLocalById($T['dept_id'], 'name', $T['dept__name']);
                     ?>
                     <td nowrap><span class="truncate" style="max-width: 169px">
                         <?php echo Format::htmlchars($lc2); ?></span>
                     </td>
-                <?php }?>
+                <?php } ?>
                 <td nowrap>
-                    <?=$teamName?>
+                    <?= $teamName ?>
                 </td>
             </tr>
             <?php
@@ -636,7 +657,7 @@ return false;">
     </tbody>
     <tfoot>
      <tr>
-        <td colspan="9">
+        <td colspan="<?=$colNum?>">
             <?php if($total && $thisstaff->canManageTickets()){ ?>
             <?php echo __('Select');?>:&nbsp;
             <a id="selectAll" href="#ckb"><?php echo __('All');?></a>&nbsp;&nbsp;

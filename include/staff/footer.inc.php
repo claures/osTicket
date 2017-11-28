@@ -39,7 +39,7 @@ if(is_object($thisstaff) && $thisstaff->isStaff()) { ?>
      </p>
     <div class="clear"></div>
 </div>
-
+<script type="text/javascript" src="<?php echo VENDOR_PATH; ?>js/bootstrap.min.js?9ae093d"></script>
 <script type="text/javascript" src="<?php echo ROOT_PATH; ?>js/jquery.pjax.js?9ae093d"></script>
 <script type="text/javascript" src="<?php echo ROOT_PATH; ?>scp/js/bootstrap-typeahead.js?9ae093d"></script>
 <script type="text/javascript" src="<?php echo ROOT_PATH; ?>scp/js/scp.js?9ae093d"></script>
@@ -69,6 +69,7 @@ if ($thisstaff
     <script type="text/javascript" src="ajax.php/i18n/<?php
         echo $thisstaff->getLanguage(); ?>/js"></script>
 <?php } ?>
+<script type="text/javascript" src="<?php echo ROOT_PATH; ?>scp/js/mxvp.js?9ae093d"></script>
 </body>
 </html>
 <?php } # endif X_PJAX ?>

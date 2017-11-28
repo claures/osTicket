@@ -2981,6 +2981,34 @@ implements RestrictedAccess, Threadable {
         return db_fetch_array(db_query($sql));
     }
 
+    /**
+     * Get all the open / answered Tickets of the $departments
+     * @param $departments array List with the id of the Departments
+     * @return array dept_id => count
+     */
+    static function getDepartemntsStats($departments)
+    {
+        $visibility = Q::any(new Q(array('status__state__in' => array('open', 'closed'))));
+        $visibility->add(array('dept_id__in' => $departments));
+
+        $blocks = Ticket::objects()
+            ->filter(Q::any($visibility))
+            //->filter(array('status__state' => 'open'))
+            ->aggregate(array('count' => SqlAggregate::COUNT('ticket_id')))
+            ->values('status__state', 'isanswered', 'isoverdue', 'dept_id', 'staff_id', 'team_id');
+        $ret = array_fill_keys($departments,array('open'=>0,'answered'=>0,'closed'=>0,'open_sum'=>0,'total_sum'=>0));
+        foreach ($blocks as $block){
+            $tmp = $block['status__state'];
+            if($block['status__state']=='open'){
+                $ret[$block['dept_id']]['open_sum'] += $block['count'];
+                if($block['isanswered']) $tmp = 'answered';
+            }
+            $ret[$block['dept_id']][$tmp] += $block['count'];
+            $ret[$block['dept_id']]['total_sum'] += $block['count'];
+        }
+        return $ret;
+    }
+
     protected function filterTicketData($origin, $vars, $forms, $user=false) {
         global $cfg;
 

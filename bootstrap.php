@@ -306,6 +306,7 @@ unset($here); unset($h);
 define('INCLUDE_DIR', ROOT_DIR . 'include/'); // Set by installer
 define('PEAR_DIR',INCLUDE_DIR.'pear/');
 define('SETUP_DIR',ROOT_DIR.'setup/');
+define('VENDOR_DIR',ROOT_DIR.'vendor/');
 
 define('UPGRADE_DIR', INCLUDE_DIR.'upgrader/');
 define('I18N_DIR', INCLUDE_DIR.'i18n/');
@@ -345,5 +346,5 @@ define('THISPAGE', Misc::currentURL());
 
 define('DEFAULT_MAX_FILE_UPLOADS', ini_get('max_file_uploads') ?: 5);
 define('DEFAULT_PRIORITY_ID', 1);
-
+define('VENDOR_PATH',ROOT_PATH.'vendor/');
 ?>

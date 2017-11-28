@@ -28,6 +28,7 @@ if ($lang) {
     </style>
     <![endif]-->
     <script type="text/javascript" src="<?php echo ROOT_PATH; ?>js/jquery-1.11.2.min.js?9ae093d"></script>
+    <link rel="stylesheet" href="<?php echo VENDOR_PATH ?>css/bootstrap.min.css?9ae093d" media="all"/>
     <link rel="stylesheet" href="<?php echo ROOT_PATH ?>css/thread.css?9ae093d" media="all"/>
     <link rel="stylesheet" href="<?php echo ROOT_PATH ?>scp/css/scp.css?9ae093d" media="all"/>
     <link rel="stylesheet" href="<?php echo ROOT_PATH; ?>css/redactor.css?9ae093d" media="screen"/>
@@ -44,6 +45,7 @@ if ($lang) {
     <link type="text/css" rel="stylesheet" href="<?php echo ROOT_PATH; ?>css/select2.min.css?9ae093d"/>
     <link type="text/css" rel="stylesheet" href="<?php echo ROOT_PATH; ?>css/rtl.css?9ae093d"/>
     <link type="text/css" rel="stylesheet" href="<?php echo ROOT_PATH ?>scp/css/translatable.css?9ae093d"/>
+    <link type="text/css" rel="stylesheet" href="<?php echo ROOT_PATH ?>scp/css/mxvp.css?9ae093d"/>
 
     <?php
     if($ost && ($headers=$ost->getExtraHeaders())) {
@@ -76,7 +78,24 @@ if ($lang) {
             <span class="valign-helper"></span>
             <img src="<?php echo ROOT_PATH ?>scp/logo.php?<?php echo strtotime($cfg->lastModified('staff_logo_id')); ?>" alt="osTicket &mdash; <?php echo __('Customer Support System'); ?>"/>
         </a>
-        <?php require_once(INCLUDE_DIR.'mxvpheader.php');?>
+        <?php
+        $mxvpdepartments = $thisstaff->getDepartments();
+        if (isset($mxvpdepartments)) { ?>
+            <div id="mxvp_departmentselect">
+                <ul>
+                    <?php
+                    $depStats = Ticket::getDepartemntsStats($mxvpdepartments);
+                    foreach ($mxvpdepartments as $depID) {
+                        $depName = Dept::lookup($depID)->getName();
+                        $actualDept = isset($_REQUEST['mxvptype'], $_REQUEST['mxvpid']) && $_REQUEST['mxvptype'] && $_REQUEST['mxvpid'] == $depID;
+                        echo '<li ' . ($actualDept ? 'class="depSelected"' : "") . '><a href="tickets.php?status=mxvp&mxvptype=dept&mxvpid=' . $depID . '">' . $depName . ' (' . $depStats[$depID]['open_sum'] . ')' . '</a></li>';
+                    }
+                    ?>
+                </ul>
+            </div>
+            <?php
+        }
+        ?>
     </div>
     <div id="pjax-container" class="<?php if ($_POST) echo 'no-pjax'; ?>">
 <?php } else {
