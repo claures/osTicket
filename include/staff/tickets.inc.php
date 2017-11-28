@@ -600,7 +600,7 @@ return false;">
                         echo Format::datetime($T[$date_col ?: 'lastupdate']) ?: $date_fallback;
                     ?>
                 </td>
-                <td><div style="max-height: 1.2em"
+                <td><div
                     class="<?php if ($flag) { ?>Icon <?php echo $flag; ?>Ticket <?php } ?>link truncate"
                     <?php if ($flag) { ?> title="<?php echo ucfirst($flag); ?> Ticket" <?php } ?>
                     href="tickets.php?id=<?php echo $T['ticket_id']; ?>"><?php echo $subject; ?></div>
