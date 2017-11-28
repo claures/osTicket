@@ -116,9 +116,10 @@ case 'answered':
         $status='open';
         $staffId=$thisstaff->getId();
         $results_type=__('Unassigned Tickets');
+        $unassignedUID = Staff::getIdByUsername('unassigned');
         $tickets->filter(Q::any(array(
             'staff_id'=>0,
-            Q::any(array('staff_id' => 2)),
+            Q::any(array('staff_id' => $unassignedUID)),
         )));
         $queue_sort_options = array('updated', 'priority,updated',
             'priority,created', 'priority,due', 'due', 'answered', 'number',
