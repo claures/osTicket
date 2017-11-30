@@ -1698,6 +1698,10 @@ implements RestrictedAccess, Threadable {
         }
     }
 
+    function onTransfer($srcDept,$destDept,$comments,$wasClosed,$alert){
+        Signal::send('ticket.transfered',array('ticket'=>$this,'sourceDept'=>$srcDept,'destDept'=>$destDept,'comments'=>$comments,'wasClosed'=>$wasClosed,'alert'=>$alert));
+    }
+
     function onAssign($assignee, $comments, $alert=true) {
         global $cfg, $thisstaff;
 
@@ -1726,6 +1730,8 @@ implements RestrictedAccess, Threadable {
 
             $note = $this->logNote($title, $comments, $assigner, false);
         }
+
+        Signal::send('ticket.assigned',array('ticket'=>$this,'assignee'=>$assignee,'comments'=>$comments,'alert'=>$alert));
 
         // See if we need to send alerts
         if (!$alert || !$cfg->alertONAssignment())
@@ -2031,7 +2037,8 @@ implements RestrictedAccess, Threadable {
             return false;
 
         // Reopen ticket if closed
-        if ($this->isClosed())
+        $wasClosed = $this->isClosed();
+        if ($wasClosed)
             $this->reopen();
 
         // Set SLA of the new department
@@ -2056,6 +2063,8 @@ implements RestrictedAccess, Threadable {
                     array('note' => $comments, 'title' => $title),
                     $_errors, $thisstaff, false);
         }
+
+        $this->onTransfer($cdept,$dept,$comments,$wasClosed,$alert);
 
         //Send out alerts if enabled AND requested
         if (!$alert || !$cfg->alertONTransfer())
