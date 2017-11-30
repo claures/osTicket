@@ -28,3 +28,24 @@ label.checkbox { /* scp.css */
 .ticket-subject {
     max-width: 120em;
 }
+
+/*Status Colors*/
+.status_open td:not(.ticketPrio){
+    background-color: rgb(255, 246, 195) !important;
+}
+
+.status_closed td:not(.ticketPrio){
+
+}
+
+.status_answered td:not(.ticketPrio){
+    background-color: rgb(234, 234, 234) !important;
+}
+
+.status_overdue td:not(.ticketPrio){
+    background-color: #ffb85f !important;
+}
+
+.status_spam td:not(.ticketPrio){
+    background-color: rgb(197, 197, 197) !important;
+}

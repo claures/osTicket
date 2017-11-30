@@ -494,7 +494,7 @@ return false;">
  <input type="hidden" name="do" id="action" value="" >
  <input type="hidden" name="status" value="<?php echo
  Format::htmlchars($_REQUEST['status'], true); ?>" >
- <table class="list table table-hover table-striped table-bordered table-sm">
+ <table class="list table table-hover table-bordered table-sm">
     <thead>
         <tr>
             <?php
@@ -577,8 +577,21 @@ return false;">
                 if(!strcasecmp($T['status__state'],'open') && !$T['isanswered'] && !$T['lock__staff_id']) {
                     $tid=sprintf('<b>%s</b>',$tid);
                 }
+
+                $statusClass='';
+            if (strtolower($T['status__name']) === 'closed' || strtolower($T['status__name']) === 'resolved')
+                $statusClass = 'status_closed';
+            elseif ($T['isanswered'])
+                $statusClass = 'status_answered';
+            elseif ($T['isoverdue'])
+                $statusClass = 'status_overdue';
+            elseif (strtolower($T['status__name']) === 'spam')
+                $statusClass = 'status_spam';
+            elseif (strtolower($T['status__name']) === 'open')
+                $statusClass = 'status_open';
+
                 ?>
-            <tr id="<?php echo $T['ticket_id']; ?>">
+            <tr id="<?php echo $T['ticket_id']; ?>" class="<?=$statusClass?>">
                 <?php if($thisstaff->canManageTickets()) {
 
                     $sel=false;
@@ -625,7 +638,6 @@ return false;">
                     ?></span></div></td>
                 <?php
                 $displaystatus = TicketStatus::getLocalById($T['status_id'], 'value', $T['status__name']);
-                $ticketState = $T['status__name'];
                 if ($T['isanswered'] && $T['status_id'] < 2) {
                     $displaystatus = 'Answered';
                 }
@@ -633,7 +645,7 @@ return false;">
                     $displaystatus = "<b>$displaystatus</b>";
                 echo "<td>$displaystatus</td>";
                 ?>
-                <td class="nohover" align="center"
+                <td class="nohover ticketPrio" align="center"
                     style="background-color:<?php echo $T['cdata__:priority__priority_color']; ?>;">
                     <?php echo $T['cdata__:priority__priority_desc']; ?></td>
                 <td nowrap><span class="truncate" style="max-width: 169px"><?php
