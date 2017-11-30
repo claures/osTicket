@@ -1177,6 +1177,8 @@ implements RestrictedAccess, Threadable {
         if (!$status || !$status instanceof TicketStatus)
             return false;
 
+        if(strtolower($status->getName())=='spam') $set_closing_agent = false; //When spam we don't set the closed by
+
         // Double check permissions (when changing status)
         if ($role && $this->getStatusId()) {
             switch ($status->getState()) {
