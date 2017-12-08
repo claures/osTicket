@@ -3408,6 +3408,14 @@ implements RestrictedAccess, Threadable {
             $ticket->duedate = date('Y-m-d G:i',
                 Misc::dbtime($vars['duedate'].' '.$vars['time']));
 
+        //MARK: Multihost just before the create
+        if(file_exists(MULTIHOSTCLASS)) {
+            require_once(MULTIHOSTCLASS);
+            /** @var Dept $mh_department */
+            $mh_department = Dept::lookup($deptId);
+            $params = array('deptName'=>$mh_department->getName());
+            Multihost::getInstance()->rewriteConfig($params,true);
+        }
 
         if (!$ticket->save())
             return null;

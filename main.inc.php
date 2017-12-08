@@ -54,4 +54,3 @@ if ($_SESSION['::sysmsgs']) {
     extract($_SESSION['::sysmsgs']);
     unset($_SESSION['::sysmsgs']);
 }
-?>

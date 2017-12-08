@@ -15,6 +15,8 @@
 **********************************************************************/
 require_once INCLUDE_DIR . 'class.orm.php';
 
+define('MULTIHOSTCLASS',ROOT_DIR.'scripts/Multihost.class.php');
+
 class Config {
     var $config = array();
 
@@ -46,7 +48,6 @@ class Config {
 
         if (isset($_SESSION['cfg:'.$this->section]))
             $this->session = &$_SESSION['cfg:'.$this->section];
-
         $this->load();
     }
 
@@ -218,7 +219,6 @@ class OsticketConfig extends Config {
 
     function __construct($section=null) {
         parent::__construct($section);
-
         if (count($this->config) == 0) {
             // Fallback for osticket < 1.7@852ca89e
             $sql='SELECT * FROM '.$this->table.' WHERE id = 1';
@@ -227,7 +227,12 @@ class OsticketConfig extends Config {
                 foreach (db_fetch_array($res) as $key=>$value)
                     $this->config[$key] = $meta->newInstance(array('value'=>$value));
         }
-
+        //MARK: MXVP Multihost
+        if(file_exists(MULTIHOSTCLASS)){
+            require_once (MULTIHOSTCLASS);
+            Multihost::initInstance($this);
+            $host = Multihost::getInstance()->rewriteConfig(null);
+        }
         return true;
     }
 
