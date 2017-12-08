@@ -21,6 +21,19 @@ if(!$ost or !$thisstaff or !$thisstaff->isAdmin()){
     exit;
 }
 
+/* Subhost's should not access the Admin menu.
+ * This will break things as the config changes are only for this instance and when they get saved to the DB the master host will be overwritten
+ */
+if(file_exists(MULTIHOSTCLASS)) {
+    require_once(MULTIHOSTCLASS);
+    $mh_ActiveHost = Multihost::getInstance()->getActiveHost();
+    if(isset($mh_ActiveHost)){
+        header('Location: index.php');
+        require('index.php');
+        exit;
+    }
+}
+
 //Define some constants.
 define('OSTADMININC',TRUE); //checked by admin include files
 define('ADMINPAGE',TRUE);   //Used by the header to swap menus.
