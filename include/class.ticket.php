@@ -3694,6 +3694,7 @@ implements RestrictedAccess, Threadable {
          Punt for now
          */
 
+        /*
         $sql='SELECT ticket_id FROM '.TICKET_TABLE.' T1 '
             .' INNER JOIN '.TICKET_STATUS_TABLE.' status
                 ON (status.id=T1.status_id AND status.state="open") '
@@ -3711,9 +3712,94 @@ implements RestrictedAccess, Threadable {
             }
         } else {
             //TODO: Trigger escalation on already overdue tickets - make sure last overdue event > grace_period.
+        }*/
 
+        $overdue = static::objects()->filter(array('isoverdue' => 0))->filter(array('status__state' => 'open'))->limit(50);
+        /**@var Ticket $ticket * */
+        foreach ($overdue as $ticket) {
+            /**@var SLA $slaPlan */
+            $slaPlan = $ticket->getSLA();
+            if(!isset($slaPlan)) continue;
+            $slaTimeoutHours = $slaPlan->getGracePeriod();
+            if (isset($slaPlan->ht['notes']) && is_string($slaPlan->ht['notes'])) {
+                $json = @json_decode($slaPlan->ht['notes']);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    if (isset($json->start, $json->end, $json->ignoreDays, $json->ignoreAnswered)) {
+                        if ($json->ignoreAnswered && $ticket->isAnswered()) continue; //Answered Ticket sould not have a SLA
+                        if (in_array(date('N'), $json->ignoreDays)) continue;
+                        //Let's get our dates ready
+                        if(strtotime($ticket->getLastMessageDate()) > strtotime($ticket->getCreateDate())){
+                            //This ticket is reopened by the client so lets swap the timeout to the answerSLA
+                            if(isset($json->answerSLA)&&is_int($json->answerSLA))
+                                $slaTimeoutHours = $json->answerSLA;
+                        }
+                        $createDate = DateTime::createFromFormat('Y-m-d H:i:s', $ticket->getLastMessageDate());
+                        $ticketStart = DateTime::createFromFormat('Y-m-d H:i:s', $createDate->format('Y-m-d') . ' ' . $json->start);
+                        $ticketEnd = DateTime::createFromFormat('Y-m-d H:i:s', $createDate->format('Y-m-d') . ' ' . $json->end);
+                        $todayEnd = DateTime::createFromFormat('H:i:s', $json->end);
+                        $diffTime = $ticketEnd->format('U') - $ticketStart->format('U');
+                        $ignDays = $json->ignoreDays;
+                        //Check if the Startdate/endate is not in our ignore Dates
+                        sort($ignDays);
+                        foreach ($ignDays as $ignDay) {
+                            if ($ticketStart->format('N') == $ignDay) {
+                                $ticketStart->modify('+1 Day');
+                                $ticketEnd->modify('+1 Day');
+                            }
+                        }
+                        //Let's check if the create time is in our interval
+                        if ($createDate->format('U') < $ticketStart->format('U') || $createDate->format('U') > $ticketEnd->format('U')) {
+                            //Set create to ticketStart
+                            if ($createDate->format('U') > $ticketEnd->format('U')) {
+                                $createDate = clone $ticketStart;
+                                $createDate->modify('+1 day');
+                            } else
+                                $createDate = clone $ticketStart;
+                        }
+                        //Let's GO first let's set the sla firedate.
+                        $slaFireTime = clone $createDate;
+                        $slaFireTime->modify('+' . $slaTimeoutHours . ' Hours');
+                        //Let's check if the sla overflows the current working day(s)
+                        if ($slaFireTime->format('U') > $ticketEnd->format('U')) {
+                            $overflowSEC = ($slaFireTime->format('U') - $ticketEnd->format('U'));
+                            $overflowDays = (int)floor($overflowSEC / $diffTime)+1;
+                            $slaTS = $ticketStart->format('U') + $overflowSEC + ($overflowDays * 24 * 60 * 60);
+                            $slaFireTime->setTimestamp($slaTS);
+                            foreach ($ignDays as $ignDay) {
+                                if ($slaFireTime->format('N') == $ignDay) {
+                                    $slaFireTime->modify('+1 Day');
+                                }
+                            }
+                        }
+                        //Let's check the SLA
+                        if ($slaFireTime->format('U') <= time()){
+                            $ticket->markOverdue();
+                            $ticket->logNote('SLA Overdue','SLA Overdue by rule: '.$slaPlan->getName(),'SYSTEM',false);
+                        }
+                    } else {
+                        self::calcStdSLA($ticket);
+                    }
+                } else {
+                    self::calcStdSLA($ticket);
+                }
+            }else{
+                self::calcStdSLA($ticket);
+            }
         }
-   }
+    }
+
+    /**
+     * Default Fallback SLA Calculeted based on the create / reopen date
+     * @param Ticket $ticket Ticket to be handled
+     */
+    private static function calcStdSLA($ticket)
+    {
+        $slaPlan = $ticket->sla;
+        $slaFireTime = strtotime($ticket->getCreateDate()) + $slaPlan->getGracePeriod() * 60 * 60;
+        $slaFireTimeReop = strtotime($ticket->getReopenDate()) + $slaPlan->getGracePeriod() * 60 * 60;;
+        if ($slaFireTime <= time() || $slaFireTimeReop <= time())
+            $ticket->markOverdue();
+    }
 
     static function agentActions($agent, $options=array()) {
         if (!$agent)
@@ -3722,4 +3808,3 @@ implements RestrictedAccess, Threadable {
         require STAFFINC_DIR.'templates/tickets-actions.tmpl.php';
     }
 }
-?>
