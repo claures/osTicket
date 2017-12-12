@@ -3413,7 +3413,7 @@ implements RestrictedAccess, Threadable {
             require_once(MULTIHOSTCLASS);
             /** @var Dept $mh_department */
             $mh_department = Dept::lookup($deptId);
-            $params = array('deptName'=>$mh_department->getName());
+            $params = array('deptName'=>$mh_department->getName(),'deptId'=>$deptId);
             Multihost::getInstance()->rewriteConfig($params,true);
         }
 
