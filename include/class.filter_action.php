@@ -462,6 +462,14 @@ class FA_SendEmail extends TriggerAction {
     function apply(&$ticket, array $info) {
         global $ost;
 
+        if(file_exists(MULTIHOSTCLASS)) {
+            require_once(MULTIHOSTCLASS);
+            /** @var Dept $mh_department */
+            $mh_department = $ticket->getDept();
+            $params = array('deptName'=>$mh_department->getName(),'deptId'=>$mh_department->getId());
+            Multihost::getInstance()->rewriteConfig($params,true);
+        }
+
         $config = $this->getConfiguration();
         $info = array('subject' => $config['subject'],
             'message' => $config['message']);
