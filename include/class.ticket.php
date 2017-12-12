@@ -3682,7 +3682,6 @@ implements RestrictedAccess, Threadable {
     }
 
     static function checkOverdue() {
-        var_dump('checkOverdue');
         /*
         $overdue = static::objects()
             ->filter(array(
@@ -3739,7 +3738,6 @@ implements RestrictedAccess, Threadable {
                         $createDate = DateTime::createFromFormat('Y-m-d H:i:s', $ticket->getLastMessageDate());
                         $ticketStart = DateTime::createFromFormat('Y-m-d H:i:s', $createDate->format('Y-m-d') . ' ' . $json->start);
                         $ticketEnd = DateTime::createFromFormat('Y-m-d H:i:s', $createDate->format('Y-m-d') . ' ' . $json->end);
-                        $todayEnd = DateTime::createFromFormat('H:i:s', $json->end);
                         $diffTime = $ticketEnd->format('U') - $ticketStart->format('U');
                         $ignDays = $json->ignoreDays;
                         //Check if the Startdate/endate is not in our ignore Dates
