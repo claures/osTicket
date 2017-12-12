@@ -3796,10 +3796,14 @@ implements RestrictedAccess, Threadable {
     private static function calcStdSLA($ticket)
     {
         $slaPlan = $ticket->getSLA();
-        if(!isset($slaPlan)) return;
-        $slaFireTime = strtotime($ticket->getCreateDate()) + $slaPlan->getGracePeriod() * 60 * 60;
-        $slaFireTimeReop = strtotime($ticket->getReopenDate()) + $slaPlan->getGracePeriod() * 60 * 60;;
-        if ($slaFireTime <= time() || $slaFireTimeReop <= time())
+        if (!isset($slaPlan)) return;
+        $reopDate = $ticket->getReopenDate();
+        if (isset($reopDate) && strtotime($ticket->getCreateDate()) < strtotime($reopDate))
+            $Tdate = $reopDate;
+        else
+            $Tdate = $ticket->getCreateDate();
+        $slaFireTime = strtotime($Tdate) + $slaPlan->getGracePeriod() * 60 * 60;
+        if ($slaFireTime <= time())
             $ticket->markOverdue();
     }
 
