@@ -3682,6 +3682,7 @@ implements RestrictedAccess, Threadable {
     }
 
     static function checkOverdue() {
+        var_dump('checkOverdue');
         /*
         $overdue = static::objects()
             ->filter(array(
@@ -3722,7 +3723,9 @@ implements RestrictedAccess, Threadable {
             if(!isset($slaPlan)) continue;
             $slaTimeoutHours = $slaPlan->getGracePeriod();
             if (isset($slaPlan->ht['notes']) && is_string($slaPlan->ht['notes'])) {
-                $json = @json_decode($slaPlan->ht['notes']);
+                $reqEX='/}<br.*$/';
+                $notes = preg_replace($reqEX,'}',trim($slaPlan->ht['notes']));
+                $json = @json_decode($notes);
                 if (json_last_error() === JSON_ERROR_NONE) {
                     if (isset($json->start, $json->end, $json->ignoreDays, $json->ignoreAnswered)) {
                         if ($json->ignoreAnswered && $ticket->isAnswered()) continue; //Answered Ticket sould not have a SLA
@@ -3730,8 +3733,8 @@ implements RestrictedAccess, Threadable {
                         //Let's get our dates ready
                         if(strtotime($ticket->getLastMessageDate()) > strtotime($ticket->getCreateDate())){
                             //This ticket is reopened by the client so lets swap the timeout to the answerSLA
-                            if(isset($json->answerSLA)&&is_int($json->answerSLA))
-                                $slaTimeoutHours = $json->answerSLA;
+                            if(isset($json->answerSLA)&&is_numeric($json->answerSLA))
+                                $slaTimeoutHours = intval($json->answerSLA);
                         }
                         $createDate = DateTime::createFromFormat('Y-m-d H:i:s', $ticket->getLastMessageDate());
                         $ticketStart = DateTime::createFromFormat('Y-m-d H:i:s', $createDate->format('Y-m-d') . ' ' . $json->start);
@@ -3794,7 +3797,8 @@ implements RestrictedAccess, Threadable {
      */
     private static function calcStdSLA($ticket)
     {
-        $slaPlan = $ticket->sla;
+        $slaPlan = $ticket->getSLA();
+        if(!isset($slaPlan)) return;
         $slaFireTime = strtotime($ticket->getCreateDate()) + $slaPlan->getGracePeriod() * 60 * 60;
         $slaFireTimeReop = strtotime($ticket->getReopenDate()) + $slaPlan->getGracePeriod() * 60 * 60;;
         if ($slaFireTime <= time() || $slaFireTimeReop <= time())
