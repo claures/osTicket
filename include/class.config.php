@@ -15,8 +15,7 @@
 **********************************************************************/
 require_once INCLUDE_DIR . 'class.orm.php';
 
-//define('MULTIHOSTCLASS',ROOT_DIR.'scripts/Multihost.class.php');
-define('MULTIHOSTCLASS','/home/claures/dev/osticket/scripts/Multihost.class.php');
+define('MULTIHOSTCLASS',ROOT_DIR.'scripts/Multihost.class.php');
 
 class Config {
     var $config = array();
