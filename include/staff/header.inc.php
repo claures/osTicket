@@ -22,6 +22,8 @@ if ($lang) {
     <meta http-equiv="pragma" content="no-cache" />
     <meta http-equiv="x-pjax-version" content="<?php echo GIT_VERSION; ?>">
     <title><?php echo Format::htmlchars($title); ?></title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
     <!--[if IE]>
     <style type="text/css">
         .tip_shadow { display:block !important; }
