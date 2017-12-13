@@ -264,6 +264,13 @@ implements RestrictedAccess, Threadable {
     var $lastrespondent;
 
     function __onload() {
+        //MARK: MXVP Multihost
+        if(file_exists(MULTIHOSTCLASS)){
+            require_once (MULTIHOSTCLASS);
+            Multihost::initInstance($this);
+            $params = array('deptName'=>$this->getDept()->getName(),'deptId'=>$this->getDeptId());
+            $host = Multihost::getInstance()->rewriteConfig($params,false,true);
+        }
         $this->loadDynamicData();
     }
 
@@ -1791,6 +1798,8 @@ implements RestrictedAccess, Threadable {
 
    function onOverdue($whine=true, $comments="") {
         global $cfg;
+
+        Signal::connect('ticket.overdue',array('ticket'=>$this,'alert'=>$whine,'comments'=>$comments));
 
         if ($whine && ($sla = $this->getSLA()) && !$sla->alertOnOverdue())
             $whine = false;
@@ -3714,7 +3723,7 @@ implements RestrictedAccess, Threadable {
             //TODO: Trigger escalation on already overdue tickets - make sure last overdue event > grace_period.
         }*/
 
-        $overdue = static::objects()->filter(array('isoverdue' => 0))->filter(array('status__state' => 'open'))->limit(50);
+        $overdue = static::objects()->filter(array('isoverdue' => 0))->filter(array('status__state' => 'open'));//->limit(50);
         /**@var Ticket $ticket * */
         foreach ($overdue as $ticket) {
             /**@var SLA $slaPlan */
