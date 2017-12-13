@@ -6,7 +6,7 @@ defined('OSTSCPINC') or die('Invalid path');
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta http-equiv="refresh" content="7200" />
-    <title>osTicket :: <?php echo __('Agent Login'); ?></title>
+    <title>Mooni Ticket :: <?php echo __('Agent Login'); ?></title>
     <link rel="stylesheet" href="css/login.css" type="text/css" />
     <link type="text/css" rel="stylesheet" href="<?php echo ROOT_PATH; ?>css/font-awesome.min.css?9ae093d"/>
     <meta name="robots" content="noindex" />

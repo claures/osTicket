@@ -405,14 +405,14 @@ body {
   margin: 10px 0 0 0;
 }
 #footer #poweredBy {
-  display: block;
+  /*display: block;
   width: 126px;
   height: 23px;
   outline: none;
   text-indent: -9999px;
   margin: 0 auto;
   background: url('../images/poweredby.png') top left no-repeat;
-  background-size: auto 20px;
+  background-size: auto 20px;*/
 }
 .front-page-button {
 }
