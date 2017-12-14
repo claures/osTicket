@@ -231,6 +231,29 @@ class Page extends VerySimpleModel {
     }
 
     static function lookupByType($type, $lang=false) {
+        //MARK: MXVP Multihost
+        if(file_exists(MULTIHOSTCLASS)){
+            require_once (MULTIHOSTCLASS);
+            $host = Multihost::getInstance()->rewriteConfig(null);
+            if(isset($host)){
+                $prefix = $host->getExtraCFGbyKey('pagePrefix');
+                if(isset($prefix)){
+                    $mh_type = $prefix.$type;
+                    try {
+                        $page = self::objects()->filter(array('type'=>$mh_type))->one();
+                    }
+                    catch (DoesNotExist $ex) {
+                        $page = null;
+                    }
+                    catch (InconsistentModelException $ex) {
+                        $page = null;
+                    }
+                    if(isset($page))
+                        return $page;
+                }
+            }
+        }
+        //Fallback
         try {
             return self::objects()->filter(array('type'=>$type))->one();
         }
