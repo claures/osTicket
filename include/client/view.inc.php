@@ -21,8 +21,10 @@ if ($thisclient && $thisclient->isGuest()
     <a href="<?php echo ROOT_PATH; ?>login.php?e=<?php
         echo urlencode($thisclient->getEmail());
     ?>" style="text-decoration:underline"><?php echo __('Sign In'); ?></a>
-    <?php echo sprintf(__('or %s register for an account %s for the best experience on our help desk.'),
-        '<a href="account.php?do=create" style="text-decoration:underline">','</a>'); ?>
+    <?php if ($cfg->getClientRegistrationMode() != 'closed') {
+        echo sprintf(__('or %s register for an account %s for the best experience on our help desk.'),
+            '<a href="account.php?do=create" style="text-decoration:underline">', '</a>');
+    } ?>
     </div>
 
 <?php } ?>
@@ -76,7 +78,7 @@ if ($thisclient && $thisclient->isGuest()
            <table class="infoTable" cellspacing="1" cellpadding="3" width="100%" border="0">
                 <thead>
                     <tr><td class="headline" colspan="2">
-                        <?php echo __('User Information'); ?>
+                        <?php echo __('Guest User Information'); ?>
                     </td></tr>
                 </thead>
                <tr>
