@@ -37,22 +37,27 @@ else
     </p>
     </div>
     <div class="instructions">
-<?php if ($cfg && $cfg->getClientRegistrationMode() !== 'disabled') { ?>
-        <?php echo __('Have an account with us?'); ?>
-        <a href="login.php"><?php echo __('Sign In'); ?></a> <?php
-    if ($cfg->isClientRegistrationEnabled()) { ?>
-<?php echo sprintf(__('or %s register for an account %s to access all your tickets.'),
-    '<a href="account.php?do=create">','</a>');
-    }
-}?>
+        <?php if ($cfg && $cfg->getClientRegistrationMode() !== 'disabled') { ?>
+            <?php
+            if ($cfg->getClientRegistrationMode() === 'closed') {
+                echo __('Please login to see your Tickets');
+            } else {
+                echo __('Have an account with us?');
+            } ?>
+            <a href="login.php"><?php echo __('Sign In'); ?></a>
+            <?php if ($cfg->isClientRegistrationEnabled()) { ?>
+                <?php echo sprintf(__('or %s register for an account %s to access all your tickets.'),
+                    '<a href="account.php?do=create">', '</a>');
+            }
+        } ?>
     </div>
 </div>
 </form>
 <br>
 <p>
 <?php
-if ($cfg->getClientRegistrationMode() != 'disabled'
-    || !$cfg->isClientLoginRequired()) {
+if (($cfg->getClientRegistrationMode() != 'disabled'
+        || !$cfg->isClientLoginRequired()) && $cfg->getClientRegistrationMode() != 'closed') {
     echo sprintf(
     __("If this is your first time contacting us or you've lost the ticket number, please %s open a new ticket %s"),
         '<a href="open.php">','</a>');
