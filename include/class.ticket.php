@@ -1404,6 +1404,21 @@ implements RestrictedAccess, Threadable {
                     $recipients[] = $acct_manager;
             }
 
+            $notifyAttachments = null;
+            //MARK: Multihost just before the create
+            if(file_exists(MULTIHOSTCLASS)) {
+                require_once(MULTIHOSTCLASS);
+                $host = Multihost::getInstance()->getActiveHost();
+                if(isset($host)){
+                    $sendAtta = $host->getExtraCFGbyKey('sendAttachmentOnNotification_new');
+                    if(isset($sendAtta)&&$sendAtta) {
+                        /** @var ThreadEntry $lastMSG */
+                        $lastMSG = $this->getLastMessage();
+                        $notifyAttachments = $lastMSG->getAttachments();
+                    }
+                }
+            }
+
             foreach ($recipients as $k=>$staff) {
                 if (!is_object($staff)
                     || !$staff->isAvailable()
@@ -1412,7 +1427,7 @@ implements RestrictedAccess, Threadable {
                     continue;
                 }
                 $alert = $this->replaceVars($msg, array('recipient' => $staff));
-                $email->sendAlert($staff, $alert['subj'], $alert['body'], null, $options);
+                $email->sendAlert($staff, $alert['subj'], $alert['body'], $notifyAttachments, $options);
                 $sentlist[] = $staff->getEmail();
             }
 
@@ -1422,7 +1437,7 @@ implements RestrictedAccess, Threadable {
                 $options += array('utype'=>'A');
                 $alert = $this->replaceVars($msg, array('recipient' => 'Admin'));
                 $email->sendAlert($cfg->getAdminEmail(), $alert['subj'],
-                        $alert['body'], null, $options);
+                        $alert['body'], $notifyAttachments, $options);
             }
 
         }
@@ -1701,8 +1716,24 @@ implements RestrictedAccess, Threadable {
             ) {
                 continue;
             }
+
+            $notifyAttachments = null;
+            //MARK: Multihost just before the create
+            if(file_exists(MULTIHOSTCLASS)) {
+                require_once(MULTIHOSTCLASS);
+                $host = Multihost::getInstance()->getActiveHost();
+                if(isset($host)){
+                    $sendAtta = $host->getExtraCFGbyKey('sendAttachmentOnNotification_activity');
+                    if(isset($sendAtta)&&$sendAtta) {
+                        /** @var ThreadEntry $lastMSG */
+                        $lastMSG = $this->getLastMessage();
+                        $notifyAttachments = $lastMSG->getAttachments();
+                    }
+                }
+            }
+
             $alert = $this->replaceVars($msg, array('recipient' => $staff));
-            $email->sendAlert($staff, $alert['subj'], $alert['body'], null, $options);
+            $email->sendAlert($staff, $alert['subj'], $alert['body'], $notifyAttachments, $options);
             $sentlist[$staff->getEmail()] = 1;
         }
     }
@@ -1788,8 +1819,23 @@ implements RestrictedAccess, Threadable {
                 ) {
                     continue;
                 }
+
+                $notifyAttachments = null;
+                if(file_exists(MULTIHOSTCLASS)) {
+                    require_once(MULTIHOSTCLASS);
+                    $host = Multihost::getInstance()->getActiveHost();
+                    if(isset($host)){
+                        $sendAtta = $host->getExtraCFGbyKey('sendAttachmentOnNotification_assign');
+                        if(isset($sendAtta)&&$sendAtta) {
+                            /** @var ThreadEntry $lastMSG */
+                            $lastMSG = $this->getLastMessage();
+                            $notifyAttachments = $lastMSG->getAttachments();
+                        }
+                    }
+                }
+
                 $alert = $this->replaceVars($msg, array('recipient' => $staff));
-                $email->sendAlert($staff, $alert['subj'], $alert['body'], null, $options);
+                $email->sendAlert($staff, $alert['subj'], $alert['body'], $notifyAttachments, $options);
                 $sentlist[] = $staff->getEmail();
             }
         }
@@ -1852,8 +1898,23 @@ implements RestrictedAccess, Threadable {
                 ) {
                     continue;
                 }
+
+                $notifyAttachments = null;
+                if(file_exists(MULTIHOSTCLASS)) {
+                    require_once(MULTIHOSTCLASS);
+                    $host = Multihost::getInstance()->getActiveHost();
+                    if(isset($host)){
+                        $sendAtta = $host->getExtraCFGbyKey('sendAttachmentOnNotification_overdue');
+                        if(isset($sendAtta)&&$sendAtta) {
+                            /** @var ThreadEntry $lastMSG */
+                            $lastMSG = $this->getLastMessage();
+                            $notifyAttachments = $lastMSG->getAttachments();
+                        }
+                    }
+                }
+
                 $alert = $this->replaceVars($msg, array('recipient' => $staff));
-                $email->sendAlert($staff, $alert['subj'], $alert['body'], null);
+                $email->sendAlert($staff, $alert['subj'], $alert['body'], $notifyAttachments);
                 $sentlist[] = $staff->getEmail();
             }
         }
@@ -2124,8 +2185,23 @@ implements RestrictedAccess, Threadable {
                 ) {
                     continue;
                 }
+
+                $notifyAttachments = null;
+                if(file_exists(MULTIHOSTCLASS)) {
+                    require_once(MULTIHOSTCLASS);
+                    $host = Multihost::getInstance()->getActiveHost();
+                    if(isset($host)){
+                        $sendAtta = $host->getExtraCFGbyKey('sendAttachmentOnNotification_xfer');
+                        if(isset($sendAtta)&&$sendAtta) {
+                            /** @var ThreadEntry $lastMSG */
+                            $lastMSG = $this->getLastMessage();
+                            $notifyAttachments = $lastMSG->getAttachments();
+                        }
+                    }
+                }
+
                 $alert = $this->replaceVars($msg, array('recipient' => $staff));
-                $email->sendAlert($staff, $alert['subj'], $alert['body'], null, $options);
+                $email->sendAlert($staff, $alert['subj'], $alert['body'], $notifyAttachments, $options);
                 $sentlist[] = $staff->getEmail();
             }
          }
@@ -2422,8 +2498,23 @@ implements RestrictedAccess, Threadable {
                 ) {
                     continue;
                 }
+
+                $notifyAttachments = null;
+                if(file_exists(MULTIHOSTCLASS)) {
+                    require_once(MULTIHOSTCLASS);
+                    $host = Multihost::getInstance()->getActiveHost();
+                    if(isset($host)){
+                        $sendAtta = $host->getExtraCFGbyKey('sendAttachmentOnNotification_postMsg');
+                        if(isset($sendAtta)&&$sendAtta) {
+                            /** @var ThreadEntry $lastMSG */
+                            $lastMSG = $this->getLastMessage();
+                            $notifyAttachments = $lastMSG->getAttachments();
+                        }
+                    }
+                }
+
                 $alert = $this->replaceVars($msg, array('recipient' => $staff));
-                $email->sendAlert($staff, $alert['subj'], $alert['body'], null, $options);
+                $email->sendAlert($staff, $alert['subj'], $alert['body'], $notifyAttachments, $options);
                 $sentlist[] = $staff->getEmail();
             }
         }

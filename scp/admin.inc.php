@@ -27,7 +27,7 @@ if(!$ost or !$thisstaff or !$thisstaff->isAdmin()){
 if(file_exists(MULTIHOSTCLASS)) {
     require_once(MULTIHOSTCLASS);
     $mh_ActiveHost = Multihost::getInstance()->getActiveHost();
-    if(isset($mh_ActiveHost)){
+    if(isset($mh_ActiveHost) && $mh_ActiveHost->getHostname() !== Multihost::getInstance()->getDefaultHost()->getHostname()){
         header('Location: index.php');
         require('index.php');
         exit;
