@@ -465,9 +465,14 @@ class FA_SendEmail extends TriggerAction {
         if(file_exists(MULTIHOSTCLASS)) {
             require_once(MULTIHOSTCLASS);
             /** @var Dept $mh_department */
-            $mh_department = $ticket->getDept();
-            $params = array('deptName'=>$mh_department->getName(),'deptId'=>$mh_department->getId());
-            Multihost::getInstance()->rewriteConfig($params,true);
+            if($ticket->getDept()) {
+                $mh_department = $ticket->getDept();
+                $params = array('deptName' => $mh_department->getName(), 'deptId' => $mh_department->getId());
+                Multihost::getInstance()->rewriteConfig($params, true);
+            }else{
+                $params = array('mail-to'=>$ticket['mail-to']);
+                Multihost::getInstance()->rewriteConfig($params, true);
+            }
         }
 
         $config = $this->getConfiguration();
@@ -494,11 +499,19 @@ class FA_SendEmail extends TriggerAction {
         if (!($mails = Mail_RFC822::parseAddressList($to)) || PEAR::isError($mails))
             return false;
 
-        // Allow %{recipient} in the body
+        // Allow %{recipient} %{body} & %{subject} in the body
+        $body = ''; $subject = '';
+        if($ticket['merssage']->body)
+            $body = $ticket['merssage']->body;
+        if($ticket['subject'])
+            $subject = $ticket['subject'];
+        if($ticket->)
         foreach ($mails as $R) {
             $recipient = sprintf('%s <%s@%s>', $R->personal, $R->mailbox, $R->host);
             $replacer->assign(array(
                 'recipient' => new EmailAddress($recipient),
+                'body' => $body,
+                'subject' =>$subject,
             ));
             $I = $replacer->replaceVars($info);
             $mailer->send($recipient, $I['subject'], $I['message']);
