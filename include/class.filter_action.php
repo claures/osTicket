@@ -501,8 +501,8 @@ class FA_SendEmail extends TriggerAction {
 
         // Allow %{recipient} %{body} & %{subject} in the body
         $body = ''; $subject = '';
-        if($ticket['merssage']->body)
-            $body = $ticket['merssage']->body;
+        if($ticket['message']->body)
+            $body = $ticket['message']->body;
         if($ticket['subject'])
             $subject = $ticket['subject'];
         foreach ($mails as $R) {
