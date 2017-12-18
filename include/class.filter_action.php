@@ -505,7 +505,6 @@ class FA_SendEmail extends TriggerAction {
             $body = $ticket['merssage']->body;
         if($ticket['subject'])
             $subject = $ticket['subject'];
-        if($ticket->)
         foreach ($mails as $R) {
             $recipient = sprintf('%s <%s@%s>', $R->personal, $R->mailbox, $R->host);
             $replacer->assign(array(
