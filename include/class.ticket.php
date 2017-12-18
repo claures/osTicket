@@ -3726,6 +3726,13 @@ implements RestrictedAccess, Threadable {
         $overdue = static::objects()->filter(array('isoverdue' => 0))->filter(array('status__state' => 'open'));//->limit(50);
         /**@var Ticket $ticket * */
         foreach ($overdue as $ticket) {
+            //MARK: MXVP Multihost
+            if(file_exists(MULTIHOSTCLASS)){
+                require_once (MULTIHOSTCLASS);
+                Multihost::initInstance($this);
+                $params = array('deptName'=>$ticket->getDept()->getName(),'deptId'=>$ticket->getDeptId());
+                $host = Multihost::getInstance()->rewriteConfig($params,false,true);
+            }
             /**@var SLA $slaPlan */
             $slaPlan = $ticket->getSLA();
             if(!isset($slaPlan)) continue;
