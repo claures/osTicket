@@ -465,7 +465,7 @@ class FA_SendEmail extends TriggerAction {
         if(file_exists(MULTIHOSTCLASS)) {
             require_once(MULTIHOSTCLASS);
             /** @var Dept $mh_department */
-            if($ticket->getDept()) {
+            if($ticket instanceof Ticket) {
                 $mh_department = $ticket->getDept();
                 $params = array('deptName' => $mh_department->getName(), 'deptId' => $mh_department->getId());
                 Multihost::getInstance()->rewriteConfig($params, true);
@@ -509,10 +509,10 @@ class FA_SendEmail extends TriggerAction {
             $recipient = sprintf('%s <%s@%s>', $R->personal, $R->mailbox, $R->host);
             $replacer->assign(array(
                 'recipient' => new EmailAddress($recipient),
-                'body' => $body,
-                'subject' =>$subject,
             ));
             $I = $replacer->replaceVars($info);
+            $I['subject'] = str_replace('%{subject}',$subject,$I['subject']);
+            $I['message'] = str_replace('%{body}',$body,$I['message']);
             $mailer->send($recipient, $I['subject'], $I['message']);
         }
 
