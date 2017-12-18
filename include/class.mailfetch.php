@@ -637,8 +637,28 @@ class MailFetcher {
         global $ost;
 
         unset($this->tnef);
-        if(!($mailinfo = $this->getHeaderInfo($mid)))
-            return false;
+        if(!($mailinfo = $this->getHeaderInfo($mid))){
+            $invalidMailBox = 'InvalidMails';
+            if(in_array($this->srvstr.$this->mailbox_encode($invalidMailBox),imap_list($this->mbox, $this->srvstr, '*'))){
+                $warn=sprintf(_S('Invalid Mail found please check '.$invalidMailBox.' from %s : %s'),
+                    $this->getHost(), $this->getUsername());
+                $this->log($warn);
+                return imap_mail_move($this->mbox,$mid,$this->mailbox_encode($invalidMailBox)); //Was success?
+            }else{ //Create one and move mail
+                if($this->createMailbox($invalidMailBox)){
+                    $warn=sprintf(_S('Invalid Mail found please check '.$invalidMailBox.' from %s : %s'),
+                        $this->getHost(), $this->getUsername());
+                    $this->log($warn);
+                    return imap_mail_move($this->mbox,$mid,$this->mailbox_encode($invalidMailBox));
+                }else{
+                    $warn=sprintf(_S($invalidMailBox.'Could not be created from %s : %s'),
+                        $this->getHost(), $this->getUsername());
+                    $this->log($warn);
+                    return false; //OK now we have a problem
+                }
+            }
+        }
+
 
         // TODO: If the content-type of the message is 'message/rfc822',
         // then this is a message with the forwarded message as the
