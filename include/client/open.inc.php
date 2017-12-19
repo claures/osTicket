@@ -38,19 +38,35 @@ if ($info['topicId'] && ($topic=Topic::lookup($info['topicId']))) {
   <input type="hidden" name="a" value="open">
   <table width="800" cellpadding="1" cellspacing="0" border="0">
     <tbody>
-<?php
-        if (!$thisclient) {
-            $uform = UserForm::getUserForm()->getForm($_POST);
-            if ($_POST) $uform->isValid();
-            $uform->render(false);
-        }
-        else { ?>
-            <tr><td colspan="2"><hr /></td></tr>
-        <tr><td><?php echo __('Email'); ?>:</td><td><?php
-            echo $thisclient->getEmail(); ?></td></tr>
-        <tr><td><?php echo __('User'); ?>:</td><td><?php
-            echo Format::htmlchars($thisclient->getName()); ?></td></tr>
+    <?php
+    if (!$thisclient) {
+        $uform = UserForm::getUserForm()->getForm($_POST);
+        if ($_POST) $uform->isValid();
+        $uform->render(false);
+    } else { ?>
+        <tr>
+            <td colspan="2">
+                <hr/>
+            </td>
+        </tr>
+        <tr>
+            <td><?php echo __('Email'); ?>:</td>
+            <td><?= $thisclient->getEmail(); ?></td>
+        </tr>
+        <?php
+        /**@var $my_org Organization* */
+        $my_org = $thisclient->getOrganization();
+        if (isset($my_org)) { ?>
+            <tr>
+                <td><?php echo __('Client'); ?>:</td>
+                <td><?= Format::htmlchars($my_org->getName()); ?></td>
+            </tr>
         <?php } ?>
+        <tr>
+            <td><?php echo __('User'); ?>:</td>
+            <td><?= Format::htmlchars($thisclient->getName()); ?></td>
+        </tr>
+    <?php } ?>
     </tbody>
     <tbody>
     <tr><td colspan="2"><hr />
