@@ -664,8 +664,10 @@ class MailFetcher {
         // then this is a message with the forwarded message as the
         // attachment. Download the body and pass it along to the mail
         // parsing engine.
+        // TODO: MIXvoip Fix this and make it work
+        // We don't need this as it is not working as expected
         $info = Mail_Parse::splitHeaders($mailinfo['header']);
-        if (strtolower($info['Content-Type']) == 'message/rfc822') {
+        if (strtolower($info['Content-Type']) == 'message/rfc822' && false) {
             if ($wrapped = $this->getPart($mid, 'message/rfc822')) {
                 require_once INCLUDE_DIR.'api.tickets.php';
                 // Simulate piping the contents into the system
