@@ -130,8 +130,33 @@ else
     <tbody>
     <?php
         $ids=($errors && is_array($_POST['ids']))?$_POST['ids']:null;
+    //MARK: Multihost show only allowed users
+    $showOnlyAllowed = false;
+    if (file_exists(MULTIHOSTCLASS)) {
+        require_once(MULTIHOSTCLASS);
+        $host = Multihost::getInstance()->getActiveHost();
+        if (isset($host)) {
+            $tmp = $host->getExtraCFGbyKey('showOnlyWhiteListedOrganizations');
+            if (isset($tmp))
+                $showOnlyAllowed = $tmp;
+        }
+        if ($showOnlyAllowed) {
+            $my_orgs = Organization::objects();
+            $allowedOrgsID = array();
+            $whiteList = $host->getExtraCFGbyKey('whiteListString');
+            /** @var Organization $org */
+            foreach ($my_orgs as $my_org) {
+                if (OrganizationCdata::lookup($my_org->getId())->ht['notes'] === $whiteList) {
+                    $allowedOrgsID[] = $my_org->getID();
+                }
+            }
+        }
+    }
         foreach ($orgs as $org) {
-
+            if ($showOnlyAllowed) {
+                if (!in_array($org['id'], $allowedOrgsID))
+                    continue;
+            }
             $sel=false;
             if($ids && in_array($org['id'], $ids))
                 $sel=true;
