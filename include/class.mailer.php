@@ -375,6 +375,14 @@ class Mailer {
             }
         }
 
+        //Cc
+        if(isset($options['cc']) && $options['cc'])
+            $headers += array('Cc'=>$options['cc']);
+
+        //Bcc
+        if(isset($options['bcc']) && $options['bcc'])
+            $headers += array('Bcc'=>$options['bcc']);
+
         // Return-Path
         if (isset($options['nobounce']) && $options['nobounce'])
             $headers['Return-Path'] = '<>';

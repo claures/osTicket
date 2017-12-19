@@ -48,7 +48,7 @@ if ($info['topicId'] && ($topic=Topic::lookup($info['topicId']))) {
             <tr><td colspan="2"><hr /></td></tr>
         <tr><td><?php echo __('Email'); ?>:</td><td><?php
             echo $thisclient->getEmail(); ?></td></tr>
-        <tr><td><?php echo __('Client'); ?>:</td><td><?php
+        <tr><td><?php echo __('User'); ?>:</td><td><?php
             echo Format::htmlchars($thisclient->getName()); ?></td></tr>
         <?php } ?>
     </tbody>
@@ -74,7 +74,7 @@ if ($info['topicId'] && ($topic=Topic::lookup($info['topicId']))) {
                       });">
                 <option value="" selected="selected">&mdash; <?php echo __('Select a Help Topic');?> &mdash;</option>
                 <?php
-                if($topics=Topic::getPublicHelpTopics()) {
+                if($topics=Topic::getHelpTopicsForMultihost(true)) {
                     foreach($topics as $id =>$name) {
                         echo sprintf('<option value="%d" %s>%s</option>',
                                 $id, ($info['topicId']==$id)?'selected="selected"':'', $name);

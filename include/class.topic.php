@@ -385,6 +385,37 @@ implements TemplateVariable {
             return $list[0];
     }
 
+    /** Get the Topics with the injected Multihost data. If Multihost is not enabled just pass the data to getHelpTopics
+     * @param bool $publicOnly Show only the public Topics
+     * @param bool $disabled Show also disabled Topics
+     * @param bool $localize Localize Topics
+     * @return array array('topicID'=>'name')
+     */
+    public static function getHelpTopicsForMultihost($publicOnly = false, $disabled = false, $localize = true)
+    {
+        //MARK: Multihost
+        if (file_exists(MULTIHOSTCLASS)) {
+            $data = self::getHelpTopics(false, $disabled, $localize);
+            require_once(MULTIHOSTCLASS);
+            $host = Multihost::getInstance()->getActiveHost();
+            if (Multihost::getInstance()->getDefaultHost()->getHostname() !== $host->getHostname()) {
+                $allowedDepts = $host->getExtraCFGbyKey('allowedDepts');
+                if (isset($allowedDepts)) {
+                    $ret = array();
+                    foreach ($data as $key => $name) {
+                        /**@var $my_topic Topic */
+                        $my_topic = self::lookup($key);
+                        if (in_array($my_topic->getDeptId(), $allowedDepts))
+                            $ret[$my_topic->getId()] = $my_topic->getName();
+                    }
+                    $data = $ret;
+                }
+            }
+        }else
+            $data = self::getHelpTopics($publicOnly, $disabled, $localize);
+        return $data;
+    }
+
     function update($vars, &$errors) {
         global $cfg;
 
