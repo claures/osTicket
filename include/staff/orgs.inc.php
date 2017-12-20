@@ -35,12 +35,12 @@ if (file_exists(MULTIHOSTCLASS)) {
                 $allowedOrgsID[] = $my_org->getID();
             }
         }
+        if (count($allowedOrgsID) <= 0)
+            $allowedOrgsID = null;
+        $orgs->filter(Q::any(array(
+            'id__in' => $allowedOrgsID,
+        )));
     }
-    if (count($allowedOrgsID) <= 0)
-        $allowedOrgsID = null;
-    $orgs->filter(Q::any(array(
-        'id__in' => $allowedOrgsID,
-    )));
 }
 
 $sortOptions = array(
