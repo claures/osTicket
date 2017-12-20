@@ -19,6 +19,34 @@ if ($_REQUEST['query']) {
     $qs += array('query' => $_REQUEST['query']);
 }
 
+//MARK: Multihost show only allowed users
+$showOnlyAllowed = false;
+if (file_exists(MULTIHOSTCLASS)) {
+    require_once(MULTIHOSTCLASS);
+    $host = Multihost::getInstance()->getActiveHost();
+    if (isset($host)) {
+        $tmp = $host->getExtraCFGbyKey('showOnlyWhiteListedUsers');
+        if (isset($tmp))
+            $showOnlyAllowed = $tmp;
+    }
+    if ($showOnlyAllowed) {
+        $my_orgs = Organization::objects();
+        $allowedOrgsID = array();
+        $whiteList = $host->getExtraCFGbyKey('whiteListString');
+        /** @var Organization $org */
+        foreach ($my_orgs as $my_org) {
+            if (OrganizationCdata::lookup($my_org->getId())->ht['notes'] === $whiteList) {
+                $allowedOrgsID[] = $my_org->getID();
+            }
+        }
+        if (count($allowedOrgsID) <= 0)
+            $allowedOrgsID = null;
+        $users->filter(Q::any(array(
+            'org__id__in' => $allowedOrgsID,
+        )));
+    }
+}
+
 $sortOptions = array('name' => 'name',
                      'email' => 'emails__address',
                      'status' => 'account__status',
@@ -164,36 +192,8 @@ else
     </thead>
     <tbody>
     <?php
-    //MARK: Multihost show only allowed users
-    $showOnlyAllowed = false;
-    if (file_exists(MULTIHOSTCLASS)) {
-        require_once(MULTIHOSTCLASS);
-        $host = Multihost::getInstance()->getActiveHost();
-        if (isset($host)) {
-            $tmp = $host->getExtraCFGbyKey('showOnlyWhiteListedUsers');
-            if (isset($tmp))
-                $showOnlyAllowed = $tmp;
-        }
-        if ($showOnlyAllowed) {
-            $my_orgs = Organization::objects();
-            $allowedOrgsID = array();
-            $whiteList = $host->getExtraCFGbyKey('whiteListString');
-            /** @var Organization $org */
-            foreach ($my_orgs as $my_org) {
-                if (OrganizationCdata::lookup($my_org->getId())->ht['notes'] === $whiteList) {
-                    $allowedOrgsID[] = $my_org->getID();
-                }
-            }
-        }
-    }
         $ids=($errors && is_array($_POST['ids']))?$_POST['ids']:null;
         foreach ($users as $U) {
-            if ($showOnlyAllowed) {
-                /** @var User $my_user */
-                $my_user = User::lookup($U['id']);
-                if (!in_array($my_user->getOrgId(), $allowedOrgsID))
-                    continue;
-            }
                 // Default to email address mailbox if no name specified
                 if (!$U['name'])
                     list($name) = explode('@', $U['default_email__address']);
