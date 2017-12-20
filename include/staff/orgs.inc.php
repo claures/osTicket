@@ -19,13 +19,13 @@ if ($_REQUEST['query']) {
 //MARK: Multihost show only allowed users
 $showOnlyAllowed = false;
 if (file_exists(MULTIHOSTCLASS)) {
-    /*require_once(MULTIHOSTCLASS);
+    require_once(MULTIHOSTCLASS);
     $host = Multihost::getInstance()->getActiveHost();
     if (isset($host)) {
         $tmp = $host->getExtraCFGbyKey('showOnlyWhiteListedOrganizations');
         if (isset($tmp))
             $showOnlyAllowed = $tmp;
-    }*/
+    }
     if ($showOnlyAllowed) {
         $my_orgs = Organization::objects();
         $allowedOrgsID = array();
