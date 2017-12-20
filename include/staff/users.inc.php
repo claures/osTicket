@@ -30,20 +30,37 @@ if (file_exists(MULTIHOSTCLASS)) {
             $showOnlyAllowed = $tmp;
     }
     if ($showOnlyAllowed) {
+        $whiteList = $host->getExtraCFGbyKey('whiteListString');
+        $condArray = array();
+        //Get allowed Orgs
         $my_orgs = Organization::objects();
         $allowedOrgsID = array();
-        $whiteList = $host->getExtraCFGbyKey('whiteListString');
         /** @var Organization $org */
         foreach ($my_orgs as $my_org) {
             if (OrganizationCdata::lookup($my_org->getId())->ht['notes'] === $whiteList) {
                 $allowedOrgsID[] = $my_org->getID();
             }
         }
-        if (count($allowedOrgsID) <= 0)
-            $allowedOrgsID = null;
-        $users->filter(Q::any(array(
-            'org__id__in' => $allowedOrgsID,
-        )));
+        if (count($allowedOrgsID) > 0)
+            $condArray['org__id__in'] = $allowedOrgsID;
+
+        //Get allowed users:
+        $allowedUserID = array();
+        $my_users = User::objects();
+        $my_users->values('id');
+        /** @var AnnotatedModel $my_user **/
+        foreach ($my_users as $my_user){
+            if(UserCdata::lookup($my_user['id'])->ht['notes'] === $whiteList){
+                $allowedUserID[] = $my_user['id'];
+            }
+        }
+        if (count($allowedUserID) > 0)
+            $condArray['id__in'] = $allowedUserID;
+
+        //Filter here
+        if(count($condArray)>0) {
+            $users->filter(Q::any($condArray));
+        }
     }
 }
 
@@ -81,7 +98,6 @@ $qstr.='&amp;order='.($order=='-' ? 'ASC' : 'DESC');
 
 //echo $query;
 $_SESSION[':Q:users'] = $users;
-
 $users->values('id', 'name', 'default_email__address', 'account__id',
     'account__status', 'created', 'updated');
 $users->order_by($order . $order_column);
