@@ -29,10 +29,9 @@ if (file_exists(MULTIHOSTCLASS)) {
     if ($showOnlyAllowed) {
         $my_orgs = Organization::objects();
         $allowedOrgsID = array();
-        $whiteList = $host->getExtraCFGbyKey('whiteListString');
         /** @var Organization $org */
         foreach ($my_orgs as $my_org) {
-            if (OrganizationCdata::lookup($my_org->getId())->ht['notes'] === $whiteList) {
+            if ($host->matchWhiteList(OrganizationCdata::lookup($my_org->getId())->ht['notes'])) {
                 $allowedOrgsID[] = $my_org->getID();
             }
         }

@@ -30,14 +30,13 @@ if (file_exists(MULTIHOSTCLASS)) {
             $showOnlyAllowed = $tmp;
     }
     if ($showOnlyAllowed) {
-        $whiteList = $host->getExtraCFGbyKey('whiteListString');
         $condArray = array();
         //Get allowed Orgs
         $my_orgs = Organization::objects();
         $allowedOrgsID = array();
         /** @var Organization $org */
         foreach ($my_orgs as $my_org) {
-            if (OrganizationCdata::lookup($my_org->getId())->ht['notes'] === $whiteList) {
+            if ($host->matchWhiteList(OrganizationCdata::lookup($my_org->getId())->ht['notes'])) {
                 $allowedOrgsID[] = $my_org->getID();
             }
         }
@@ -50,7 +49,7 @@ if (file_exists(MULTIHOSTCLASS)) {
         $my_users->values('id');
         /** @var AnnotatedModel $my_user **/
         foreach ($my_users as $my_user){
-            if(UserCdata::lookup($my_user['id'])->ht['notes'] === $whiteList){
+            if($host->matchWhiteList(UserCdata::lookup($my_user['id'])->ht['notes'])){
                 $allowedUserID[] = $my_user['id'];
             }
         }
