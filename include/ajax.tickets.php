@@ -632,8 +632,12 @@ class TicketsAjaxAPI extends AjaxController {
 
                     $prompt  = __('Select an Agent');
                     $assignees = array();
-                    foreach ($members as $member)
-                         $assignees['s'.$member->getId()] = $member->getName();
+                    foreach ($members as $member) {
+                        $stats = $member->getTicketsStats();
+                        $answered = isset($stats['answered'])?$stats['answered']:0;
+                        $assigned = isset($stats['assigned'])?$stats['assigned']:0;
+                        $assignees['s' . $member->getId()] = $member->getName()." ($assigned/$answered)";
+                    }
 
                     if (!$assignees)
                         $info['warn'] =  __('No agents available for assignment');

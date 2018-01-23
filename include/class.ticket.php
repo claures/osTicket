@@ -896,8 +896,12 @@ implements RestrictedAccess, Threadable {
         switch (strtolower($options['target'])) {
             case 'agents':
                 $dept = $this->getDept();
-                foreach ($dept->getAssignees() as $member)
-                    $assignees['s'.$member->getId()] = $member;
+                foreach ($dept->getAssignees() as $member) {
+                    $stats = $member->getTicketsStats();
+                    $answered = isset($stats['answered'])?$stats['answered']:0;
+                    $assigned = isset($stats['assigned'])?$stats['assigned']:0;
+                    $assignees['s' . $member->getId()] = $member->getName()." ($assigned/$answered)";
+                }
 
                 if (!$source && $this->isOpen() && $this->staff)
                     $assignee = sprintf('s%d', $this->staff->getId());
