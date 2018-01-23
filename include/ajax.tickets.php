@@ -634,9 +634,8 @@ class TicketsAjaxAPI extends AjaxController {
                     $assignees = array();
                     foreach ($members as $member) {
                         $stats = $member->getTicketsStats();
-                        $answered = isset($stats['answered'])?$stats['answered']:0;
                         $assigned = isset($stats['assigned'])?$stats['assigned']:0;
-                        $assignees['s' . $member->getId()] = $member->getName()." ($assigned/$answered)";
+                        $assignees['s' . $member->getId()] = $member->getName()." ($assigned)";
                     }
 
                     if (!$assignees)
