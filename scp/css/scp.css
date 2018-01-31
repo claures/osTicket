@@ -2501,7 +2501,7 @@ tr i.help-tip.warning {
     width: auto;
     display: inline-block;
     max-width: 100%;
-    white-space: nowrap;
+    /*white-space: nowrap;*/
     overflow: hidden;
     text-overflow: ellipsis;
     vertical-align: bottom;
