@@ -4,6 +4,9 @@ $tickets = TicketModel::objects();
 $clear_button = false;
 $view_all_tickets = $date_header = $date_col = false;
 
+/** @var TicketStatus $waitingStatus */
+$waitingStatus = TicketStatus::lookup(array('name' => 'Waiting'));
+
 // Make sure the cdata materialized view is available
 TicketForm::ensureDynamicDataView();
 
@@ -111,6 +114,17 @@ case 'answered':
     $queue_sort_options = array('answered', 'priority,updated', 'updated',
         'priority,created', 'priority,due', 'due', 'number', 'hot');
     break;
+
+    case 'waiting':
+        $status='open';
+        $results_type=__('Open Tickets');
+        $tickets->filter(array('status_id' => $waitingStatus->getId()));
+        if (!$cfg->showAnsweredTickets())
+            $tickets->filter(array('isanswered'=>0));
+        $queue_sort_options = array('priority,updated', 'updated',
+            'priority,due', 'due', 'priority,created', 'answered', 'number',
+            'hot');
+        break;
 
     case 'unassigned':
         $status='open';
@@ -231,6 +245,7 @@ case 'open':
     $status='open';
     $queue_name = $queue_name ?: 'open';
     $results_type=__('Open Tickets');
+    $tickets->filter(Q::not(array('status_id' => $waitingStatus->getId())));
     if (!$cfg->showAnsweredTickets())
         $tickets->filter(array('isanswered'=>0));
     $queue_sort_options = array('priority,updated', 'updated',

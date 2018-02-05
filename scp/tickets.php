@@ -408,6 +408,13 @@ if($stats['assigned']) {
                         ($_REQUEST['status']=='assigned'));
 }
 
+$nav->addSubMenu(array(
+    'desc' => __('Waiting'),
+    'title' => __('Waiting Tickets'),
+    'href' => 'tickets.php?status=waiting',
+    'iconclass' => 'Ticket'),
+    ($_REQUEST['status'] == 'waiting'));
+
 if($stats['overdue']) {
     $nav->addSubMenu(array('desc'=>__('Overdue').' ('.number_format($stats['overdue']).')',
                            'title'=>__('Stale Tickets'),
