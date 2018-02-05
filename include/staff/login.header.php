@@ -6,7 +6,7 @@ defined('OSTSCPINC') or die('Invalid path');
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta http-equiv="refresh" content="7200" />
-    <title>Mooni Ticket :: <?php echo __('Agent Login'); ?></title>
+    <title>Mint Ticket System :: <?php echo __('Agent Login'); ?></title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" href="css/login.css" type="text/css" />

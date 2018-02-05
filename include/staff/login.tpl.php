@@ -9,7 +9,7 @@ $info = ($_POST && $errors)?Format::htmlchars($_POST):array();
     </div>
     <h1 id="logo"><a href="index.php">
         <span class="valign-helper"></span>
-        <img src="logo.php?login" alt="Mooni Ticket :: <?php echo __('Staff Control Panel');?>" />
+        <img src="logo.php?login" alt="Mint Ticket System :: <?php echo __('Staff Control Panel');?>" />
     </a></h1>
     <h3><?php echo Format::htmlchars($msg); ?></h3>
     <div class="banner"><small><?php echo ($content) ? Format::display($content->getLocalBody()) : ''; ?></small></div>
@@ -51,8 +51,8 @@ if (count($ext_bks)) { ?>
     </div>
 </div>
 <div id="poweredBy"><?php echo __('Powered by'); ?>
-    <a href="http://mixvoip.com/mooni" target="_blank">
-        Mooni Ticket
+    <a href="http://mixvoip.com/mint" target="_blank">
+        Mint Ticket System
     </a>
 </div>
     <script>

@@ -2,7 +2,7 @@
     </div>
     <div id="footer">
         <p>Copyright &copy; <?php echo date('Y'); ?> <?php echo (string) $ost->company ?: 'osTicket.com'; ?> - All rights reserved.</p>
-        <a id="poweredBy" href="http://mixvoip.com/mooni" target="_blank"><?php echo __('powered by Mooni Ticket'); ?></a>
+        <a id="poweredBy" href="http://mixvoip.com/mint" target="_blank"><?php echo __('powered by Mint Ticket System'); ?></a>
     </div>
 <div id="overlay"></div>
 <div id="loading">

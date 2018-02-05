@@ -79,5 +79,5 @@ $ost->setWarning($sysnotice);
 $nav = new AdminNav($thisstaff);
 
 //Page title.
-$ost->setPageTitle(__('Mooni Ticket :: Admin Control Panel'));
+$ost->setPageTitle(__('Mint Ticket System :: Admin Control Panel'));
 ?>

@@ -134,6 +134,6 @@ if($thisstaff->forcePasswdChange() && !$exempt) {
     exit;
 }
 $ost->setWarning($sysnotice);
-$ost->setPageTitle(__('Mooni Ticket :: Staff Control Panel'));
+$ost->setPageTitle(__('Mint Ticket System :: Staff Control Panel'));
 
 ?>

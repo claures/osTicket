@@ -11,7 +11,7 @@ $info = ($_POST && $errors)?Format::htmlchars($_POST):array();
     </div>
     <h1 id="logo"><a href="index.php">
         <span class="valign-helper"></span>
-        <img src="logo.php?login" alt="Mooni Ticket :: <?php echo __('Agent Password Reset');?>" />
+        <img src="logo.php?login" alt="Mint Ticket System:: <?php echo __('Agent Password Reset');?>" />
     </a></h1>
     <h3><?php echo __('A confirmation email has been sent'); ?></h3>
     <h3 style="color:black;"><em><?php echo __(
@@ -30,8 +30,8 @@ $info = ($_POST && $errors)?Format::htmlchars($_POST):array();
     </div>
 </div>
 <div id="poweredBy"><?php echo __('Powered by'); ?>
-    <a href="http://mixvoip.com/mooni" target="_blank">
-        Mooni Ticket
+    <a href="http://mixvoip.com/mint" target="_blank">
+        Mint Ticket System
     </a>
 </div>
     <script>
