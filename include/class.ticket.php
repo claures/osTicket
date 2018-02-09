@@ -1566,6 +1566,16 @@ implements RestrictedAccess, Threadable {
         global $cfg;
 
         $this->isanswered = 0;
+
+        //Set ticket to open if it's on waiting
+        /** @var TicketStatus $waitingStatus */
+        $waitingStatus = TicketStatus::lookup(array('name' => 'Waiting'));
+        /** @var TicketStatus $openStatus */
+        $openStatus = TicketStatus::lookup(array('name' => 'Open'));
+        if ($this->getStatusId() == $waitingStatus->getId()) {
+            $this->setStatusId($openStatus->getId());
+        }
+
         $this->lastupdate = SqlFunction::NOW();
         $this->save();
 

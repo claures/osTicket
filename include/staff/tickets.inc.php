@@ -119,8 +119,6 @@ switch ($queue_name) {
         $status = 'open';
         $results_type = __('Open Tickets');
         $tickets->filter(array('status_id' => $waitingStatus->getId()));
-        if (!$cfg->showAnsweredTickets())
-            $tickets->filter(array('isanswered' => 0));
         $queue_sort_options = array('priority,updated', 'updated',
             'priority,due', 'due', 'priority,created', 'answered', 'number',
             'hot');
