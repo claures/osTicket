@@ -2701,8 +2701,8 @@ implements RestrictedAccess, Threadable {
                 foreach ($recipians as $recipient) {
                     if ($recipient->getUserId() == $this->getUserId())
                         continue;
-                    $cc_mail .= sprintf('"%s" <%s>',
-                        $recipient->getName()->getOriginal(), $recipient->getEmail()
+                    $cc_mail .= sprintf('%s <%s>',
+                        $recipient->getName(), $recipient->getEmail()
                     ).', ';
                 }
                 $cc_mail = substr($cc_mail,0,-2);

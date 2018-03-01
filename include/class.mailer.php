@@ -377,7 +377,7 @@ class Mailer {
 
         //Cc
         if(isset($options['cc']) && $options['cc'])
-            $headers += array('CC'=>$options['cc']);
+            $headers += array('Cc'=>$options['cc']);
 
         //Bcc
         if(isset($options['bcc']) && $options['bcc'])
@@ -560,7 +560,7 @@ class Mailer {
                 'type'=>'mail',
                 'to'=>$to,
                 'headers'=>$headers,
-                'body'=>$body,
+                'body'=>$body
             ));
             if(!PEAR::isError($result))
                 return $messageId;
