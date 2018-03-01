@@ -2705,7 +2705,7 @@ implements RestrictedAccess, Threadable {
                 }
                 $cc_mail = substr($cc_mail,0,-2);
                 if(isset($cc_mail) && $cc_mail !== '')
-                    $options['Cc'] = $cc_mail;
+                    $options['cc'] = $cc_mail;
             }
             $email->send($user, $msg['subj'], $msg['body'], $attachments,
                 $options);
