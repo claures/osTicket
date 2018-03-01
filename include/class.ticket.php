@@ -2685,19 +2685,33 @@ implements RestrictedAccess, Threadable {
         );
 
         $user = $this->getOwner();
-        if (($email=$dept->getEmail())
+        $cc_mail = '';
+        if (($email = $dept->getEmail())
             && ($tpl = $dept->getTemplate())
-            && ($msg=$tpl->getReplyMsgTemplate())
+            && ($msg = $tpl->getReplyMsgTemplate())
         ) {
             $msg = $this->replaceVars($msg->asArray(),
                 $variables + array('recipient' => $user)
             );
-            $attachments = $cfg->emailAttachments()?$response->getAttachments():array();
+            $attachments = $cfg->emailAttachments() ? $response->getAttachments() : array();
+            //MARK: CC MAIL
+            //Get the Collabs and add them to the cc:
+            if($vars['emailcollab']){
+                $recipians = $this->getRecipients();
+                foreach ($recipians as $recipient) {
+                    if ($recipient->getUserId() == $this->getUserId())
+                        continue;
+                    $cc_mail .= $recipient.', ';
+                }
+                $cc_mail = substr($cc_mail,0,-2);
+                if(isset($cc_mail) && $cc_mail !== '')
+                    $options['Cc'] = $cc_mail;
+            }
             $email->send($user, $msg['subj'], $msg['body'], $attachments,
                 $options);
         }
 
-        if ($vars['emailcollab']) {
+        if ($vars['emailcollab'] && !isset($cc_mail) && $cc_mail !== '') {
             $this->notifyCollaborators($response,
                 array(
                     'signature' => $signature,
