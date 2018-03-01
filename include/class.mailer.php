@@ -318,8 +318,8 @@ class Mailer {
         }
 
         //do some cleanup
-        $to = preg_replace("/(\r\n|\r|\n)/s",'', trim($to));
-        $subject = preg_replace("/(\r\n|\r|\n)/s",'', trim($subject));
+        $to = preg_replace("/(\r\n|\r|\n)/s", '', trim($to));
+        $subject = preg_replace("/(\r\n|\r|\n)/s", '', trim($subject));
 
         $headers = array(
             'From' => $this->getFromAddress($options),
@@ -327,12 +327,18 @@ class Mailer {
         );
 
         //Cc
-        if (isset($options['cc']) && $options['cc'])
+        if (isset($options['cc']) && $options['cc']) {
+            $options['cc'] = preg_replace("/(\r\n|\r|\n)/s", '', trim($options['cc']));
             $headers += array('Cc' => $options['cc']);
+            $to .= ', ' . $options['cc'];
+        }
 
         //Bcc
-        if (isset($options['bcc']) && $options['bcc'])
+        if (isset($options['bcc']) && $options['bcc']) {
+            $options['bcc'] = preg_replace("/(\r\n|\r|\n)/s", '', trim($options['bcc']));
             $headers += array('Bcc' => $options['bcc']);
+            $to .= ', ' . $options['bcc'];
+        }
 
         $headers += array(
             'Subject' => $subject,
