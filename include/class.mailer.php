@@ -321,13 +321,24 @@ class Mailer {
         $to = preg_replace("/(\r\n|\r|\n)/s",'', trim($to));
         $subject = preg_replace("/(\r\n|\r|\n)/s",'', trim($subject));
 
-        $headers = array (
+        $headers = array(
             'From' => $this->getFromAddress($options),
             'To' => $to,
+        );
+
+        //Cc
+        if (isset($options['cc']) && $options['cc'])
+            $headers += array('Cc' => $options['cc']);
+
+        //Bcc
+        if (isset($options['bcc']) && $options['bcc'])
+            $headers += array('Bcc' => $options['bcc']);
+
+        $headers += array(
             'Subject' => $subject,
-            'Date'=> date('D, d M Y H:i:s O'),
+            'Date' => date('D, d M Y H:i:s O'),
             'Message-ID' => "<{$messageId}>",
-            'X-Mailer' =>'osTicket Mailer',
+            'X-Mailer' => 'osTicket Mailer',
         );
 
         // Add in the options passed to the constructor
@@ -374,14 +385,6 @@ class Mailer {
                 $options['reply-tag'] = '';
             }
         }
-
-        //Cc
-        if(isset($options['cc']) && $options['cc'])
-            $headers += array('Cc'=>$options['cc']);
-
-        //Bcc
-        if(isset($options['bcc']) && $options['bcc'])
-            $headers += array('Bcc'=>$options['bcc']);
 
         // Return-Path
         if (isset($options['nobounce']) && $options['nobounce'])
