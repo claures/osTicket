@@ -2701,15 +2701,13 @@ implements RestrictedAccess, Threadable {
                 foreach ($recipians as $recipient) {
                     if ($recipient->getUserId() == $this->getUserId())
                         continue;
-                    $cc_to = $recipient->getEmail();
-                    $cc_to = preg_replace("/(\r\n|\r|\n)/s",'', trim($cc_to));
                     $cc_mail .= sprintf('%s <%s>',
-                        $recipient->getName(), $cc_to
+                        $recipient->getName(), $recipient->getEmail()
                     ).', ';
                 }
                 $cc_mail = substr($cc_mail,0,-2);
                 if(isset($cc_mail) && $cc_mail !== '')
-                    $options['cc'] = $cc_mail;
+                    $options['cc'] = preg_replace("/(\r\n|\r|\n)/s",'', trim($cc_mail));
             }
             $email->send($user, $msg['subj'], $msg['body'], $attachments,
                 $options);
