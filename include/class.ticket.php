@@ -2701,8 +2701,10 @@ implements RestrictedAccess, Threadable {
                 foreach ($recipians as $recipient) {
                     if ($recipient->getUserId() == $this->getUserId())
                         continue;
+                    $cc_to = $recipient->getEmail()
+                    $cc_to = preg_replace("/(\r\n|\r|\n)/s",'', trim($cc_to));
                     $cc_mail .= sprintf('%s <%s>',
-                        $recipient->getName(), $recipient->getEmail()
+                        $recipient->getName(), $cc_to
                     ).', ';
                 }
                 $cc_mail = substr($cc_mail,0,-2);
