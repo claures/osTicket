@@ -3868,7 +3868,7 @@ implements RestrictedAccess, Threadable {
                         //Let's get our dates ready
                         if(strtotime($ticket->getLastMessageDate()) > strtotime($ticket->getCreateDate())){
                             //This ticket is reopened by the client so lets swap the timeout to the answerSLA
-                            if(isset($json->answerSLA)&&is_numeric($json->answerSLA))
+                            if(isset($json->answerSLA) && is_numeric($json->answerSLA) && !$json->ignoreAnswered)
                                 $slaTimeoutHours = intval($json->answerSLA);
                         }
                         $createDate = DateTime::createFromFormat('Y-m-d H:i:s', $ticket->getLastMessageDate());
