@@ -79,6 +79,8 @@ $use_subquery = true;
 $queue_key = sprintf('::Q:%s', ObjectModel::OBJECT_TYPE_TICKET);
 $queue_name = $_SESSION[$queue_key] ?: '';
 
+$unassignedUID = Staff::getIdByUsername('unassigned');
+
 switch ($queue_name) {
     case 'closed':
         $status = 'closed';
@@ -131,7 +133,6 @@ switch ($queue_name) {
         $status = 'open';
         $staffId = $thisstaff->getId();
         $results_type = __('Unassigned Tickets');
-        $unassignedUID = Staff::getIdByUsername('unassigned');
         $tickets->filter(Q::any(array(
             Q::all(array('staff_id' => 0, 'team_id' => 0)),
             Q::all(array('staff_id' => $unassignedUID)),
@@ -515,6 +516,8 @@ return false;">
             <?php
             $colNum = 10;
             // Swap some columns based on the queue.
+            if ($queue_name == "assigned")
+                $queue_columns['team']['heading'] = __('Team / User');
             if ($showassigned) {
                 //unset($queue_columns['dept']);
                 if (!strcasecmp($status, 'closed'))
@@ -562,7 +565,11 @@ return false;">
         $ids = ($errors && $_POST['tids'] && is_array($_POST['tids'])) ? $_POST['tids'] : null;
         foreach ($tickets as $T) {
             $teamName = Team::getLocalById($T['team_id'], 'name', $T['team__name']);
-            if (!isset($teamName)) $teamName = '';
+            $agentName = new AgentsName($T['staff__firstname'] . ' ' . $T['staff__lastname']);
+            if (!isset($teamName))
+                $teamName = '';
+            elseif($queue_name == 'assigned' && !empty(trim($agentName)) && $T['staff_id'] != $unassignedUID)
+                $teamName .= ' / '.$agentName;
             $total += 1;
             $tag = $T['staff_id'] ? 'assigned' : 'openticket';
             $flag = null;
@@ -574,7 +581,7 @@ return false;">
             $lc = '';
             if ($showassigned) {
                 if ($T['staff_id'])
-                    $lc = new AgentsName($T['staff__firstname'] . ' ' . $T['staff__lastname']);
+                    $lc = $agentName;
                 elseif ($T['team_id'])
                     $lc = Team::getLocalById($T['team_id'], 'name', $T['team__name']);
             } else {
