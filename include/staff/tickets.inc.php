@@ -102,7 +102,7 @@ switch ($queue_name) {
             'staff_id' => $thisstaff->getId()
         ));
         if($teams = array_filter($thisstaff->getTeams())){
-            $filter->add(array('team_id_in' => $teams));
+            $filter->add(Q::any(array('team_id_in' => $teams)));
         }
         $tickets->filter($filter);
         $queue_sort_options = array('updated', 'priority,updated',
