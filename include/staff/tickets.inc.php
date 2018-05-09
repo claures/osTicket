@@ -102,7 +102,7 @@ switch ($queue_name) {
         $results_type = __('My Tickets');
         $tickets->filter(Q::any(array(
             'staff_id' => $thisstaff->getId(),
-            Q::all(array('staff_id' => 0, 'team_id__gt' => $agentTeams)),
+            Q::all(array('staff_id' => 0, 'team_id__in' => $agentTeams)),
         )));
         $queue_sort_options = array('updated', 'priority,updated',
             'priority,created', 'priority,due', 'due', 'answered', 'number',
