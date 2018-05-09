@@ -98,13 +98,10 @@ switch ($queue_name) {
         $status = 'open';
         $staffId = $thisstaff->getId();
         $results_type = __('My Tickets');
-        $filter = Q::any(array(
-            'staff_id' => $thisstaff->getId()
-        ));
-        if($teams = array_filter($thisstaff->getTeams())){
-            $filter->add(Q::any(array('team_id_in' => $teams)));
-        }
-        $tickets->filter($filter);
+        $tickets->filter(Q::any(array(
+            'staff_id' => $thisstaff->getId(),
+            Q::all(array('staff_id' => 0, 'team_id__gt' => 0)),
+        )));
         $queue_sort_options = array('updated', 'priority,updated',
             'priority,created', 'priority,due', 'due', 'answered', 'number',
             'hot');
