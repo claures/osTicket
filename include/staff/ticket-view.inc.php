@@ -205,20 +205,38 @@ if($ticket->isOverdue())
                 ?>
               </ul>
             </div>
-                <?php
-                if ($role->hasPerm(TicketModel::PERM_REPLY)) { ?>
+            <?php
+            if ($role->hasPerm(TicketModel::PERM_REPLY)) { ?>
                 <a href="#post-reply" class="post-response action-button"
-                data-placement="bottom" data-toggle="tooltip"
-                title="<?php echo __('Post Reply'); ?>"><i class="icon-mail-reply"></i></a>
+                   data-placement="bottom" data-toggle="tooltip"
+                   title="<?php echo __('Post Reply'); ?>"><i class="icon-mail-reply"></i></a>
                 <?php
-                } ?>
-                <a href="#post-note" id="post-note" class="post-response action-button"
-                data-placement="bottom" data-toggle="tooltip"
-                title="<?php echo __('Post Internal Note'); ?>"><i class="icon-file-text"></i></a>
-                <?php // Status change options
-                echo TicketStatus::status_options();
-                ?>
-           </div>
+            } ?>
+            <a href="#post-note" id="post-note" class="post-response action-button"
+               data-placement="bottom" data-toggle="tooltip"
+               title="<?php echo __('Post Internal Note'); ?>"><i class="icon-file-text"></i></a>
+            <?php // Status change options
+            /** @var Ticket $ticket */
+            echo TicketStatus::status_options();
+            ?>
+            <span class="quickCloseTicket action-button" data-placement="bottom"
+               data-toggle="tooltip" data-ticketid="<?=$ticket->getId()?>"
+               title="Close Ticket"><i class="glyphicon glyphicon-folder-close"></i></span>
+            <span class="quickClaimTicket action-button" data-placement="bottom"
+               data-toggle="tooltip" data-ticketid="<?=$ticket->getId()?>"
+               title="Claim Ticket"><i class="icon-chevron-sign-down"></i></span>
+            <?php if ($thisstaff->isAdmin()) {
+                /** @var $staff Staff */
+                /** @var $thisstaff Staff */
+                $staff = $ticket->getStaff();
+                $staffMail = $staff->getEmail();
+            ?>
+                <span class="quickBombTicket action-button" data-placement="bottom" data-toggle="tooltip"
+                   data-ticketid="<?=$ticket->getId()?>" data-ticketno="<?=$ticket->getNumber()?>" data-owener="<?=$staffMail?>"
+                   data-bomber="<?=$thisstaff->getEmail()?>"
+                   title="Bomb Ticket"><i class="glyphicon glyphicon-fire"></i></span>
+            <?php } ?>
+        </div>
         <div class="flush-left">
              <h2><a href="tickets.php?id=<?php echo $ticket->getId(); ?>"
              title="<?php echo __('Reload'); ?>"><i class="icon-refresh"></i>
