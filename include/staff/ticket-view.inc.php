@@ -229,7 +229,8 @@ if($ticket->isOverdue())
                 /** @var $staff Staff */
                 /** @var $thisstaff Staff */
                 $staff = $ticket->getStaff();
-                $staffMail = $staff->getEmail();
+                if(isset($staff)) $staffMail = $staff->getEmail();
+                else $staffMail = '';
             ?>
                 <span class="quickBombTicket action-button" data-placement="bottom" data-toggle="tooltip"
                    data-ticketid="<?=$ticket->getId()?>" data-ticketno="<?=$ticket->getNumber()?>" data-owener="<?=$staffMail?>"

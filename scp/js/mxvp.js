@@ -45,7 +45,7 @@ $(document).on('click', '.quickBombTicket',function (evt) {
     console.log(tid + ' - bomb');
     $.ajax({
         method: 'GET',
-        url: '../scripts/bomb.php?tid='+tid+'&tno='+tno+'&mail='+mail+'&bomber='+bomber;
+        url: '../scripts/bomb.php?tid='+tid+'&tno='+tno+'&mail='+mail+'&bomber='+bomber
     }).success(function(evt) {
         alert('Boom');
         window.location.href ='../scp';
