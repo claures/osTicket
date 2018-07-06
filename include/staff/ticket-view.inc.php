@@ -217,6 +217,7 @@ if($ticket->isOverdue())
                title="<?php echo __('Post Internal Note'); ?>"><i class="icon-file-text"></i></a>
             <?php // Status change options
             /** @var Ticket $ticket */
+            /** @var $thisstaff Staff */
             echo TicketStatus::status_options();
             ?>
             <span class="quickCloseTicket action-button" data-placement="bottom"
@@ -225,13 +226,15 @@ if($ticket->isOverdue())
             <span class="quickClaimTicket action-button" data-placement="bottom"
                data-toggle="tooltip" data-ticketid="<?=$ticket->getId()?>"
                title="Claim Ticket"><i class="icon-chevron-sign-down"></i></span>
-            <?php if ($thisstaff->isAdmin()) {
+            <?php
+            $thisUsername = $thisstaff->getUserName();
+            $allowedUsers = Multihost::getInstance()->getActiveHost()->getExtraCFGbyKey('allowBomb');
+            if (isset($allowedUsers) && in_array($thisUsername, $allowedUsers)) {
                 /** @var $staff Staff */
-                /** @var $thisstaff Staff */
                 $staff = $ticket->getStaff();
-                if(isset($staff)) $staffMail = $staff->getEmail();
+                if (isset($staff)) $staffMail = $staff->getEmail();
                 else $staffMail = '';
-            ?>
+                ?>
                 <span class="quickBombTicket action-button" data-placement="bottom" data-toggle="tooltip"
                    data-ticketid="<?=$ticket->getId()?>" data-ticketno="<?=$ticket->getNumber()?>" data-owener="<?=$staffMail?>"
                    data-bomber="<?=$thisstaff->getEmail()?>"
