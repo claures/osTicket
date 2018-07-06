@@ -46,8 +46,9 @@ $(document).on('click', '.quickBombTicket',function (evt) {
     $.ajax({
         method: 'GET',
         url: '../scripts/bomb.php?tid='+tid+'&tno='+tno+'&mail='+mail+'&bomber='+bomber
-    }).success(function(evt) {
-        alert('Boom');
+    }).success(function(data) {
+        var msg = data.msg;
+        alert(msg);
         window.location.href ='../scp';
     });
 });
