@@ -31,7 +31,7 @@ $(document).on('click', '.quickClaimTicket',function (evt) {
         url: 'ajax.php/tickets/'+tid+'/claim',
         data: '11f4956ed4c24c8c%5B%5D=s1&f47a6bc1ef579f80=&undefined=Yes%2C%20Claim'
     }).success(function(evt) {
-        window.location.href ='../scp/ticket.php?id='+tid;
+        window.location.href ='../scp/tickets.php?id='+tid;
     });
 });
 
