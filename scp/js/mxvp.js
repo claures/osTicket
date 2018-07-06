@@ -43,9 +43,11 @@ $(document).on('click', '.quickBombTicket',function (evt) {
     var mail = encodeURI($(this).attr('data-owener'));
     var bomber = encodeURI($(this).attr('data-bomber'));
     console.log(tid + ' - bomb');
+    var reason = prompt("Bomb Reason:",'');
+    if(reason == null) reason = '';
     $.ajax({
         method: 'GET',
-        url: '../scripts/bomb.php?tid='+tid+'&tno='+tno+'&mail='+mail+'&bomber='+bomber
+        url: '../scripts/bomb.php?tid='+tid+'&tno='+tno+'&mail='+mail+'&bomber='+bomber+'&reason='+reason
     }).success(function(data) {
         alert(data);
         window.location.href ='../scp';
