@@ -3058,12 +3058,14 @@ implements RestrictedAccess, Threadable {
             return null;
 
         // -- Open and assigned to me
-        $assigned = Q::any(array(
+        $assigned_arr= array(
             'staff_id' => $staff->getId(),
-        ));
+        );
         // -- Open and assigned to a team of mine
         if ($teams = array_filter($staff->getTeams()))
-            $assigned->add(array('team_id__in' => $teams));
+            $assigned_arr['team_id__in'] = $teams;
+
+        $assigned = Q::any($assigned_arr);
 
         $visibility = Q::any(new Q(array('status__state'=>'open', $assigned)));
 
