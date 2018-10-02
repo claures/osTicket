@@ -66,6 +66,9 @@ class Internationalization {
             'role.yaml' =>          'Role::__create',
             'file.yaml' =>          'AttachmentFile::__create',
             'sequence.yaml' =>      'Sequence::__create',
+            'queue_column.yaml' =>  'QueueColumn::__create',
+            'queue_sort.yaml' =>    'QueueSort::__create',
+            'queue.yaml' =>         'CustomQueue::__create',
         );
 
         $errors = array();
@@ -382,6 +385,10 @@ class Internationalization {
         return self::getDefaultLanguage();
     }
 
+    static function getCurrentLanguageInfo($user=false) {
+        return static::getLanguageInfo(static::getCurrentLanguage($user));
+    }
+
     static function getCurrentLocale($user=false) {
         global $thisstaff, $cfg;
 
@@ -401,6 +408,30 @@ class Internationalization {
         return $locale;
     }
 
+    static function getCSVDelimiter($locale='') {
+
+        if (!$locale && extension_loaded('intl'))  // Prefer browser settings
+            $locale = Locale::acceptFromHttp($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+
+        // Detect delimeter from the current locale settings. For locales
+        // which use comma (,) as the decimal separator, the semicolon (;)
+        // should be used as the field separator
+        $delimiter = ',';
+        if (class_exists('NumberFormatter')) {
+            $nf = NumberFormatter::create($locale ?: self::getCurrentLocale(),
+                NumberFormatter::DECIMAL);
+            $s = $nf->getSymbol(NumberFormatter::DECIMAL_SEPARATOR_SYMBOL);
+            if ($s == ',')
+                $delimiter = ';';
+        } else {
+            $info = localeconv();
+            if ($info && $info['decimal_point'] == ',')
+                $delimiter = ';';
+
+        }
+
+        return $delimiter;
+    }
 
     //  getIntDateFormatter($options)
     //
@@ -504,6 +535,7 @@ class Internationalization {
     static function sortKeyedList($list, $case=false) {
         global $cfg;
 
+        // XXX: Use current language
         if ($cfg && function_exists('collator_create')) {
             $coll = Collator::create($cfg->getPrimaryLanguage());
             if (!$case)

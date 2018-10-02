@@ -163,6 +163,10 @@ var scp_prep = function() {
 
     $('form.save, form:has(table.list)').submit(function() {
         $(window).unbind('beforeunload');
+        $.toggleOverlay(true);
+        // Disable staff-side Post Reply/Open buttons to help prevent
+        // duplicate POST
+        $(':submit', $(this)).attr('disabled', true);
         $('#overlay, #loading').show();
         return true;
      });
@@ -193,6 +197,13 @@ var scp_prep = function() {
         }
      });
 
+    $('form select#cannedResp').select2({width: '350px'});
+    $('form select#cannedResp').on('select2:opening', function (e) {
+        var redactor = $('.richtext', $(this).closest('form')).data('redactor');
+        if (redactor)
+            redactor.selection.save();
+    });
+
     $('form select#cannedResp').change(function() {
 
         var fObj = $(this).closest('form');
@@ -214,9 +225,10 @@ var scp_prep = function() {
                     var box = $('#response',fObj),
                         redactor = box.data('redactor');
                     if(canned.response) {
-                        if (redactor)
+                        if (redactor) {
+                            redactor.selection.restore();
                             redactor.insert.html(canned.response);
-                        else
+                        } else
                             box.val(box.val() + canned.response);
 
                         if (redactor)
@@ -376,7 +388,8 @@ var scp_prep = function() {
            $('input[name^='+attr+']', ui.item.parent('tbody')).each(function(i, el) {
                $(el).val(i + 1 + offset);
            });
-       }
+       },
+       'cancel': ':input,button,div[contenteditable=true]'
    });
 
     // Scroll to a stop or top on scroll-up click
@@ -475,6 +488,52 @@ var scp_prep = function() {
   $('.attached.input input')
     .on('focus', function() { $(this).parent().addClass('focus'); })
     .on('blur', function() { $(this).parent().removeClass('focus'); })
+
+  $(function() {
+    // whenever we hover over a menu item that has a submenu
+    $('.subQ').on('mouseover', function() {
+      var $menuItem = $(this),
+          $submenuWrapper = $('> .subMenuQ', $menuItem);
+
+      // grab the menu item's position relative to its positioned parent
+      var menuItemPos = $menuItem.position();
+
+      // place the submenu in the correct position relevant to the menu item
+      $submenuWrapper.css({
+        top: menuItemPos.top - 1,
+        left: menuItemPos.left + Math.round($menuItem.outerWidth())
+      });
+    });
+    // Ensure the "new ticket" link is never in the drop-down menu
+    $('#new-ticket').parent('li').addClass('primary-only');
+    $('#customQ_nav').overflowmenu({
+      guessHeight: false,
+      // items: 'li.top-queue',
+      change: function( e, ui ) {
+        var handle = ui.container.find('.jb-overflowmenu-menu-secondary-handle');
+        handle.toggle( ui.secondary.children().length > 0 );
+      }
+    });
+  });
+
+  // Auto fetch queue counts
+  $(function() {
+    var fired = false;
+    $('#customQ_nav li.item').hover(function() {
+      if (fired) return;
+      fired = true;
+      $.ajax({
+        url: 'ajax.php/queue/counts',
+        dataType: 'json',
+        success: function(json) {
+          $('li > span.queue-count').each(function(i, e) {
+            var $e = $(e);
+            $e.text(json['q' + $e.data('queueId')]);
+          });
+        }
+      });
+    });
+  });
 };
 
 $(document).ready(scp_prep);
@@ -665,7 +724,9 @@ $.dialog = function (url, codes, cb, options) {
                         }
                         catch (e) { }
                         $('div.body', $popup).html(resp);
-                        $popup.effect('shake');
+                        if ($('#msg_error, .error-banner', $popup).length) {
+                            $popup.effect('shake');
+                        }
                         $('#msg_notice, #msg_error', $popup).delay(5000).slideUp();
                         $('div.tab_content[id] div.error:not(:empty)', $popup).each(function() {
                           var div = $(this).closest('.tab_content');
@@ -753,7 +814,7 @@ $.confirm = function(message, title, options) {
             .append($('<span class="buttons pull-left"></span>')
                 .append($('<input type="button" class="close"/>')
                     .attr('value', __('Cancel'))
-                    .click(function() { hide(); })
+                    .click(function() { hide();  D.resolve(false); })
             )).append($('<span class="buttons pull-right"></span>')
                 .append($('<input type="button"/>')
                     .attr('value', __('OK'))
@@ -945,7 +1006,7 @@ $(document).on('click.tab', 'ul.tabs > li > a', function(e) {
         $ul.children('li.active').removeClass('active');
         $(this).closest('li').addClass('active');
         $container.children('.tab_content').hide();
-        $tab.fadeIn('fast');
+        $tab.fadeIn('fast').show();
         return false;
     }
 
@@ -983,12 +1044,11 @@ $(document).on('submit', 'form', function() {
 });
 
 //Collaborators
-$(document).on('click', 'a.collaborator, a.collaborators', function(e) {
+$(document).on('click', 'a.collaborator, a.collaborators:not(.noclick)', function(e) {
     e.preventDefault();
     var url = 'ajax.php/'+$(this).attr('href').substr(1);
     $.dialog(url, 201, function (xhr) {
        var resp = $.parseJSON(xhr.responseText);
-       $('input#t'+resp.id+'-emailcollab').show();
        $('#t'+resp.id+'-recipients').text(resp.text);
        $('.tip_box').remove();
     }, {
@@ -1228,3 +1288,51 @@ window.relativeAdjust = setInterval(function() {
   });
 }, 20000);
 
+// Add 'afterShow' event to jQuery elements,
+// thanks http://stackoverflow.com/a/1225238/1025836
+(function ($) {
+    var _oldShow = $.fn.show;
+
+    $.fn.show = function (/*speed, easing, callback*/) {
+        var argsArray = Array.prototype.slice.call(arguments),
+            duration = argsArray[0],
+            easing,
+            callback,
+            callbackArgIndex;
+
+        // jQuery recursively calls show sometimes; we shouldn't
+        //  handle such situations. Pass it to original show method.
+        if (!this.selector) {
+            _oldShow.apply(this, argsArray);
+            return this;
+        }
+
+        if (argsArray.length === 2) {
+            if ($.isFunction(argsArray[1])) {
+                callback = argsArray[1];
+                callbackArgIndex = 1;
+            } else {
+                easing = argsArray[1];
+            }
+        } else if (argsArray.length === 3) {
+            easing = argsArray[1];
+            callback = argsArray[2];
+            callbackArgIndex = 2;
+        }
+        return $(this).each(function () {
+            var obj = $(this),
+                oldCallback = callback,
+                newCallback = function () {
+                    if ($.isFunction(oldCallback)) {
+                        oldCallback.apply(obj);
+                    }
+                };
+            if (callback) {
+                argsArray[callbackArgIndex] = newCallback;
+            }
+            obj.trigger('beforeShow');
+            _oldShow.apply(obj, argsArray);
+            obj.trigger('afterShow');
+        });
+    };
+})(jQuery);

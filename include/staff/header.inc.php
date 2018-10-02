@@ -1,5 +1,6 @@
 <?php
 header("Content-Type: text/html; charset=UTF-8");
+header("X-Frame-Options: SAMEORIGIN");
 
 $title = ($ost && ($title=$ost->getPageTitle()))
     ? $title : ('Mint Ticket System :: '.__('Staff Control Panel'));
@@ -41,12 +42,15 @@ if ($lang) {
     <!--[if IE 7]>
     <link rel="stylesheet" href="<?php echo ROOT_PATH; ?>css/font-awesome-ie7.min.css?9ae093d"/>
     <![endif]-->
-    <link type="text/css" rel="stylesheet" href="<?php echo ROOT_PATH ?>scp/css/dropdown.css?9ae093d"/>
-    <link type="text/css" rel="stylesheet" href="<?php echo ROOT_PATH; ?>css/loadingbar.css?9ae093d"/>
-    <link type="text/css" rel="stylesheet" href="<?php echo ROOT_PATH; ?>css/flags.css?9ae093d"/>
-    <link type="text/css" rel="stylesheet" href="<?php echo ROOT_PATH; ?>css/select2.min.css?9ae093d"/>
-    <link type="text/css" rel="stylesheet" href="<?php echo ROOT_PATH; ?>css/rtl.css?9ae093d"/>
-    <link type="text/css" rel="stylesheet" href="<?php echo ROOT_PATH ?>scp/css/translatable.css?9ae093d"/>
+    <link type="text/css" rel="stylesheet" href="<?php echo ROOT_PATH ?>scp/css/dropdown.css">
+    <link type="text/css" rel="stylesheet" href="<?php echo ROOT_PATH; ?>css/loadingbar.css"/>
+    <link type="text/css" rel="stylesheet" href="<?php echo ROOT_PATH; ?>css/flags.css">
+    <link type="text/css" rel="stylesheet" href="<?php echo ROOT_PATH; ?>css/select2.min.css">
+    <link type="text/css" rel="stylesheet" href="<?php echo ROOT_PATH; ?>css/rtl.css"/>
+    <link type="text/css" rel="stylesheet" href="<?php echo ROOT_PATH ?>scp/css/translatable.css"/>
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" href="<?php echo ROOT_PATH ?>images/oscar-favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="<?php echo ROOT_PATH ?>images/oscar-favicon-16x16.png" sizes="16x16" />
     <link type="text/css" rel="stylesheet" href="<?php echo ROOT_PATH ?>scp/css/mxvp.css?9ae093d"/>
 
     <?php
@@ -116,10 +120,9 @@ if ($lang) {
     <ul id="nav">
 <?php include STAFFINC_DIR . "templates/navigation.tmpl.php"; ?>
     </ul>
-    <ul id="sub_nav">
-<?php include STAFFINC_DIR . "templates/sub-navigation.tmpl.php"; ?>
-    </ul>
-    <div id="content">
+    <?php include STAFFINC_DIR . "templates/sub-navigation.tmpl.php"; ?>
+
+        <div id="content">
         <?php if($errors['err']) { ?>
             <div id="msg_error"><?php echo $errors['err']; ?></div>
         <?php }elseif($msg) { ?>

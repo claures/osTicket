@@ -21,6 +21,9 @@ class Filter {
     var $id;
     var $ht;
 
+    const FLAG_INACTIVE_HT = 0x0001;
+    const FLAG_INACTIVE_DEPT  = 0x0002;
+
     static $match_types = array(
         /* @trans */ 'User Information' => array(
             array('name'      =>    /* @trans */ 'Name',
@@ -138,6 +141,18 @@ class Filter {
         return $this->ht['topic_id'];
     }
 
+    public function setFlag($flag, $val) {
+        $vars = array();
+        $errors = array();
+        if ($val)
+            $this->ht['flags'] |= $flag;
+        else
+            $this->ht['flags'] &= ~$flag;
+        $vars['rules']= $this->getRules();
+        $this->ht['pass'] = true;
+        $this->update($this->ht, $errors);
+    }
+
     function stopOnMatch() {
         return ($this->ht['stop_onmatch']);
     }
@@ -251,7 +266,7 @@ class Filter {
             'starts'    => array('stripos', 0),
             'ends'      => array('iendsWith', true),
             'match'     => array('pregMatchB', 1),
-            'not_match' => array('pregMatchB', null, 0),
+            'not_match' => array('pregMatchB', null, 1),
         );
 
         $match = false;
@@ -340,7 +355,7 @@ class Filter {
     }
 
     function update($vars,&$errors) {
-
+        $vars['flags'] = $this->ht['flags'];
         if(!Filter::save($this->getId(),$vars,$errors))
             return false;
 
@@ -355,6 +370,7 @@ class Filter {
         $sql='DELETE FROM '.FILTER_TABLE.' WHERE id='.db_input($id).' LIMIT 1';
         if(db_query($sql) && ($num=db_affected_rows())) {
             db_query('DELETE FROM '.FILTER_RULE_TABLE.' WHERE filter_id='.db_input($id));
+            db_query('DELETE FROM '.FILTER_ACTION_TABLE.' WHERE filter_id='.db_input($id));
         }
 
         return $num;
@@ -457,6 +473,9 @@ class Filter {
     }
 
     function save($id,$vars,&$errors) {
+        //validate filter actions before moving on
+        if (!self::validate_actions($vars, $errors))
+            return false;
 
         if(!$vars['execorder'])
             $errors['execorder'] = __('Order required');
@@ -487,12 +506,13 @@ class Filter {
 
         $sql=' updated=NOW() '
             .',isactive='.db_input($vars['isactive'])
+            .',flags='.db_input($vars['flags'])
             .',target='.db_input($vars['target'])
             .',name='.db_input($vars['name'])
             .',execorder='.db_input($vars['execorder'])
             .',email_id='.db_input($emailId)
             .',match_all_rules='.db_input($vars['match_all_rules'])
-            .',stop_onmatch='.db_input(isset($vars['stop_onmatch'])?1:0)
+            .',stop_onmatch='.db_input($vars['stop_onmatch'])
             .',notes='.db_input(Format::sanitize($vars['notes']));
 
         if($id) {
@@ -518,6 +538,71 @@ class Filter {
         return count($errors) == 0;
     }
 
+    function validate_actions($vars, &$errors) {
+        //allow the save if it is to set a filter flag
+        if ($vars['pass'])
+            return true;
+
+        if (!is_array(@$vars['actions']))
+            return;
+
+      foreach ($vars['actions'] as $sort=>$v) {
+          if (is_array($v)) {
+              $info = $v['type'];
+              $sort = $v['sort'] ?: $sort;
+          } else
+              $info = substr($v, 1);
+
+          $action = new FilterAction(array(
+              'type'=>$info,
+              'sort' => (int) $sort,
+          ));
+          $errors = array();
+          $action->setConfiguration($errors, $vars);
+
+          $config = json_decode($action->ht['configuration'], true);
+          if (is_numeric($action->ht['type'])) {
+              foreach ($config as $key => $value) {
+                  if ($key == 'topic_id') {
+                      $action->ht['type'] = 'topic';
+                      $config['topic_id'] = $value;
+                  }
+                  if ($key == 'dept_id') {
+                      $action->ht['type'] = 'dept';
+                      $config['dept_id'] = $value;
+                  }
+              }
+          }
+
+          // do not throw an error if we are deleting an action
+          if (substr($v, 0, 1) != 'D') {
+              switch ($action->ht['type']) {
+                case 'dept':
+                  $dept = Dept::lookup($config['dept_id']);
+                  if (!$dept || !$dept->isActive()) {
+                    $errors['err'] = sprintf(__('Unable to save: Please choose an active %s'), 'Department');
+                  }
+                  break;
+                case 'topic':
+                  $topic = Topic::lookup($config['topic_id']);
+                  if (!$topic || !$topic->isActive()) {
+                    $errors['err'] = sprintf(__('Unable to save: Please choose an active %s'), 'Help Topic');
+                  }
+                  break;
+                default:
+                  foreach ($config as $key => $value) {
+                    if (!$value) {
+                      $errors['err'] = sprintf(__('Unable to save: Please insert a value for %s'), ucfirst($action->ht['type']));
+                    }
+                  }
+                  break;
+              }
+          }
+      }
+
+      return count($errors) == 0;
+    }
+
     function save_actions($id, $vars, &$errors) {
         if (!is_array(@$vars['actions']))
             return;
@@ -527,7 +612,8 @@ class Filter {
                 $info = $v['type'];
                 $sort = $v['sort'] ?: $sort;
                 $action = 'N';
-            } else {
+            }
+            else {
                 $action = $v[0];
                 $info = substr($v, 1);
             }
@@ -540,11 +626,13 @@ class Filter {
                     'sort' => (int) $sort,
                 ));
                 $I->setConfiguration($errors, $vars);
+
                 $I->save();
                 break;
-            case 'I': # exiting filter action
+            case 'I': # existing filter action
                 if ($I = FilterAction::lookup($info)) {
                     $I->setConfiguration($errors, $vars);
+
                     $I->sort = (int) $sort;
                     $I->save();
                 }
@@ -803,7 +891,7 @@ class TicketFilter {
      *    http://msdn.microsoft.com/en-us/library/ee219609(v=exchg.80).aspx
      */
     /* static */
-    function isAutoReply($headers) {
+    static function isAutoReply($headers) {
 
         if($headers && !is_array($headers))
             $headers = Mail_Parse::splitHeaders($headers);

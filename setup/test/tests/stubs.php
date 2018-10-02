@@ -104,6 +104,7 @@ class Phar {
     function startBuffering() {}
     function stopBuffering() {}
     function setSignatureAlgorithm() {}
+    function compress() {}
 }
 
 class ZipArchive {
@@ -114,6 +115,10 @@ class ZipArchive {
     function setExternalAttributesName() {}
 }
 
+class Spyc {
+    function YAMLLoad() {}
+}
+
 class finfo {
     function file() {}
     function buffer() {}
@@ -121,6 +126,7 @@ class finfo {
 
 class Locale {
     function getDisplayName() {}
+    function acceptFromHttp() {}
 }
 class IntlBreakIterator {
     static function createWordInstance() {}
@@ -132,10 +138,12 @@ class SqlFunction {
     static function LENGTH() {}
     static function COALESCE() {}
     static function DATEDIFF() {}
+    static function timestampdiff() {}
 }
 
 class SqlExpression {
     static function plus() {}
+    static function minus() {}
     static function times() {}
     static function bitor() {}
     static function bitand() {}
@@ -149,6 +157,8 @@ class SqlInterval {
 
 class SqlAggregate {
     static function COUNT() {}
+    static function SUM() {}
+    static function MAX() {}
 }
 
 class Q {
@@ -171,6 +181,7 @@ class NumberFormatter {
 
 class Collator {
     function setStrength() {}
+    function compare() {}
 }
 
 class Aws_Route53_Client {
@@ -184,4 +195,46 @@ class Memcache {
     function set() {}
     function get() {}
 }
+
+class Crypt_Hash {
+    function setKey() {}
+    function setIV() {}
+}
+
+class Crypt_AES {
+    function setKey() {}
+    function setIV() {}
+    function enableContinuousBuffer() {}
+}
+
+class PEAR {
+    function isError() {}
+    function mail() {}
+}
+
+class mail {
+    function factory() {}
+    function connect() {}
+    function disconnect() {}
+}
+
+class Mail_mime {
+    function headers() {}
+    function setTXTBody() {}
+    function setHTMLBody() {}
+    function addCc() {}
+    function addTo() {}
+    function addBcc() {}
+}
+
+class mPDF {
+    function Output() {}
+    function SetAutoFont() {}
+}
+
+class HashPassword {
+    function CheckPassword() {}
+    function HashPassword() {}
+}
+
 ?>

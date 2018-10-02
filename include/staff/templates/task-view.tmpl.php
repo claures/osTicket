@@ -1,7 +1,7 @@
 <?php
 if (!defined('OSTSCPINC')
     || !$thisstaff || !$task
-    || !($role = $thisstaff->getRole($task->getDeptId())))
+    || !($role = $thisstaff->getRole($task->getDept())))
     die('Invalid path');
 
 global $cfg;
@@ -78,7 +78,7 @@ if ($role->hasPerm(Task::PERM_DELETE)) {
             'delete' => array(
                 'href' => sprintf('#tasks/%d/delete', $task->getId()),
                 'icon' => 'icon-trash',
-                'class' => 'red button',
+                'class' => (strpos($_SERVER['REQUEST_URI'], 'tickets.php') !== false) ? 'danger' : 'red button',
                 'label' => __('Delete'),
                 'redirect' => 'tasks.php'
             ));
@@ -154,7 +154,7 @@ if ($task->isOverdue())
                             echo __('Reopen');?> </a>
                     </li>
                     <?php
-                    } else {
+                    } elseif ($canClose) {
                     ?>
                     <li>
                         <a class="no-pjax task-action"
@@ -212,7 +212,7 @@ if ($task->isOverdue())
                                 echo __('Reopen');?> </a>
                         </li>
                         <?php
-                        } else {
+                        } elseif ($canClose) {
                         ?>
                         <li>
                             <a class="no-pjax task-action"
@@ -268,7 +268,7 @@ if ($task->isOverdue())
                 <?php
                 foreach ($actions as $action) {?>
                 <span class="action-button <?php echo $action['class'] ?: ''; ?>">
-                    <a class="task-action"
+                    <a class="<?php echo ($action['class'] == 'no-pjax') ? '' : 'task-action'; ?>"
                         <?php
                         if ($action['dialog'])
                             echo sprintf("data-dialog-config='%s'", $action['dialog']);
@@ -619,7 +619,6 @@ else
 <?php
 echo $reply_attachments_form->getMedia();
 ?>
-
 <script type="text/javascript">
 $(function() {
     $(document).off('.tasks-content');

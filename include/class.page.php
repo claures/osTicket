@@ -57,7 +57,7 @@ class Page extends VerySimpleModel {
         return $this->name;
     }
     function getLocalName($lang=false) {
-        return $this->getLocal('name', $lang);
+        return $this->_getLocal('name', $lang);
     }
     function getNameAsSlug() {
         return urlencode(Format::slugify($this->name));
@@ -70,7 +70,7 @@ class Page extends VerySimpleModel {
         return $this->_getLocal('body', $lang);
     }
     function getBodyWithImages() {
-        return Format::viewableImages($this->getLocalBody());
+        return Format::viewableImages($this->getLocalBody(), ['type' => 'P']);
     }
 
     function _getLocal($what, $lang=false) {

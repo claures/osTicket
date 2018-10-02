@@ -1,19 +1,128 @@
+osTicket 1.11.0-rc.1
+====================
+## Major New Features
+* Create Ticket or Task from Thread Entry
+* Custom Columns/Custom Queues
+* Inline Edit
+* Ticket Referral
+* CC/BCC
+* Export Agent CSV
+* Department Access CSV
+* Archive Help Topics/Departments
+* Nested Knowledgebase Categories
+
+### Enhancements
+* Fix Custom Department Field (#3976)
+* Remove Future Search/Filter Criteria if Invalid
+* Dashboard Statistics
+* Fix Vimeo iFrames
+* Fix randNumber()
+* Section Break Hint
+* List & Choice Searching (#3703, #3493, #2625)
+* Adds osTicket Favicons (#4112)
+* Fix Most Redactor Issues (#3849)
+* Send Login Errors Still Sends (#4073)
+* Private FAQs In Sidebar Search
+* User Password Reset (#4030)
+* Disabled & Private Help Topic (#3538)
+* Helpdesk Status Help Tip
+* Local Names In Validation Errors
+* User Registration Form (#4043)
+* Organization User List Pages Link (#4116)
+* Ticket Edit Internal Note (#4028)
+* Disable Canned Responses On New Ticket (#3971)
+* Canned Response Margin
+* Ticket Preview Custom Fields
+* Help Topic SLA (#3979)
+* Fix Agent Identity Masking (#2955, #3524)
+* Force Keys For Choice Field Options (#4071)
+* Check Missing Required Fields
+* Task Action Button Styling
+* Add Fullscreen To Embedded Videos
+* Fix Serbian Flag Icon (#3952)
+* Optimize Lock Table
+* Fix Outdated Alerts Link (#3935)
+* Fix Default Dept. Private Error (#3934)
+* Mailto TLD Length (#4063)
+* Remove Primary Contacts (#3903)
+* Fix Reset Button(s) (#3670)
+* Newsletter Link
+* Offline Page Images (#3869)
+* User Login Page Translation (#3860)
+* Translate Special Characters (#3842)
+* Custom Form Deletion (#3542, #4059)
+* Client Side Long FAQ Title (#3380)
+* Client FAQ Last Updated Time (#3475)
+* Email Banlist Sorting (#3452)
+* Fix New Ticket Cancel Button (#2624, #2881)
+* SQL Error Unknown column 'relevance' (#2655)
+* Fixes issue with last_update ticket variable
+* Ticket Notice Alert
+* Fix CSRF fail + shake effect (#3928, #3546)
+* Issue/ticket preview collabs
+* Allowing translation of copyrights in footers
+* User/Organization are not translated (#3650)
+* Fix DatePicker on client side (#3625, #3817, #3804, 0fbc09a)
+* Add Custom Forms to Ticket Filter Data
+* Fix for LDAP/AD auth plugin (#4198, #3460, #3544, #3549)
+
+osTicket v1.10.4
+================
+### Enhancements
+* issue: Auto-Assignment Log (#4316)
+* issue: Language Pack Locale Mismatch (#4326)
+* issue: CLI Deploy Missing Bootstrap (#4332)
+* issue: User Import No Email (#4330)
+* issue: Ticket Lock On Disable (#4335)
+
+### Performance and Security
+* security: Fix Multiple XSS Vulnerabilities (#4331)
+* department: Error Feedback (#4331)
+
+osTicket v1.10.3
+================
+### Enhancements
+* issue: Org. User Account Status (#4219)
+* upgrader: Flush Cache On Upgrade (#4227)
+* issue: Outlook _MailEndCompose (#4206)
+* issue: Files - deleteOrphans() (#4253)
+* issue: Fix imap_open Disable Authenticator (#4195)
+* Check permissions before displaying Close Task (#4177)
+
+### Performance and Security
+* issue: Information Page Performance (#4275)
+* issue: Prevent Click Jacking (#4266)
+* orm: queryset: Fix circular reference error (#4247)
+
+
+osTicket v1.10.2
+================
+### Performance and Security
+* Prevent Account Takeover (be0133b)
+* Prevent Agent Directory XSS (36651b9)
+* Httponly Cookies (5b2dfce)
+* File Upload Bypass (3eb1614)
+* Only allow image attachments to be opened in the browser window (4c79ff8)
+* Fix randNumber() (5b8b95a)
+* CSRF in users.inc.php URL (285a292)
+* AJAX Reflected XSS (e919d8a)
+
 osTicket v1.10.1
 ================
 ### Enhancements
-- Users: Support search by phone number
-- i18n: Fix getPrimaryLanguage() on non-object (#3799)
-- Add TimezoneField (#3786)
-- Chunk long text body (#3757, 7b68c994)
-- Spyc: convert hex strings to INTs under PHP 7 (#3621)
-- forms: Proper Field Deletion
-- Move orphaned tasks on department deletion to the default department (42e2c55a)
-- List: Save List Item Abbreviation (8513f137)
+* Users: Support search by phone number
+* i18n: Fix getPrimaryLanguage() on non-object (#3799)
+* Add TimezoneField (#3786)
+* Chunk long text body (#3757, 7b68c994)
+* Spyc: convert hex strings to INTs under PHP 7 (#3621)
+* forms: Proper Field Deletion
+* Move orphaned tasks on department deletion to the default department (42e2c55a)
+* List: Save List Item Abbreviation (8513f137)
 
 ### Performance and Security
-- XSS: Encode html entities of advanced search title (#3919)
-- XSS: Encode html entities of cached form data (#3960, bcd58e8)
-- ORM: Addresses an SQL injection vulnerability in ORM lookup function (#3959, 1eaa6910)
+* XSS: Encode html entities of advanced search title (#3919)
+* XSS: Encode html entities of cached form data (#3960, bcd58e8)
+* ORM: Addresses an SQL injection vulnerability in ORM lookup function (#3959, 1eaa6910)
 
 
 osTicket v1.10

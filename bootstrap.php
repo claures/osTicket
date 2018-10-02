@@ -98,6 +98,7 @@ class Bootstrap {
         define('TICKET_TABLE',$prefix.'ticket');
         define('TICKET_CDATA_TABLE', $prefix.'ticket__cdata');
         define('THREAD_EVENT_TABLE',$prefix.'thread_event');
+        define('THREAD_REFERRAL_TABLE',$prefix.'thread_referral');
         define('THREAD_COLLABORATOR_TABLE', $prefix.'thread_collaborator');
         define('TICKET_STATUS_TABLE', $prefix.'ticket_status');
         define('TICKET_PRIORITY_TABLE',$prefix.'ticket_priority');
@@ -133,6 +134,12 @@ class Bootstrap {
         define('SEQUENCE_TABLE', $prefix.'sequence');
         define('TRANSLATION_TABLE', $prefix.'translation');
         define('QUEUE_TABLE', $prefix.'queue');
+        define('COLUMN_TABLE', $prefix.'queue_column');
+        define('QUEUE_COLUMN_TABLE', $prefix.'queue_columns');
+        define('QUEUE_SORT_TABLE', $prefix.'queue_sort');
+        define('QUEUE_SORTING_TABLE', $prefix.'queue_sorts');
+        define('QUEUE_EXPORT_TABLE', $prefix.'queue_export');
+        define('QUEUE_CONFIG_TABLE', $prefix.'queue_config');
 
         define('API_KEY_TABLE',$prefix.'api_key');
         define('TIMEZONE_TABLE',$prefix.'timezone');
@@ -206,7 +213,7 @@ class Bootstrap {
         require(INCLUDE_DIR.'class.mailer.php');
         require_once INCLUDE_DIR.'mysqli.php';
         require_once INCLUDE_DIR.'class.i18n.php';
-        require_once INCLUDE_DIR.'class.search.php';
+        require_once INCLUDE_DIR.'class.queue.php';
     }
 
     function i18n_prep() {

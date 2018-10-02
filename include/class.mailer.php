@@ -165,8 +165,11 @@ class Mailer {
         case $recipient instanceof Collaborator:
             $utype = 'C';
             break;
+        case  $recipient instanceof MailingList:
+            $utype = 'M';
+            break;
         default:
-            $utype = $options['utype'] ?: '?';
+            $utype = $options['utype'] ?: is_array($recipient) ? 'M' : '?';
         }
 
 
@@ -209,6 +212,7 @@ class Mailer {
      *          'U' - TicketOwner
      *          'S' - Staff
      *          'C' - Collborator
+     *          'M' - Multiple
      *          '?' - Something else
      */
     static function decodeMessageId($mid) {
@@ -294,7 +298,7 @@ class Mailer {
             0, 6);
     }
 
-    function send($recipient, $subject, $message, $options=null) {
+    function send($recipients, $subject, $message, $options=null) {
         global $ost, $cfg;
 
         //Get the goodies
@@ -321,6 +325,8 @@ class Mailer {
         $to = preg_replace("/(\r\n|\r|\n)/s", '', trim($to));
         $subject = preg_replace("/(\r\n|\r|\n)/s", '', trim($subject));
 
+        $messageId = $this->getMessageId($recipients, $options);
+        $subject = preg_replace("/(\r\n|\r|\n)/s",'', trim($subject));
         $headers = array(
             'From' => $this->getFromAddress($options),
             'To' => $to,
@@ -365,10 +371,12 @@ class Mailer {
                 case $recipient instanceof TicketOwner:
                 case $recipient instanceof Collaborator:
                 case $recipient instanceof Staff:
+                case $recipients instanceof TicketOwner:
+                case $recipients instanceof Collaborator:
                     $entry = $thread->getLastEmailMessage(array(
-                                'user_id' => $recipient->getUserId()));
+                                'user_id' => $recipients->getUserId()));
                     break;
-                case $recipient instanceof Staff:
+                case $recipients instanceof Staff:
                     //XXX: is it necessary ??
                     break;
                 }
@@ -431,19 +439,57 @@ class Mailer {
 
         // Use general failsafe default initially
         $eol = "\n";
-
         // MAIL_EOL setting can be defined in `ost-config.php`
-        if (defined('MAIL_EOL') && is_string(MAIL_EOL)) {
+        if (defined('MAIL_EOL') && is_string(MAIL_EOL))
             $eol = MAIL_EOL;
-        }
         $mime = new Mail_mime($eol);
+        // Add recipients
+        if (!is_array($recipients) && (!$recipients instanceof MailingList))
+            $recipients =  array($recipients);
+        foreach ($recipients as $recipient) {
+            switch (true) {
+                case $recipient instanceof EmailRecipient:
+                    $addr = sprintf('"%s" <%s>',
+                            $recipient->getName(),
+                            $recipient->getEmail());
+                    switch ($recipient->getType()) {
+                        case 'to':
+                            $mime->addTo($addr);
+                            break;
+                        case 'cc':
+                            $mime->addCc($addr);
+                            break;
+                        case 'bcc':
+                            $mime->addBcc($addr);
+                            break;
+                    }
+                    break;
+                case $recipient instanceof TicketOwner:
+                case $recipient instanceof Staff:
+                    $mime->addTo(sprintf('"%s" <%s>',
+                                $recipient->getName(),
+                                $recipient->getEmail()));
+                    break;
+                case $recipient instanceof Collaborator:
+                    $mime->addCc(sprintf('"%s" <%s>',
+                                $recipient->getName(),
+                                $recipient->getEmail()));
+                    break;
+                case $recipient instanceof EmailAddress:
+                    $mime->addTo($recipient->getAddress());
+                    break;
+                default:
+                    // Assuming email address.
+                    $mime->addTo($recipient);
+            }
+        }
 
         // Add in extra attachments, if any from template variables
         if ($message instanceof TextWithExtras
-            && ($files = $message->getFiles())
+            && ($attachments = $message->getAttachments())
         ) {
-            foreach ($files as $F) {
-                $file = $F->getFile();
+            foreach ($attachments as $a) {
+                $file = $a->getFile();
                 $mime->addAttachment($file->getData(),
                     $file->getType(), $file->getName(), false);
             }
@@ -539,7 +585,8 @@ class Mailer {
         $body = $mime->get($encodings);
         //encode the headers.
         $headers = $mime->headers($headers, true);
-
+        $to = implode(',', array_filter(array($headers['To'], $headers['Cc'],
+                    $headers['Bcc'])));
         // Cache smtp connections made during this request
         static $smtp_connections = array();
         if(($smtp=$this->getSMTPInfo())) { //Send via SMTP
@@ -588,7 +635,6 @@ class Mailer {
         if ($this->getEmail())
             $args = array('-f '.$this->getEmail()->getEmail());
         $mail = mail::factory('mail', $args);
-        // Ensure the To: header is properly encoded.
         $to = $headers['To'];
         $result = $mail->send($to, $headers, $body);
         Signal::send('MXVP_LOG',array(
