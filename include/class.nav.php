@@ -188,6 +188,10 @@ class StaffNav {
                     foreach ($this->getRegisteredApps() as $app)
                         $subnav[] = $app;
                     break;
+                case 'useroverview':
+                    $subnav[] = array('desc'=>__('Agent overview'),'href'=>'mxvpUserOw.php','title'=>__('User overview'));
+                    $subnav[] = array('desc'=>__('Team overview'),'href'=>'mxvpUserOw.php?type=team','title'=>__('Team overview'));
+                    $subnav[] = array('desc'=>__('Department overview'),'href'=>'mxvpUserOw.php?type=dep','title'=>__('Department overview'));
             }
             if($subnav)
                 $submenus[$this->getPanel().'.'.strtolower($k)]=$subnav;

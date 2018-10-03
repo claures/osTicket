@@ -171,8 +171,23 @@ switch ($queue_name) {
                 break;
             case 'user':
                 $status = 'open';
+                /** @var Staff $_staff */
+                $_staff = Staff::lookup(array('staff_id'=>$_REQUEST['mxvpid']));
+                $results_type = __('Agent :: ') . $_staff->getName();
                 $tickets->filter(Q::any(array(
                     'staff_id' => $_REQUEST['mxvpid'],
+                )));
+                $queue_sort_options = array('updated', 'priority,updated',
+                    'priority,created', 'priority,due', 'due', 'answered', 'number',
+                    'hot');
+                break;
+            case 'team':
+                $status = 'open';
+                if($_REQUEST['mxvpid'] == 0) $_teamName = 'No Team';
+                else $_teamName = Team::lookup(array('team_id' => $_REQUEST['mxvpid']))->getName();
+                $results_type = __('Team :: ') . $_teamName;
+                $tickets->filter(Q::any(array(
+                    'team_id' => $_REQUEST['mxvpid'],
                 )));
                 $queue_sort_options = array('updated', 'priority,updated',
                     'priority,created', 'priority,due', 'due', 'answered', 'number',
@@ -544,8 +559,22 @@ return false;">
 
             //Hide Department when we are in it.
             if (isset($_REQUEST['mxvptype'])) {
-                unset($queue_columns['dept']);
-                $colNum--;
+                switch ($_REQUEST['mxvptype']) {
+                    //Department filters:
+                    case 'dept':
+                        unset($queue_columns['dept']);
+                        $colNum--;
+                        break;
+                    /*case 'team':
+                        unset($queue_columns['team']);
+                        $colNum--;
+                    break;
+                    case 'user':
+                        unset($queue_columns['assignee']);
+                        $colNum--;
+                        break;
+                    */
+                }
             }
             // Query string
             unset($args['sort'], $args['dir'], $args['_pjax']);
@@ -577,8 +606,8 @@ return false;">
             $agentName = new AgentsName($T['staff__firstname'] . ' ' . $T['staff__lastname']);
             if (!isset($teamName))
                 $teamName = '';
-            elseif($queue_name == 'assigned' && !empty(trim($agentName)) && $T['staff_id'] != $unassignedUID)
-                $teamName .= ' / '.$agentName;
+            elseif ($queue_name == 'assigned' && !empty(trim($agentName)) && $T['staff_id'] != $unassignedUID)
+                $teamName .= ' / ' . $agentName;
             $total += 1;
             $tag = $T['staff_id'] ? 'assigned' : 'openticket';
             $flag = null;

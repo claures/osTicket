@@ -490,7 +490,7 @@ if ($ticket) {
     }
 
     //Clear active submenu on search with no status
-    if (($_REQUEST['a'] == 'search' && !$_REQUEST['status']) || (isset($_REQUEST['mxvptype']) && $_REQUEST['mxvptype'] == 'dept'))
+    if (($_REQUEST['a'] == 'search' && !$_REQUEST['status']) || (isset($_REQUEST['mxvptype'])))
         $nav->setActiveSubMenu(-1);
 
     //set refresh rate if the user has it configured
