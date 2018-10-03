@@ -26,8 +26,8 @@ switch ($_REQUEST['type']) {
     case 'team':
         $nav->setActiveSubMenu(2);
         $tableTitle = 'Team';
-        $teamIds = Team::getTeams();
-        array_unshift($teamIds, 'No Team');
+        $teamIds = array(0=>'No Team');
+        $teamIds += Team::getTeams();
         foreach ($teamIds as $teamId => $teamName) {
             $tCount = 0;
             $sql = "SELECT COUNT(*) FROM " . TABLE_PREFIX . "ticket WHERE status_id IN ($statusIdQuery) AND team_id = $teamId";
