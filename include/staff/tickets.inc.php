@@ -169,6 +169,15 @@ switch ($queue_name) {
                     'priority,created', 'priority,due', 'due', 'answered', 'number',
                     'hot');
                 break;
+            case 'user':
+                $status = 'open';
+                $tickets->filter(Q::any(array(
+                    'staff_id' => $_REQUEST['mxvpid'],
+                )));
+                $queue_sort_options = array('updated', 'priority,updated',
+                    'priority,created', 'priority,due', 'due', 'answered', 'number',
+                    'hot');
+                break;
         }
         break;
 

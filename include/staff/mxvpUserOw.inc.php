@@ -17,26 +17,34 @@ $_users = array();
 $_users = Staff::getStaffMembers();
 //}
 
-
-//Let's get the Department's where the user is member
-
-
 //Let's create our table array
 $displayUsers = array();
 
-var_dump($_users);
+$statusIdArr = array();
+/** @var TicketStatus $openStatus */
+$openStatus = TicketStatus::lookup(array('name' => 'Open'));
+/** @var TicketStatus $waitStatus */
+$waitStatus = TicketStatus::lookup(array('name' => 'Waiting'));
+
+if (isset($openStatus)) $statusIdArr[] = $openStatus->getId();
+if (isset($waitStatus)) $statusIdArr[] = $waitStatus->getId();
+$statusIdQuery = implode(',',$statusIdArr);
 
 foreach ($_users as $uid => $user) {
+    $tCount = 0;
+    $sql = "SELECT COUNT(*) FROM " . TABLE_PREFIX . "ticket WHERE status_id IN ($statusIdQuery) AND staff_id = $uid";
+    if (!($res = db_query($sql)))
+        Http::response(500, 'Unable to lookup files');
+    if($row = db_fetch_row($res)){
+        $tCount = $row[0];
+    }
     $displayUsers[] = array(
         'uid' => $uid,
         'name' => $user->name,
-        'noTicket' => 5
+        'noTicket' => $tCount
     );
-
 }
-var_dump($displayUsers);
 
-//var_dump($thisstaff);
 ?>
 <table class="list table table-bordered table-sm table-hover">
     <thead>
@@ -49,7 +57,7 @@ var_dump($displayUsers);
     <?php
     foreach ($displayUsers as $agent) {
         echo '<tr>';
-        echo "<td>{$agent['name']}</td>";
+        echo "<td><a href='tickets.php?status=mxvp&mxvptype=user&mxvpid={$agent['uid']}'>{$agent['name']}</a></td>";
         echo "<td>{$agent['noTicket']}</td>";
         echo "</tr>";
     }
