@@ -225,10 +225,34 @@ implements TemplateVariable {
     // Get members  eligible members only
     function getAssignees() {
         $members = clone $this->getAvailableMembers();
+        /** @var Role $noAssignRole */
+        $noAssignRole = Role::lookup(array('name' => 'No Assign'));
+        if (isset($noAssignRole)) {
+            $noAssignUsers = array();
+            /** @var Staff $staff */
+            foreach ($members as $staff) {
+                if ($staff->isAdmin()) continue;
+                $roleID = $staff->getRole($this->getId())->getId();
+                if ($roleID == $noAssignRole->getId()) $noAssignUsers[] = "{$staff->getId()}";
+            }
+            $members = Staff::objects()
+                ->distinct('staff_id')
+                ->constrain(array(
+                    // Ensure that joining through dept_access is only relevant
+                    // for this department, so that the `alerts` annotation
+                    // can work properly
+                    'dept_access' => new Q(array('dept_access__dept_id' => $this->getId()))
+                ))
+                ->filter(Q::any(array(
+                    'dept_id' => $this->getId(),
+                    'staff_id' => $this->manager_id,
+                    'dept_access__dept_id' => $this->getId(),
+                )))->exclude(array('staff_id__in' => $noAssignUsers));
+            $members = Staff::nsort($members);
+        }
         // If restricted then filter to primary members ONLY!
         if ($this->assignMembersOnly())
             $members->filter(array('dept_id' => $this->getId()));
-
         return $members;
     }
 
