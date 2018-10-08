@@ -10,7 +10,16 @@
  */
 require_once(INCLUDE_DIR . 'class.ticket.php');
 require_once(INCLUDE_DIR . 'class.dept.php');
-
+if(!$_REQUEST['type'] || $_REQUEST['type'] == 'user'){
+    if(isset($_REQUEST['showAll']) && $_REQUEST['showAll'] == 1){
+        $sAllT = 'Hide All';
+        $sAllV = 0;
+    }else{
+        $sAllT = 'Show All';
+        $sAllV = 1;
+    }
+echo '<a href="?type=user&showAll='.$sAllV.'">'.$sAllT.'</a>';
+}
 ?>
 <table class="list table table-bordered table-sm table-hover">
     <thead>

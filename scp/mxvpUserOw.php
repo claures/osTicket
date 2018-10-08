@@ -26,7 +26,7 @@ switch ($_REQUEST['type']) {
     case 'team':
         $nav->setActiveSubMenu(2);
         $tableTitle = 'Team';
-        $teamIds = array(0=>'No Team');
+        $teamIds = array(0 => 'No Team');
         $teamIds += Team::getTeams();
         foreach ($teamIds as $teamId => $teamName) {
             $tCount = 0;
@@ -76,12 +76,14 @@ switch ($_REQUEST['type']) {
             if ($row = db_fetch_row($res)) {
                 $tCount = $row[0];
             }
-            $displayUsers[] = array(
-                'uid' => $uid,
-                'name' => $user->name,
-                'noTicket' => $tCount,
-                'type' => 'user'
-            );
+            if ((isset($_REQUEST['showAll']) && $_REQUEST['showAll']) || $tCount > 0) {
+                $displayUsers[] = array(
+                    'uid' => $uid,
+                    'name' => $user->name,
+                    'noTicket' => $tCount,
+                    'type' => 'user'
+                );
+            }
         }
         $tableTitle = 'Agent';
         $nav->setActiveSubMenu(1);
