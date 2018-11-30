@@ -65,7 +65,7 @@ $(document).on('click', '.quickMarkTicket',function (evt) {
         url: '../scripts/mark.php?tid='+tid+'&tno='+tno,
         data: JSON.stringify(markData)
     }).success(function(data) {
-        alert(data);
+        alert("User Marked");
         //window.location.href ='../scp';
     });
 });

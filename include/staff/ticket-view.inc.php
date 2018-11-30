@@ -246,7 +246,7 @@ if($ticket->isOverdue())
             $data = array();
             /**@var TicketOwner $_recipient**/
             foreach ($_recipiens as $_recipient){
-                $data[] = array('mail' => $_recipient->getName()->getFull(), 'name' => $_recipient->getEmail()->__tostring());
+                $data[] = array('name' => $_recipient->getName()->getFull(), 'mail' => $_recipient->getEmail()->__tostring());
             }
             $data = json_encode($data);
             ?>
