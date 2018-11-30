@@ -1655,6 +1655,8 @@ implements RestrictedAccess, Threadable {
             $email->sendAutoReply($user, $msg['subj'], $msg['body'],
                 null, $options);
         }
+
+        Signal::send('ticket.onmessage',array('ticket'=>$this,'dept'=>$dept,'comments'=>$comments,'wasClosed'=>$wasClosed,'alert'=>$alert));
     }
 
     function onActivity($vars, $alert=true) {
