@@ -53,3 +53,19 @@ $(document).on('click', '.quickBombTicket',function (evt) {
         window.location.href ='../scp';
     });
 });
+
+$(document).on('click', '.quickMarkTicket',function (evt) {
+    evt.preventDefault();
+    evt.stopPropagation();
+    var tid = $(this).attr('data-ticketid');
+    var tno = $(this).attr('data-ticketno');
+    console.log(markData);
+    $.ajax({
+        method: 'POST',
+        url: '../scripts/mark.php?tid='+tid+'&tno='+tno,
+        data: JSON.stringify(markData)
+    }).success(function(data) {
+        alert(data);
+        //window.location.href ='../scp';
+    });
+});

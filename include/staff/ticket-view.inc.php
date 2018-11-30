@@ -238,8 +238,24 @@ if($ticket->isOverdue())
                 <span class="quickBombTicket action-button" data-placement="bottom" data-toggle="tooltip"
                    data-ticketid="<?=$ticket->getId()?>" data-ticketno="<?=$ticket->getNumber()?>" data-owener="<?=$staffMail?>"
                    data-bomber="<?=$thisstaff->getEmail()?>"
-                   title="Bomb Ticket"><i class="glyphicon glyphicon-fire"></i></span>
-            <?php } ?>
+                   title="Bomb Ticket"><i class="glyphicon glyphicon-screenshot"></i></span>
+            <?php }
+            //$toName = $ticket->getUser()->getName()->getFull();
+            //$toMail = $ticket->getUser()->getEmail()->__tostring();
+            $_recipiens = $ticket->getRecipients();
+            $data = array();
+            /**@var TicketOwner $_recipient**/
+            foreach ($_recipiens as $_recipient){
+                $data[] = array('mail' => $_recipient->getName()->getFull(), 'name' => $_recipient->getEmail()->__tostring());
+            }
+            $data = json_encode($data);
+            ?>
+            <script>
+                var markData = <?=$data?>
+            </script>
+            <span class="quickMarkTicket action-button" data-placement="bottom" data-toggle="tooltip"
+                  data-ticketid="<?=$ticket->getId()?>" data-ticketno="<?=$ticket->getNumber()?>"
+                  title="Mark users for incident"><i class="glyphicon glyphicon-fire"></i></span>
         </div>
         <div class="flush-left">
              <h2><a href="tickets.php?id=<?php echo $ticket->getId(); ?>"
