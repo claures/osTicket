@@ -1567,6 +1567,9 @@ implements RestrictedAccess, Threadable {
 
         $this->isanswered = 0;
 
+        //Old Status:
+        $oldStatusID = $this->getStatusId();
+
         //Set ticket to open if it's on waiting
         /** @var TicketStatus $waitingStatus */
         $waitingStatus = TicketStatus::lookup(array('name' => 'Waiting'));
@@ -1656,7 +1659,7 @@ implements RestrictedAccess, Threadable {
                 null, $options);
         }
 
-        Signal::send('ticket.onmessage',array('ticket'=>$this,'dept'=>$dept,'comments'=>$comments,'wasClosed'=>$wasClosed,'alert'=>$alert));
+        Signal::send('ticket.onmessage',array('ticket'=>$this,'dept'=>$dept,'oldStatusID'=>$oldStatusID,'newStatusID'=>$this->getStatusId()));
     }
 
     function onActivity($vars, $alert=true) {
@@ -3853,7 +3856,7 @@ implements RestrictedAccess, Threadable {
             //MARK: MXVP Multihost
             if(file_exists(MULTIHOSTCLASS)){
                 require_once (MULTIHOSTCLASS);
-                Multihost::initInstance($this);
+                Multihost::initInstance(new Config('core'));
                 $params = array('deptName'=>$ticket->getDept()->getName(),'deptId'=>$ticket->getDeptId());
                 $host = Multihost::getInstance()->rewriteConfig($params,false,true);
             }
