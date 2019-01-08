@@ -612,7 +612,10 @@ return false;">
             elseif ($queue_name == 'assigned' && !empty(trim($agentName)) && $T['staff_id'] != $unassignedUID) {
                 $teamName .= ' / ' . $agentName;
             }
-            if ($T['staff_id'] == $thisstaff->getId()) $teamName = "<b>$teamName<b/>";
+            if ($T['staff_id'] == $thisstaff->getId()) {
+                $teamName = "<b>$teamName<b/>";
+                $agentName = "<b>$agentName<b/>";
+            }
             $total += 1;
             $tag = $T['staff_id'] ? 'assigned' : 'openticket';
             $flag = null;
