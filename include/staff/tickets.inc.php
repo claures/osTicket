@@ -612,10 +612,8 @@ return false;">
             elseif ($queue_name == 'assigned' && !empty(trim($agentName)) && $T['staff_id'] != $unassignedUID) {
                 $teamName .= ' / ' . $agentName;
             }
-            if ($T['staff_id'] == $thisstaff->getId()) {
+            if ($T['staff_id'] == $thisstaff->getId())
                 $teamName = "<b>$teamName<b/>";
-                $agentName = "<b>$agentName<b/>";
-            }
             $total += 1;
             $tag = $T['staff_id'] ? 'assigned' : 'openticket';
             $flag = null;
@@ -714,7 +712,7 @@ return false;">
                     style="background-color:<?php echo $T['cdata__:priority__priority_color']; ?>;">
                     <?php echo $T['cdata__:priority__priority_desc']; ?></td>
                 <td nowrap><span class="truncate" style="max-width: 169px"><?php
-                        echo Format::htmlchars($lc); ?></span>
+                        echo ($T['staff_id'] == $thisstaff->getId())?'<b>'.Format::htmlchars($lc).'</b>':Format::htmlchars($lc); ?></span>
                 </td>
                 <?php if (isset($queue_columns['dept']) && $showassigned) {
                     $lc2 = Dept::getLocalById($T['dept_id'], 'name', $T['dept__name']);
