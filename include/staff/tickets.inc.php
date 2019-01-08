@@ -172,7 +172,7 @@ switch ($queue_name) {
             case 'user':
                 $status = 'open';
                 /** @var Staff $_staff */
-                $_staff = Staff::lookup(array('staff_id'=>$_REQUEST['mxvpid']));
+                $_staff = Staff::lookup(array('staff_id' => $_REQUEST['mxvpid']));
                 $results_type = __('Agent :: ') . $_staff->getName();
                 $tickets->filter(Q::any(array(
                     'staff_id' => $_REQUEST['mxvpid'],
@@ -183,7 +183,7 @@ switch ($queue_name) {
                 break;
             case 'team':
                 $status = 'open';
-                if($_REQUEST['mxvpid'] == 0) $_teamName = 'No Team';
+                if ($_REQUEST['mxvpid'] == 0) $_teamName = 'No Team';
                 else $_teamName = Team::lookup(array('team_id' => $_REQUEST['mxvpid']))->getName();
                 $results_type = __('Team :: ') . $_teamName;
                 $tickets->filter(Q::any(array(
@@ -604,15 +604,15 @@ return false;">
         foreach ($tickets as $T) {
             $teamName = Team::getLocalById($T['team_id'], 'name', $T['team__name']);
             $agentName = new AgentsName($T['staff__firstname'] . ' ' . $T['staff__lastname']);
-            if($T['staff_id'] == $thisstaff->getId()) $agentName .= " (Me)";
-            if(!isset($teamName) && $queue_name == 'assigned') //On the my ticket view show myself as bold if no team
+            //f($T['staff_id'] == $thisstaff->getId()) $agentName .= " (Me)";
+            if (!isset($teamName) && $queue_name == 'assigned') //On the my ticket view show myself as bold if no team
                 $teamName = "<b>$agentName</b>";
             else if (!isset($teamName))
                 $teamName = '';
             elseif ($queue_name == 'assigned' && !empty(trim($agentName)) && $T['staff_id'] != $unassignedUID) {
                 $teamName .= ' / ' . $agentName;
-                if($T['staff_id'] == $thisstaff->getId()) $teamName = "<b>$teamName<b/>";
             }
+            if ($T['staff_id'] == $thisstaff->getId()) $teamName = "<b>$teamName<b/>";
             $total += 1;
             $tag = $T['staff_id'] ? 'assigned' : 'openticket';
             $flag = null;
