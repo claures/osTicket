@@ -604,10 +604,15 @@ return false;">
         foreach ($tickets as $T) {
             $teamName = Team::getLocalById($T['team_id'], 'name', $T['team__name']);
             $agentName = new AgentsName($T['staff__firstname'] . ' ' . $T['staff__lastname']);
-            if (!isset($teamName))
+            if($T['staff_id'] == $thisstaff->getId()) $agentName .= " (Me)";
+            if(!isset($teamName) && $queue_name == 'assigned') //On the my ticket view show myself as bold if no team
+                $teamName = "<b>$agentName</b>";
+            else if (!isset($teamName))
                 $teamName = '';
-            elseif ($queue_name == 'assigned' && !empty(trim($agentName)) && $T['staff_id'] != $unassignedUID)
+            elseif ($queue_name == 'assigned' && !empty(trim($agentName)) && $T['staff_id'] != $unassignedUID) {
                 $teamName .= ' / ' . $agentName;
+                if($T['staff_id'] == $thisstaff->getId()) $teamName = "<b>$teamName<b/>";
+            }
             $total += 1;
             $tag = $T['staff_id'] ? 'assigned' : 'openticket';
             $flag = null;
