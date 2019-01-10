@@ -11,10 +11,8 @@ label.checkbox { /* scp.css */
 }
 
 #mxvp_departmentselect {
-    position: relative;
-    top: -50px;
-    left: 300px;
     max-width: max-content;
+    padding-bottom: 10px;
 }
 
 #mxvp_departmentselect li {

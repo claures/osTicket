@@ -76,15 +76,17 @@ if ($lang) {
             | <a href="<?php echo ROOT_PATH ?>scp/profile.php"><?php echo __('Profile'); ?></a>
             | <a href="<?php echo ROOT_PATH ?>scp/logout.php?auth=<?php echo $ost->getLinkToken(); ?>" class="no-pjax"><?php echo __('Log Out'); ?></a>
         </p>
-        <a href="<?php echo ROOT_PATH ?>scp/index.php" class="no-pjax" id="logo">
-            <span class="valign-helper"></span>
-            <img src="<?php echo ROOT_PATH ?>scp/logo.php?<?php echo strtotime($cfg->lastModified('staff_logo_id')); ?>" alt="osTicket &mdash; <?php echo __('Customer Support System'); ?>"/>
-        </a>
         <?php
         $mxvpdepartments = $thisstaff->getDepartments();
         if (isset($mxvpdepartments)) { ?>
             <div id="mxvp_departmentselect">
                 <ul>
+                    <li>
+                        <a href="<?php echo ROOT_PATH ?>scp/index.php" class="no-pjax" id="logo">
+                            <span class="valign-helper"></span>
+                            <img src="<?php echo ROOT_PATH ?>scp/logo.php?<?php echo strtotime($cfg->lastModified('staff_logo_id')); ?>" alt="osTicket &mdash; <?php echo __('Customer Support System'); ?>"/>
+                        </a>
+                    </li>
                     <?php
                     $depStats = Ticket::getDepartemntsStats($mxvpdepartments);
                     foreach ($mxvpdepartments as $depID) {
