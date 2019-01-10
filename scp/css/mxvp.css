@@ -50,5 +50,5 @@ label.checkbox { /* scp.css */
 }
 
 #header{
-    height: unset;
+    height: unset !important;
 }
