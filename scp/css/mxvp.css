@@ -48,3 +48,7 @@ label.checkbox { /* scp.css */
 .status_spam td:not(.ticketPrio){
     background-color: rgb(197, 197, 197) !important;
 }
+
+#header{
+    height: unset;
+}
