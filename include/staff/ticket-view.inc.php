@@ -268,8 +268,8 @@ if($ticket->isOverdue())
 				<form action="" target="_blank" method="post" id="billSupportForm">
 					<input type="hidden" value="<?= $ticket->getNumber(); ?>" name="Prefill[ticket]">
 					<input type="hidden" value="<?= $ticket->getEmail(); ?>" name="Prefill[to]">
-					<input type="hidden" value="<?= $ticket->getLastMessageDate(); ?>" name="Prefill[data][][date]">
-					<input type="hidden" value="<?= $staffUsername; ?>" name="Prefill[data][][doneby]">
+					<input type="hidden" value="<?= $ticket->getLastMessageDate(); ?>" name="Prefill[data][0][date]">
+					<input type="hidden" value="<?= $staffUsername; ?>" name="Prefill[data][0][doneby]">
 
 					<input type="submit" class="hidden" id="submitBillSupportFom">
 				</form>
