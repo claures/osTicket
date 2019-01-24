@@ -275,7 +275,7 @@ if($ticket->isOverdue())
 				</form>
 			</div>
 
-			<span class="billSupportButton action-button"><i class="glyphicon glyphicon-eur"></i></span>
+			<span class="billSupportButton action-button" data-toggle="tooltip" title="Bill support"><i class="glyphicon glyphicon-eur"></i></span>
 
         </div>
         <div class="flush-left">
