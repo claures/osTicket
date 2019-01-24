@@ -256,6 +256,20 @@ if($ticket->isOverdue())
             <span class="quickMarkTicket action-button" data-placement="bottom" data-toggle="tooltip"
                   data-ticketid="<?=$ticket->getId()?>" data-ticketno="<?=$ticket->getNumber()?>"
                   title="Mark users for incident"><i class="glyphicon glyphicon-fire"></i></span>
+
+			<div class="hidden">
+				<form action="" target="_blank" method="post" id="billSupportForm">
+					<input type="hidden" value="<?= $ticket->getNumber(); ?>" name="Prefill[ticket]">
+					<input type="hidden" value="<?= $ticket->getEmail(); ?>" name="Prefill['to']">
+					<input type="hidden" value="<?= $ticket->getLastMessageDate(); ?>" name="Prefill[data][date]">
+					<input type="hidden" value="<?= $staffMail; ?>" name="Prefill[data][doneby]">
+
+					<input type="submit" class="hidden" id="submitBillSupportFom">
+				</form>
+			</div>
+
+			<span class="billSupportButton action-button"><i class="glyphicon glyphicon-eur"></i></span>
+
         </div>
         <div class="flush-left">
              <h2><a href="tickets.php?id=<?php echo $ticket->getId(); ?>"

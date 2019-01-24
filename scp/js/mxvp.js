@@ -69,3 +69,24 @@ $(document).on('click', '.quickMarkTicket',function (evt) {
         //window.location.href ='../scp';
     });
 });
+
+$(document).on('click', '.billSupportButton',function (evt) {
+	evt.preventDefault();
+	evt.stopPropagation();
+	// var tid = $(this).attr('data-ticketid');
+	// var tno = $(this).attr('data-ticketno');
+	// console.log(markData);
+	$.ajax({
+		method: 'GET',
+		url: '../scripts/billSupport.php',
+        dataType: 'json'
+	}).success(function(data) {
+
+	    if(data.success){
+	        $('#billSupportForm').attr('action', data.url);
+        }
+
+		// alert("User Marked");
+		//window.location.href ='../scp';
+	});
+});
