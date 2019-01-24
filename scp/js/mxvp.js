@@ -84,6 +84,10 @@ $(document).on('click', '.billSupportButton',function (evt) {
 
 	    if(data.success){
 	        $('#billSupportForm').attr('action', data.url);
+
+	        setTimeout(function () {
+                $('#submitBillSupportFom').trigger('click');
+			},200);
         }
 
 		// alert("User Marked");
