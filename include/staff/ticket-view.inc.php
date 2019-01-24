@@ -258,6 +258,13 @@ if($ticket->isOverdue())
                   title="Mark users for incident"><i class="glyphicon glyphicon-fire"></i></span>
 
 			<div class="hidden">
+
+				<?php
+					$staff = $ticket->getStaff();
+					if (isset($staff)) $staffMail = $staff->getEmail();
+					else $staffMail = '';
+				?>
+
 				<form action="" target="_blank" method="post" id="billSupportForm">
 					<input type="hidden" value="<?= $ticket->getNumber(); ?>" name="Prefill[ticket]">
 					<input type="hidden" value="<?= $ticket->getEmail(); ?>" name="Prefill['to']">
