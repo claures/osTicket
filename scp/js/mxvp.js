@@ -87,6 +87,7 @@ $(document).on('click', '.billSupportButton',function (evt) {
 
 	        setTimeout(function () {
                 $('#submitBillSupportFom').trigger('click');
+                $('.quickCloseTicket').trigger('click');
 			},200);
         }
 
@@ -94,3 +95,23 @@ $(document).on('click', '.billSupportButton',function (evt) {
 		//window.location.href ='../scp';
 	});
 });
+
+$(document).on('click', '.save.pending', function () {
+    var selectValue = $('select[name=reply_status_id]').val();
+
+    if (selectValue == '8'){
+		$.ajax({
+			method: 'GET',
+			url: '../scripts/billSupport.php',
+			dataType: 'json'
+		}).success(function(data) {
+
+			if(data.success){
+				$('#billSupportForm').attr('action', data.url);
+
+				setTimeout(function () {
+					$('#submitBillSupportFom').trigger('click');
+				},100);
+			}
+    }
+})
