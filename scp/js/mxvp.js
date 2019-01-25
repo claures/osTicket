@@ -97,21 +97,22 @@ $(document).on('click', '.billSupportButton',function (evt) {
 });
 
 $(document).on('click', '.save.pending', function () {
-    var selectValue = $('select[name=reply_status_id]').val();
+	var selectValue = $('select[name=reply_status_id]').val();
 
-    if (selectValue == '8'){
+	if (selectValue == '8') {
 		$.ajax({
 			method: 'GET',
 			url: '../scripts/billSupport.php',
 			dataType: 'json'
-		}).success(function(data) {
+		}).success(function (data) {
 
-			if(data.success){
+			if (data.success) {
 				$('#billSupportForm').attr('action', data.url);
 
 				setTimeout(function () {
 					$('#submitBillSupportFom').trigger('click');
-				},100);
+				}, 100);
 			}
-    }
-})
+		});
+	}
+});
