@@ -474,6 +474,24 @@ class TicketsAjaxAPI extends AjaxController {
         include STAFFINC_DIR . 'templates/assign.tmpl.php';
     }
 
+    function direct_claim($tid) {
+
+        global $thisstaff;
+
+        /**@var Ticket $ticket*/
+        if (!($ticket = Ticket::lookup($tid)))
+            Http::response(404, __('No such ticket'));
+
+        // Check for premissions and such
+        if (!$ticket->checkStaffPerm($thisstaff, Ticket::PERM_ASSIGN)
+            || !$ticket->isOpen() // Claim only open
+        )
+            Http::response(403, __('Permission denied'));
+
+        return $this->assignToStaff($thisstaff, 'Via Quick Claim', false);
+
+    }
+
     function claim($tid) {
 
         global $thisstaff;

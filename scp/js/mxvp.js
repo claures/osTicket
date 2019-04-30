@@ -28,7 +28,7 @@ $(document).on('click', '.quickClaimTicket',function (evt) {
     console.log(tid + ' - claim');
     $.ajax({
         method: 'POST',
-        url: 'ajax.php/tickets/'+tid+'/claim',
+        url: 'ajax.php/tickets/'+tid+'/direct_claim',
         data: '11f4956ed4c24c8c%5B%5D=s1&f47a6bc1ef579f80=&undefined=Yes%2C%20Claim'
     }).success(function(evt) {
         window.location.href ='../scp/tickets.php?id='+tid;
