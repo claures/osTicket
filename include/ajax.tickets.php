@@ -488,7 +488,7 @@ class TicketsAjaxAPI extends AjaxController {
         )
             Http::response(403, __('Permission denied'));
 
-        return $this->assignToStaff($thisstaff, 'Via Quick Claim', false);
+        return $ticket->assignToStaff($thisstaff, 'Via Quick Claim', false);
 
     }
 
