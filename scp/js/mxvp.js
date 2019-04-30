@@ -128,7 +128,7 @@ $(document).on('keydown', function (evt) {
     //Help: ctrl+alt+h
     if(isTicketView()) {
         if ((evt.metaKey || evt.ctrlKey) && evt.altKey && evt.key == 'h')
-            alert("ctrl+alt+h : Help\nctrl+alt+t : Transfer\nctrl+alt+x : Close Ticket\n ctrl+alt+c : Claim Ticket\nctrl+alt+u : Scroll to top");
+            alert("ctrl+alt+h : Help\nctrl+alt+t : Transfer\nctrl+alt+x : Close Ticket\nctrl+alt+c : Claim Ticket\nctrl+alt+u : Scroll to top");
         if ((evt.metaKey || evt.ctrlKey) && evt.altKey && evt.key == 't') {
             //Transfer Popup
             console.log('XFER');
