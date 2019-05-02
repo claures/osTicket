@@ -712,10 +712,10 @@ return false;">
                     style="background-color:<?php echo $T['cdata__:priority__priority_color']; ?>;">
                     <?php echo $T['cdata__:priority__priority_desc']; ?></td>
                 <td nowrap><span class="truncate" style="max-width: 169px"><?php
-                        echo ($T['staff_id'] == $thisstaff->getId())?'<b>'.Format::htmlchars($lc).'</b>':Format::htmlchars($lc); ?></span>
+                        echo ($T['staff_id'] == $thisstaff->getId()) ? '<b>' . Format::htmlchars($lc) . '</b>' : Format::htmlchars($lc); ?></span>
                 </td>
                 <?php if (isset($queue_columns['dept']) && $showassigned) {
-                    /**@var $_dept Dept*/
+                    /**@var $_dept Dept */
                     $_dept = Dept::lookup($T['dept_id']);
                     $lc2 = $_dept->getFullName();
                     //$lc2 = Dept::getLocalById($T['dept_id'], 'name', $T['dept__name']);
