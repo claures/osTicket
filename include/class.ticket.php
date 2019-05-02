@@ -3106,6 +3106,8 @@ implements RestrictedAccess, Threadable {
                     && in_array($S['team_id'], $teams))
                 // Assigned to my team but uassigned to an agent
                 $stats['assigned'] += $S['count'];
+            elseif ($S['team_id'] && $teams && in_array($S['team_id'], $teams))
+                $stats['teamAssigned'] += $S['count'];
         }
         return $stats;
     }

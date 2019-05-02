@@ -394,7 +394,7 @@ if ($cfg->showAnsweredTickets()) {
     }
 }
 
-if ($stats['assigned']) {
+if ($stats['assigned'] || $stats['teamAssigned'] > 0) {
 
     $nav->addSubMenu(array('desc' => __('My Tickets') . ' (' . number_format($stats['assigned']) . ')',
         'title' => __('Assigned Tickets'),
