@@ -407,10 +407,7 @@ var scp_prep = function() {
          visible = false;
 
      // Append scroll-up icon and set stop point for this sticky
-     $('.content', $that)
-     .append($('<a class="only sticky scroll-up" href="#" data-stop='
-             + (placeholder.offset().top-75) +' ><i class="icon-chevron-up icon-large"></i></a>'));
-
+     
      if (stop.length) {
        var onmove = function() {
          // Recalc when pictures pop in
@@ -421,6 +418,7 @@ var scp_prep = function() {
        });
        onmove();
      }
+
 
      // Drop the sticky bar on PJAX navigation
      $(document).on('pjax:start', function() {
@@ -562,7 +560,12 @@ $(document).keydown(function(e) {
         return false;
     }
 });
+$(document).on('ready',() => {
+$('#thread-items').children().css('position','relative').find( ".header" ).prepend($('<a class="only sticky scroll-up pull-right" style="    border-top: 1px solid #888;margin-right:20px; height:23px;margin-top:2px;" href="#"  ><i class="icon-chevron-up icon-large"></i></a>'));
 
+$('#thread-items .thread-event .scroll-up').hide();
+}
+)
 
 $(document).on('focus', 'form.spellcheck textarea, form.spellcheck input[type=text]', function() {
   var $this = $(this);

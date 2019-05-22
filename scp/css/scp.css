@@ -2620,6 +2620,9 @@ td.indented {
 .scroll-up {
   display:none;
 }
+.only.scroll-up {
+margin-top: 46px;
+}
 @media screen and (min-width: 1040px) {
   .scroll-up {
     display: inline;
@@ -2629,11 +2632,11 @@ td.indented {
     top: 0px;
     right: 20px;
     padding: 8px 8px 5px;
-    border-radius: 0 0 5px 5px;
-    border: 1px dotted #888;
+    border-radius: none;
+    border: 1px solid #888;
     border-top: none;
     color: #888 !important;
-    box-shadow: 0 3px 8px -6px rgba(0,0,0,0.9);
+    box-shadow:none;
   }
   .scroll-up:hover {
     background-color: #444;
