@@ -93,8 +93,8 @@ switch ($queue_name) {
         $status = 'open';
         $results_type = __('Overdue Tickets');
         $tickets->filter(array('isoverdue' => 1));
-        $queue_sort_options = array('priority,updated','priority,due', 'due',
-            'updated', 'answered', 'priority,created', 'number', 'hot');
+        $queue_sort_options = array( 'updated','priority,updated','priority,due', 'due',
+            'answered', 'priority,created', 'number', 'hot');
         break;
     case 'assigned':
         $status = 'open';
@@ -107,7 +107,7 @@ switch ($queue_name) {
             $filter->add(Q::any(array('team_id__in' => $teams)));
         }
         $tickets->filter($filter);
-        $queue_sort_options = array('priority,updated','updated',
+        $queue_sort_options = array('updated','priority,updated',
             'priority,created', 'priority,due', 'due', 'answered', 'number',
             'hot');
         break;
@@ -116,7 +116,7 @@ switch ($queue_name) {
         $showanswered = true;
         $results_type = __('Answered Tickets');
         $tickets->filter(array('isanswered' => 1));
-        $queue_sort_options = array('priority,updated', 'answered',  'updated',
+        $queue_sort_options = array( 'updated','priority,updated', 'answered',
             'priority,created', 'priority,due', 'due', 'number', 'hot');
         break;
 
@@ -124,7 +124,7 @@ switch ($queue_name) {
         $status = 'open';
         $results_type = __('Open Tickets');
         $tickets->filter(array('status_id' => $waitingStatus->getId()));
-        $queue_sort_options = array('priority,updated', 'updated',
+        $queue_sort_options = array('updated','priority,updated',
             'priority,due', 'due', 'priority,created', 'answered', 'number',
             'hot');
         break;
@@ -137,7 +137,7 @@ switch ($queue_name) {
             Q::all(array('staff_id' => 0, 'team_id' => 0)),
             Q::all(array('staff_id' => $unassignedUID)),
         )));
-        $queue_sort_options = array('priority,updated','updated',
+        $queue_sort_options = array('updated','priority,updated',
             'priority,created', 'priority,due', 'due', 'answered', 'number',
             'hot');
         break;
@@ -165,7 +165,7 @@ switch ($queue_name) {
                 $tickets->filter(Q::any(array(
                     'dept_id' => $_REQUEST['mxvpid'],
                 )));
-                $queue_sort_options = array('priority,updated','updated',
+                $queue_sort_options = array('updated','priority,updated',
                     'priority,created', 'priority,due', 'due', 'answered', 'number',
                     'hot');
                 break;
@@ -177,7 +177,7 @@ switch ($queue_name) {
                 $tickets->filter(Q::any(array(
                     'staff_id' => $_REQUEST['mxvpid'],
                 )));
-                $queue_sort_options = array('priority,updated','updated',
+                $queue_sort_options = array('updated','priority,updated',
                     'priority,created', 'priority,due', 'due', 'answered', 'number',
                     'hot');
                 break;
@@ -189,7 +189,7 @@ switch ($queue_name) {
                 $tickets->filter(Q::any(array(
                     'team_id' => $_REQUEST['mxvpid'],
                 )));
-                $queue_sort_options = array('priority,updated','updated',
+                $queue_sort_options = array('updated','priority,updated',
                     'priority,created', 'priority,due', 'due', 'answered', 'number',
                     'hot');
                 break;
@@ -198,8 +198,8 @@ switch ($queue_name) {
 
     default:
     case 'search':
-        $queue_sort_options = array('priority,updated', 'priority,created',
-            'priority,due', 'due', 'updated', 'answered',
+        $queue_sort_options = array('updated','priority,updated', 'priority,created',
+            'priority,due', 'due',  'answered',
             'closed', 'number', 'hot');
         // Consider basic search
         if ($_REQUEST['query']) {
@@ -270,7 +270,7 @@ switch ($queue_name) {
         $tickets->filter(Q::not(array('status_id' => $waitingStatus->getId())));
         if (!$cfg->showAnsweredTickets())
             $tickets->filter(array('isanswered' => 0));
-        $queue_sort_options = array('priority,updated', 'updated',
+        $queue_sort_options = array('updated','priority,updated',
             'priority,due', 'due', 'priority,created', 'answered', 'number',
             'hot');
         break;
