@@ -118,6 +118,30 @@ $(document).on('click', '.save.pending', function () {
 });
 
 
+$(document).ready(function () {
+
+	var email = $('#TicketEmail').val();
+	var profile_id = $('#TicketProfileId').val();
+
+	$.ajax({
+		method: 'POST',
+		url: '../scripts/ticket_contacts.php',
+		data: {
+			email: email,
+			pid: profile_id,
+		},
+		dataType: 'json'
+	}).success(function (data) {
+		if (data.success) {
+			$('#popup-container').html(data.html);
+		}
+	});
+
+	$('.popup-btn').click(function(){
+		$('#popup-container').toggleClass('open-box');
+	});
+});
+
 //Shortcuts
 
 function isTicketView(){

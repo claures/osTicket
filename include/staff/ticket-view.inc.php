@@ -265,6 +265,8 @@ if($ticket->isOverdue())
 					else $staffUsername = '';
 				?>
 
+				<input type="hidden" value="<?= $ticket->getProfileId(); ?>" name="Ticket[ProfileId]" id="TicketProfileId">
+				<input type="hidden" value="<?= $ticket->getEmail(); ?>" name="Ticket[email]" id="TicketEmail">
 				<form action="" target="_blank" method="post" id="billSupportForm">
 					<input type="hidden" value="<?= $ticket->getNumber(); ?>" name="Prefill[ticket]">
 					<input type="hidden" value="<?= $ticket->getEmail(); ?>" name="Prefill[to]">
@@ -287,6 +289,14 @@ if($ticket->isOverdue())
     </div>
   </div>
 </div>
+
+<!-- Side popup -->
+<div id="sticky-side">
+	<div class="popup-btn"> Contacts</div>
+	<div id="popup-container"></div>
+</div>
+<!-- End side popup-->
+
 <div class="clear tixTitle has_bottom_border">
     <h3>
     <?php $subject_field = TicketForm::getInstance()->getField('subject');

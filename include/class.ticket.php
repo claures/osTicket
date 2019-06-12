@@ -3144,6 +3144,11 @@ class Ticket extends TicketModel
         return (string)$this->_answers['subject'];
     }
 
+	function getProfileId()
+	{
+		return (string)$this->_answers['profile_id'];
+	}
+
     //DeptId can NOT be 0. No orphans please!
 
     function getHelpTopic()
