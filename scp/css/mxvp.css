@@ -59,7 +59,7 @@ label.checkbox { /* scp.css */
 	top: 50%;
 	transform: translateY(-50%);
 	right: -150px;
-	display: flex;
+	/*display: flex;*/
 	align-items: center;
 	z-index: 9999;
 }
