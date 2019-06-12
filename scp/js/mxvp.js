@@ -117,31 +117,6 @@ $(document).on('click', '.save.pending', function () {
     }
 });
 
-
-$(document).ready(function () {
-
-	var email = $('#TicketEmail').val();
-	var profile_id = $('#TicketProfileId').val();
-
-	$.ajax({
-		method: 'POST',
-		url: '../scripts/ticket_contacts.php',
-		data: {
-			email: email,
-			pid: profile_id,
-		},
-		dataType: 'json'
-	}).success(function (data) {
-		if (data.success) {
-			$('#side-box').html(data.html);
-		}
-	});
-
-	$('.contact-btn').click(function(){
-		$('#side-box').toggleClass('open-box');
-	});
-});
-
 //Shortcuts
 
 function isTicketView(){
