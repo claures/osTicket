@@ -118,7 +118,7 @@ $(document).on('click', '.save.pending', function () {
 });
 
 
-// $(document).ready(function () {
+$(document).ready(function () {
 
 	var email = $('#TicketEmail').val();
 	var profile_id = $('#TicketProfileId').val();
@@ -140,7 +140,7 @@ $(document).on('click', '.save.pending', function () {
 	$('.contact-btn').click(function(){
 		$('#side-box').toggleClass('open-box');
 	});
-// });
+});
 
 //Shortcuts
 
