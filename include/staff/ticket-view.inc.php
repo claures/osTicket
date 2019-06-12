@@ -292,8 +292,8 @@ if($ticket->isOverdue())
 
 <!-- Side popup -->
 <div id="sticky-side">
-	<div class="popup-btn"> Contacts</div>
-	<div id="popup-container"></div>
+	<div class="contact-btn"> Contacts</div>
+	<div id="side-box"></div>
 </div>
 <!-- End side popup-->
 
