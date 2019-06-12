@@ -133,12 +133,12 @@ $(document).ready(function () {
 		dataType: 'json'
 	}).success(function (data) {
 		if (data.success) {
-			$('#popup-container').html(data.html);
+			$('#side-box').html(data.html);
 		}
 	});
 
-	$('.popup-btn').click(function(){
-		$('#popup-container').toggleClass('open-box');
+	$('.contact-btn').click(function(){
+		$('#side-box').toggleClass('open-box');
 	});
 });
 

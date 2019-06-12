@@ -1,99 +1,100 @@
 /*override bootstrap default*/
 * {
-    -webkit-box-sizing: initial;
-    -moz-box-sizing: initial;
-    box-sizing: initial;
+	-webkit-box-sizing: initial;
+	-moz-box-sizing: initial;
+	box-sizing: initial;
 }
 
 /* ost overrides */
 label.checkbox { /* scp.css */
-    text-indent: 0em;
+	text-indent: 0em;
 }
 
 #mxvp_departmentselect {
-    max-width: max-content;
-    padding-bottom: 10px;
+	max-width: max-content;
+	padding-bottom: 10px;
 }
 
 #mxvp_departmentselect li {
-    display: inline-block;
-    margin-right: 15px;
+	display: inline-block;
+	margin-right: 15px;
 }
 
 #mxvp_departmentselect li.depSelected a {
-    font-weight: bold;
+	font-weight: bold;
 }
 
 .ticket-subject {
-    max-width: 120em;
+	max-width: 120em;
 }
 
 /*Status Colors*/
-.status_open td:not(.ticketPrio){
-    background-color: rgb(255, 246, 195) !important;
+.status_open td:not(.ticketPrio) {
+	background-color: rgb(255, 246, 195) !important;
 }
 
-.status_closed td:not(.ticketPrio){
+.status_closed td:not(.ticketPrio) {
 
 }
 
-.status_answered td:not(.ticketPrio){
-    background-color: rgb(234, 234, 234) !important;
+.status_answered td:not(.ticketPrio) {
+	background-color: rgb(234, 234, 234) !important;
 }
 
-.status_overdue td:not(.ticketPrio){
-    background-color: #ffb85f !important;
+.status_overdue td:not(.ticketPrio) {
+	background-color: #ffb85f !important;
 }
 
-.status_spam td:not(.ticketPrio){
-    background-color: rgb(197, 197, 197) !important;
+.status_spam td:not(.ticketPrio) {
+	background-color: rgb(197, 197, 197) !important;
 }
 
-#header{
-    height: unset !important;
+#header {
+	height: unset !important;
 }
 
 /* Side popup */
 #sticky-side {
-    position:fixed;
-    top:50%;
-    transform:translateY(-50%);
-    right:0;
-    /*display: flex;*/
-    align-items: center;
-    z-index: 9999;
+	position: fixed;
+	top: 50%;
+	transform: translateY(-50%);
+	right: 0;
+	display: flex;
+	align-items: center;
+
 }
 
-.popup-btn{
-    height:50px;
-    width:150px;
-    background-color:#2aa222;
-    color:#fff;
-    line-height:50px;
-    text-align:center;
-    font-size:16px;
-    font-weight:bold;
-    text-transform:uppercase;
-    transform:translatex(50px) rotate(-90deg);
-    cursor:pointer;
+.contact-btn {
+	height: 50px;
+	width: 150px;
+	background-color: #2aa222;
+	color: #fff;
+	line-height: 50px;
+	text-align: center;
+	font-size: 16px;
+	font-weight: bold;
+	text-transform: uppercase;
+	transform: translatex(50px) rotate(-90deg);
+	cursor: pointer;
 }
 
-#popup-container {
-    padding: 10px;
-    border: 1px solid #e1e1e1;
-    border-right: 0;
-    height: auto;
-    max-height: calc(100vh - 20px);
-    overflow-y: auto;
-    background: #fff;
-    max-width: 400px;
-    margin-right: -400px;
-    transition: all .5s;
-    box-sizing: border-box;
+#side-box {
+	padding: 10px;
+	border: 1px solid #e1e1e1;
+	border-right: 0;
+	height: auto;
+	max-height: calc(100vh - 20px);
+	overflow-y: auto;
+	background: #fff;
+	max-width: 400px;
+	margin-right: -400px;
+	z-index: 9999;
+	transition: all .5s;
+	box-sizing: border-box;
 }
 
 .open-box {
-    margin-right: 0 !important;
+	margin-right: 0 !important;
 }
 
 /* End side popup */
