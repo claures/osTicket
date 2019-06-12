@@ -58,10 +58,10 @@ label.checkbox { /* scp.css */
 	position: fixed;
 	top: 50%;
 	transform: translateY(-50%);
-	right: 0;
+	right: -150px;
 	display: flex;
 	align-items: center;
-
+	z-index: 9999;
 }
 
 .contact-btn {
@@ -76,6 +76,9 @@ label.checkbox { /* scp.css */
 	text-transform: uppercase;
 	transform: translatex(50px) rotate(-90deg);
 	cursor: pointer;
+	position: relative;
+	top: 105px;
+	right: 150px;
 }
 
 #side-box {
@@ -88,13 +91,16 @@ label.checkbox { /* scp.css */
 	background: #fff;
 	max-width: 400px;
 	margin-right: -400px;
-	z-index: 9999;
 	transition: all .5s;
 	box-sizing: border-box;
 }
 
+#side-box iframe{
+	border: none;
+}
+
 .open-box {
-	margin-right: 0 !important;
+	margin-right: 150px !important;
 }
 
 /* End side popup */
