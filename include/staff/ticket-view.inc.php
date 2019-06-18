@@ -292,6 +292,7 @@ if($ticket->isOverdue())
 
 <!-- Side popup -->
 <div id="sticky-side">
+	<div class='gotop-btn' onclick="$('html, body').animate({scrollTop:0}, '300');">to top</div>
 	<div class="contact-btn"> Contacts</div>
 	<div id="side-box"></div>
 </div>
