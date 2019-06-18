@@ -527,7 +527,7 @@ foreach (DynamicFormEntry::forTicket($ticket->getId()) as $form) {
 	else{
 	$label = $a->getLocal('label') ;
 	}
-        $displayed[] = array($a->getLocal('label'), $v);
+        $displayed[] = array($label, $v);
     }
     if (count($displayed) == 0)
         continue;
