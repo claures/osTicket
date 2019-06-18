@@ -521,6 +521,12 @@ foreach (DynamicFormEntry::forTicket($ticket->getId()) as $form) {
     foreach($answers as $a) {
         if (!($v = $a->display()))
             continue;
+	if($a->getLocal('label') == 'profile_id'){
+	$label = 'PID';
+	}
+	else{
+	$label = $a->getLocal('label') ;
+	}
         $displayed[] = array($a->getLocal('label'), $v);
     }
     if (count($displayed) == 0)
