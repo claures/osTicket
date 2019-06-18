@@ -80,6 +80,24 @@ label.checkbox { /* scp.css */
 	right: 150px;
 }
 
+.gotop-btn {
+    height: 51px;
+    width: 101px;
+    background-color: #2aa222;
+    color: #fff;
+    line-height: 50px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transform: translatex(50px) rotate(-90deg);
+    cursor: pointer;
+    position: relative;
+    top: 40px;
+    right: 126px;
+    border-left: 1px solid white;
+}
+
 #side-box {
 	padding: 10px;
 	border: 1px solid #e1e1e1;

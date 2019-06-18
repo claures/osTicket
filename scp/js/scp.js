@@ -560,12 +560,6 @@ $(document).keydown(function(e) {
         return false;
     }
 });
-$(document).on('ready',() => {
-$('#thread-items').children().css('position','relative').find( ".header" ).prepend($('<a class="only sticky scroll-up pull-right" style="    border-top: 1px solid #888;margin-right:20px; height:23px;margin-top:2px;" href="#"  ><i class="icon-chevron-up icon-large"></i></a>'));
-
-$('#thread-items .thread-event .scroll-up').hide();
-}
-)
 
 $(document).on('focus', 'form.spellcheck textarea, form.spellcheck input[type=text]', function() {
   var $this = $(this);
