@@ -265,7 +265,7 @@ if($ticket->isOverdue())
 					else $staffUsername = '';
 				?>
 
-				<input type="hidden" value="<?= $ticket->getProfileId(); ?>" name="Ticket[ProfileId]" id="TicketProfileId">
+				<input type="hidden" value="<?= trim($ticket->getProfileId()); ?>" name="Ticket[ProfileId]" id="TicketProfileId">
 				<input type="hidden" value="<?= $ticket->getEmail(); ?>" name="Ticket[email]" id="TicketEmail">
 				<form action="" target="_blank" method="post" id="billSupportForm">
 					<input type="hidden" value="<?= $ticket->getNumber(); ?>" name="Prefill[ticket]">
