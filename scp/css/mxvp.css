@@ -121,3 +121,7 @@ label.checkbox { /* scp.css */
 }
 
 /* End side popup */
+
+table.ticket_info.custom-data td:first-child {
+	font-weight: bold;
+}
