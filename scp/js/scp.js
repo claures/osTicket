@@ -252,7 +252,7 @@ var scp_prep = function() {
 
     /* Typeahead tickets lookup */
     var last_req;
-    $('input.basic-search').typeahead({
+  $('input.basic-search').typeahead({
         source: function (typeahead, query) {
             if (last_req) last_req.abort();
             var $el = this.$element;
@@ -261,20 +261,37 @@ var scp_prep = function() {
                 url: url,
                 dataType: 'json',
                 success: function (data) {
-                    typeahead.process(data);
+                    
+                    array = {};
+                    let val = $('input.basic-search').val();
+                    array.email = 'MXVPINPUTMODIF';
+                    array.value = val;
+                    array.info = val;
+                    array.matches = val;
+                    
+                   
+                    if(data.push(array)){
+                   console.log(data);
+                    typeahead.process(data.reverse());
+                    }
+                  
                 }
             });
         },
         onselect: function (obj) {
             var $el = this.$element;
             var form = $el.closest('form');
+            if(obj.email === 'MXVPINPUTMODIF'){}
+            else{
             form.find('input[name=search-type]').val('typeahead');
             $el.val(obj.value);
             if (obj.id) {
                 form.append($('<input type="hidden" name="number">').val(obj.id))
             }
+          }
             form.submit();
         },
+        
         property: "matches"
     });
 
