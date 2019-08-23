@@ -95,7 +95,7 @@ if ($lang) {
             <?php
             } elseif($nav) {
                 if ($cfg->getClientRegistrationMode() == 'public') { ?>
-                    <?php echo __('Guest User'); ?> | <?php
+                     <?php
                 }
                 if ($thisclient && $thisclient->isValid() && $thisclient->isGuest()) { ?>
                     <a href="<?php echo $signout_url; ?>"><?php echo __('Sign Out'); ?></a><?php
