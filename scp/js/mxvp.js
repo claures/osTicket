@@ -150,3 +150,28 @@ $(document).on('keydown', function (evt) {
         }
     }
 });
+
+
+//add collapse feature
+
+
+$(document).on('ready', function () {
+    let count = $('.thread-entry').length;
+    if (count > 5) {
+        $('.thread-entry').find('.thread-body').each(function () {
+            count--;
+            if (count > 0) {
+                $(this).addClass('hidden');
+            }
+        });
+    }
+}
+);
+
+
+
+$('body').on('click', '.thread-entry .header', function () {
+    let th = $(this).parent().find('.thread-body');
+    if (th.hasClass('hidden')) th.removeClass('hidden');
+    else th.addClass('hidden');
+})
