@@ -155,7 +155,7 @@ $(document).on('keydown', function (evt) {
 //add collapse feature
 
 
-$(document).on('ready', function () {
+
     let count = $('.thread-entry').length;
     if (count > 5) {
         $('.thread-entry').find('.thread-body').each(function () {
@@ -165,8 +165,7 @@ $(document).on('ready', function () {
             }
         });
     }
-}
-);
+
 
 
 
