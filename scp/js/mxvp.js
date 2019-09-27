@@ -154,7 +154,7 @@ $(document).on('keydown', function (evt) {
 
 //add collapse feature
 
-
+function hideAllEntry(){
 
     let count = $('.thread-entry').length;
     if (count > 5) {
@@ -165,8 +165,17 @@ $(document).on('keydown', function (evt) {
             }
         });
     }
+}
 
 
+
+hideAllEntry();
+
+
+
+$("#pjax-container").ajaxSuccess(function(){
+    hideAllEntry();
+});
 
 
 $('body').on('click', '.thread-entry .header', function () {
