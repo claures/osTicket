@@ -156,9 +156,9 @@ $(document).on('keydown', function (evt) {
 
 function hideAllEntry(){
 
-    let count = $('.thread-entry').length;
+    let count = $('.thread-entry').not('.system').length;
     if (count > 5) {
-        $('.thread-entry').find('.thread-body').each(function () {
+        $('.thread-entry').not('.system').find('.thread-body').each(function () {
             count--;
             if (count > 0) {
                 $(this).addClass('hidden');
