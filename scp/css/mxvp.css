@@ -97,6 +97,9 @@ label.checkbox { /* scp.css */
     right: 126px;
     border-left: 1px solid white;
 }
+.gotop-btn:hover , .contact-btn:hover {
+background:hotpink;
+}
 
 #side-box {
 	padding: 10px;

@@ -292,8 +292,8 @@ if($ticket->isOverdue())
 
 <!-- Side popup -->
 <div id="sticky-side">
-	<div class='gotop-btn' style='top:90px !important;' onclick="$('html, body').animate({scrollTop:0}, '300');">to top</div>
-	<div class='gotop-btn' style='top:303px !important; right:135px; width:120px;' onclick="$('html, body').animate({scrollTop: $('.thread-entry').not('.system').last().offset().top - 50 }, '300');">to bottom</div>
+	<div class='gotop-btn' style='top:95px !important;' onclick="$('html, body').animate({scrollTop:0}, '300');">to top</div>
+	<div class='gotop-btn' style='top:303px !important; right:140px; width:130px;' onclick="$('html, body').animate({scrollTop: $('.thread-entry').not('.system').last().offset().top - 50 }, '300');">TO LAST MSG</div>
 
 	<div class="contact-btn"> Contacts</div>
 	<div id="side-box"></div>
