@@ -1385,7 +1385,10 @@ implements TemplateVariable {
                 foreach ($files as $i=>$a) {
                     if (isset($a['cid']) && $a['cid']
                             && strpos($body, 'cid:'.$a['cid']) !== false) {
-                        $files[$i]['inline'] = true;
+                        $inline = true;
+                        if(stripos($files[$i]['type'],'image') === 0) //-- CL Let's save Images as forced not inline To remove the Schmuuu
+                            $inline = false;
+                        $files[$i]['inline'] = $inline;
                     }
                 }
                 foreach ($entry->normalizeFileInfo($files) as $F) {
@@ -1422,7 +1425,7 @@ implements TemplateVariable {
 
              if (($AF = AttachmentFile::create($file))) {
                  $inline = true;
-                 if(strpos($file['type'],'image') === 0) //-- CL Let's save Images as forced not inline To remove the Schmuuu
+                 if(stripos($file['type'],'image') === 0) //-- CL Let's save Images as forced not inline To remove the Schmuuu
                      $inline = false;
                  $attached_files[$file['key']] = array(
                          'id' => $AF->getId(),
