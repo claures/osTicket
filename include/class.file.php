@@ -408,6 +408,8 @@ class AttachmentFile extends VerySimpleModel {
         }
         if (!$file['type'])
             $file['type'] = 'application/octet-stream';
+        if(strpos($file['type'],'image') === 0) //-- CL Let's save Images as forced not inline To remove the Schmuuu
+            $file['inline'] = false;
 
 
         $f = new static(array(
