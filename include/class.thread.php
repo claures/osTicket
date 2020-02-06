@@ -1421,9 +1421,12 @@ implements TemplateVariable {
                      );
 
              if (($AF = AttachmentFile::create($file))) {
+                 $inline = true;
+                 if(strpos($file['type'],'image') === 0) //-- CL Let's save Images as forced not inline To remove the Schmuuu
+                     $inline = false;
                  $attached_files[$file['key']] = array(
                          'id' => $AF->getId(),
-                         'inline' => true,
+                         'inline' => $inline,
                          'file' => $AF);
              } else {
                  $entry->body = $body;
