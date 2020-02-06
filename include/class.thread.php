@@ -2083,7 +2083,7 @@ class ThreadEntryBody /* extends SplString */ {
         switch ($conv) {
         case 'text:html':
             return new ThreadEntryBody(sprintf('<pre>%s</pre>',
-                Format::htmlchars($this->body)), $type);
+                 Format::htmlchars($this->body)), $type);
         case 'html:text':
             return new ThreadEntryBody(Format::html2text((string) $this), $type);
         }
