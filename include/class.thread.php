@@ -1384,8 +1384,9 @@ implements TemplateVariable {
                 // Detect *inline* email attachments
                 foreach ($files as $i=>$a) {
                     if (isset($a['cid']) && $a['cid']
-                            && strpos($body, 'cid:'.$a['cid']) !== false)
+                            && strpos($body, 'cid:'.$a['cid']) !== false) {
                         $files[$i]['inline'] = true;
+                    }
                 }
                 foreach ($entry->normalizeFileInfo($files) as $F) {
                     // Deduplicate on the `key` attribute. The key is
