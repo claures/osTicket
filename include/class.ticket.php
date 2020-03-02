@@ -2550,6 +2550,17 @@ class Ticket extends TicketModel
 
         }
 
+        if ($this->getId() == 39229){
+
+			$responseId = $response->getId();
+			$ticketId = $this->getId();
+
+			$token = md5("{$ticketId}{$responseId}feedbackticketresponse");
+			$url = "vice.mixvoip.com/feedback/ticket?t_id={$ticketId}&r_id={$responseId}&token={$token}";
+
+        	$signature .= "<br><br>{$url}";
+		}
+
         $variables = array(
             'response' => $response,
             'signature' => $signature,
