@@ -183,3 +183,10 @@ $('body').on('click', '.thread-entry .header', function () {
     if (th.hasClass('hidden')) th.removeClass('hidden');
     else th.addClass('hidden');
 })
+
+
+$('body').on('click','.saveclose',function(e){
+e.preventDefault();
+$('.status').val(3)
+$(this).parents('form').find('.save').trigger('click');
+})
