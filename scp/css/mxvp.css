@@ -132,3 +132,21 @@ table.ticket_info.custom-data td:first-child {
 #tickets .table td {
 	max-width: 400px;
 }
+
+.assignTicketToPid {
+	height: 15px;
+	width: fit-content;
+	padding: 5px;
+	border: 1px solid lightgray;
+	background: white;
+	cursor: pointer;
+}
+
+.assignTicketToPid:hover {
+	background: #00aa00;
+	color:white;
+}
+
+table.ticket_info.custom-data {
+	margin-bottom: 20px;
+}
