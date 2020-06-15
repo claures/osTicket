@@ -144,7 +144,7 @@ switch ($queue_name) {
 			'hot');
 		break;
     case 'test':
-		$status = 'test';
+		$status = 'open';
 		$cdata = TicketCData::objects();
 		$results_type = __('Unassigned Profile');
 		$cdatas=$cdata->filter(array('profile_id'=> ''))->all();
