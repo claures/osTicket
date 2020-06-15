@@ -612,12 +612,7 @@ foreach (DynamicFormEntry::forTicket($ticket->getId()) as $form) {
 								$arrLinks[] = "<a href='/scripts/link_profile.php?ticket_id={$ticket->getId()}&pid={$pid}'></a>";
 								//var_dump($pid);
 							}
-							echo ' <span class="action-button pull-right"
-                data-dropdown="#action-dropdown-assignpid"
-                data-placement="bottom"
-                data-toggle="tooltip"
-              data-title="Assign to profile"
-                >' . implode(' ', $arrLinks) . '</span>';
+							echo  implode(' ', $arrLinks);
 						} else {
 							echo $v;
 						}
