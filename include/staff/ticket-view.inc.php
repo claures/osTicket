@@ -584,9 +584,9 @@ echo Format::htmlchars($label); ?>:</th>
 						$arrLinks = array();
 						foreach ($arrPid as $pid) {
 							$arrLinks[] = "<a href='/scripts/link_profile.php?ticket_id={$ticket->getId()}&pid={$pid}'></a>";
-							var_dump($pid);
+							//var_dump($pid);
 						}
-						echo Format::htmlchars(implode(' ', $arrLinks));
+						echo implode(' ', $arrLinks);
 					} else {
 						echo $v;
 					}
