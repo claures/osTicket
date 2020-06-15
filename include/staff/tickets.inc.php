@@ -143,7 +143,18 @@ switch ($queue_name) {
 			'priority,created', 'priority,due', 'due', 'answered', 'number',
 			'hot');
 		break;
-
+    case 'test':
+		$status = 'test';
+		$staffId = $thisstaff->getId();
+		$results_type = __('Unassigned Tickets');
+		$tickets->filter(Q::any(array(
+			Q::all(array('staff_id' => 0, 'team_id' => 0)),
+			Q::all(array('staff_id' => $unassignedUID)),
+		)));
+		$queue_sort_options = array('updated', 'priority,updated',
+			'priority,created', 'priority,due', 'due', 'answered', 'number',
+			'hot');
+		break;
 	//Our custom filters
 	case 'mxvp':
 		if (!isset($_REQUEST['mxvptype'])) {
