@@ -154,7 +154,7 @@ switch ($queue_name) {
 			$arrTicket[] = $data->ticket_id;
         }
 var_dump($arrTicket);
-		$tickets->filter(Q::any(array(
+		$tickets->options(Q::any(array(
 		        //'ticket_id IN'=> '('.implode(',',$arrTicket).')'
             'ticket_id'=>$arrTicket
         )));
