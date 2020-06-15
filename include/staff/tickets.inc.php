@@ -162,6 +162,7 @@ $sql='SELECT ticket_id FROM '.TICKET_TABLE.' T1 ,ost_ticket__cdata T2  '
 
 	.' ORDER BY T1.created';
 
+		var_dump(db_num_rows($res));
 if(($res=db_query($sql)) && db_num_rows($res)) {
 
 	while ($test = db_fetch_row($res)) {
