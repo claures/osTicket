@@ -145,9 +145,11 @@ switch ($queue_name) {
 		break;
     case 'test':
 		$status = 'open';
+
 		$cdata = TicketCData::objects();
 		$results_type = __('Unassigned Profile');
-		$cdatas=$cdata->filter(array('profile_id'=> '','ticket.lastupdate>' => '2019-12-31 00:00:00'))->all();
+		$cdatas=$cdata->filter(array('profile_id'=> ''))->all();
+            echo $cdata->getQuery();
 		$arrTicket=array();
 var_dump($cdatas);
 
