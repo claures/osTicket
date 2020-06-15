@@ -145,9 +145,11 @@ switch ($queue_name) {
 		break;
     case 'test':
 		$status = 'test';
-		$staffId = $thisstaff->getId();
+		$cdata = TicketCData::objects();
 		$results_type = __('Unassigned Profile');
-		$tickets->filter(array('profile_id'=> ''));
+		$cdatas=$cdata->filter(array('profile_id'=> ''))->all();
+		var_dump($cdatas);die;
+		$tickets->filter();
 		$queue_sort_options = array('updated', 'priority,updated',
 			'priority,created', 'priority,due', 'due', 'answered', 'number',
 			'hot');
