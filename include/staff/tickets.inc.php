@@ -148,7 +148,12 @@ switch ($queue_name) {
 		$cdata = TicketCData::objects();
 		$results_type = __('Unassigned Profile');
 		$cdatas=$cdata->filter(array('profile_id'=> ''))->all();
-		var_dump($cdatas);die;
+		$arrTicket=array()
+
+		foreach($cdatas as $data){
+			$arrTicket[] = $data->ticket_id;
+        }
+        var_dump($arrTicket);die;
 		$tickets->filter();
 		$queue_sort_options = array('updated', 'priority,updated',
 			'priority,created', 'priority,due', 'due', 'answered', 'number',
