@@ -147,7 +147,7 @@ switch ($queue_name) {
 		$status = 'open';
 		$cdata = TicketCData::objects();
 		$results_type = __('Unassigned Profile');
-		$cdatas=$cdata->filter(array('profile_id'=> ''))->select_related('ticket')->all();
+		$cdatas=$cdata->filter(array('profile_id'=> ''))->all();
 		$arrTicket=array();
 var_dump($cdatas);
 
