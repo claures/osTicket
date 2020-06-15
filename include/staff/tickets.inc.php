@@ -153,8 +153,10 @@ switch ($queue_name) {
 		foreach($cdatas as $data){
 			$arrTicket[] = $data->ticket_id;
         }
-        var_dump($arrTicket);die;
-		$tickets->filter();
+
+		$tickets->filter(Q::any(array(
+		        'ticket_id IN'=> '('.implode(',',$arrTicket).')'
+        )));
 		$queue_sort_options = array('updated', 'priority,updated',
 			'priority,created', 'priority,due', 'due', 'answered', 'number',
 			'hot');
