@@ -1,0 +1,530 @@
+<?php
+
+ini_set('display_errors', '1'); //Disable error display
+ini_set('display_startup_errors', '1');
+
+//Fix OST includes
+require_once(INCLUDE_DIR . 'class.plugin.php');
+require_once(INCLUDE_DIR . 'class.signal.php');
+require_once(INCLUDE_DIR . 'class.ticket.php');
+require_once(INCLUDE_DIR . 'class.app.php');
+require_once(INCLUDE_DIR . 'class.dispatcher.php');
+require_once(INCLUDE_DIR . 'class.dynamic_forms.php');
+require_once(INCLUDE_DIR . 'class.osticket.php');
+require_once(INCLUDE_DIR . 'class.filter_action.php');
+require_once(INCLUDE_DIR . 'class.filter.php');
+require_once(INCLUDE_DIR . 'class.dept.php');
+require_once(INCLUDE_DIR . '../scripts/Multihost.class.php');
+require_once('config.php');
+
+//Config defines
+define('MXVP_SUPERHANDLER_PLUGIN_VERSION', '0.3');
+define('SUPERHANDLER_TABLE', TABLE_PREFIX . 'mxvp_sh');
+define('MAILLOG_TABLE', TABLE_PREFIX . 'mxvp_maillog');
+
+//OST ROOT Paths
+define('OST_WEB_ROOT', osTicket::get_root_path(__DIR__));
+define('OST_ROOT', INCLUDE_DIR . '../');
+define('PLUGINS_ROOT', INCLUDE_DIR . 'plugins/');
+
+if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on')
+    $proto = 'https://';
+else
+    $proto = 'http://';
+$serverURL = $proto . $_SERVER['SERVER_NAME'];
+define('HOST_PATH', $serverURL . osTicket::get_root_path(__DIR__));
+
+//Plugin Paths
+define('SUPERHANDLER_PLUGIN_ROOT', __DIR__ . '/');
+define('SUPERHANDLER_INCLUDE_DIR', SUPERHANDLER_PLUGIN_ROOT . 'include/');
+define('SUPERHANDLER_MODEL_DIR', SUPERHANDLER_PLUGIN_ROOT . 'model/');
+define('SUPERHANDLER_CONTROLLER_DIR', SUPERHANDLER_PLUGIN_ROOT . 'controller/');
+define('SUPERHANDLER_VENDOR_DIR', SUPERHANDLER_PLUGIN_ROOT . 'vendor/');
+define('SUPERHANDLER_FILTER_DIR', SUPERHANDLER_PLUGIN_ROOT . 'filter/');
+define('SUPERHANDLER_INSTALLFILES_DIR', SUPERHANDLER_PLUGIN_ROOT . 'installfiles/');
+
+//My includes
+require_once(SUPERHANDLER_FILTER_DIR . 'MxvpApiFilterTrigger.php');
+require_once(SUPERHANDLER_INCLUDE_DIR . 'tools.inc.php');
+//require_once(ROOT_PATH.'scripts/Multihost.class.php');
+
+//require_once (EQUIPMENT_VENDOR_DIR . 'autoload.php');
+spl_autoload_register('SuperhandlerPlugin::autoload');
+
+class SuperhandlerPlugin extends Plugin
+{
+    const FILTERAPIAFTER = 0;
+    const FILTERAPIASSIGN = 1;
+    public static $apiEnabled = false;
+    public static $apiKey = null;
+    var $config_class = 'SuperhandlerPluginConfig';
+    private $filter_api_info = null;
+    private $filter_api_config = null;
+
+    public static function autoload($className)
+    {
+        $className = ltrim($className, '\\');
+        $fileName = '';
+        $namespace = '';
+        if ($lastNsPos = strrpos($className, '\\')) {
+            $namespace = substr($className, 0, $lastNsPos);
+            $className = substr($className, $lastNsPos + 1);
+            $fileName = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
+        }
+        $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
+        $fileName = 'include/' . $fileName;
+
+        if (file_exists(SUPERHANDLER_PLUGIN_ROOT . $fileName)) {
+            require $fileName;
+        }
+    }
+
+    static public function callbackDispatch($object, $data)
+    {
+        $apiURL = url('^/mxvpsh/',
+            patterns(
+                'controller\APIController',
+                url_get('^(?P<url>.*)$', 'defaultAction')
+            )
+        );
+        $object->append($apiURL);
+    }
+
+    function bootstrap()
+    {
+        global $ost;
+        $this->bootstrapDebug();
+        if ($this->firstRun()) {
+            if (!$this->configureFirstRun()) {
+                return false;
+            }
+        } else if ($this->needUpgrade()) {
+            $this->configureUpgrade();
+        }
+
+        $config = $this->getConfig();
+        if ($config->get('mxvp_superhandler_enable')) {
+            self::$apiEnabled = true;
+        } else {
+            self::$apiEnabled = false;
+        }
+        if ($config->get('mxvp_superhandler_apikey') == '') {
+            self::$apiKey = null;
+        } else {
+            self::$apiKey = $config->get('mxvp_superhandler_apikey');
+        }
+
+        //Register this app
+        //Application::registerAdminApp('MIXvoip SuperhandlerPlugin','dispatcher.php/mxvpsh/admin');
+        //Application::registerStaffApp('MIXvoip SuperhandlerPlugin','dispatcher.php/mxvpsh/agent');
+        //Application::registerClientApp('MIXvoip SuperhandlerPlugin','dispatcher.php/mxvpsh/client');
+
+        //Signals: (They can have max 2 arguments)
+        //Signal::connect('apps.scp', array($this,'callbackDispatch')); //Not used ATM
+        Signal::connect('mxvp_filter', array($this, 'apiFilterExec'));
+        Signal::connect('ticket.created', array($this, 'ticketCreated'));
+        Signal::connect('mxvp_apicalled', array($this, 'apiCalled'));
+        Signal::connect('MXVP_LOG_MAIL', array($this, 'myLoggerMail'));
+        Signal::connect('ticket.assigned', array($this, 'ticketAssigned'));
+        Signal::connect('ticket.onmessage', array($this, 'ticketMessageAdded'));
+        Signal::connect('cron', array($this, 'runCron'));
+        //register new filter
+        FilterAction::register('MxvpApiAfterFilterTrigger', 'MIXvoip');
+
+        Filter::addSupportedMatches('MIXvoip', array('mail-to' => 'Mail To'));
+    }
+
+    function bootstrapDebug()
+    {
+        //$ost->
+    }
+
+    /**
+     * Checks if this is the first run of our plugin.
+     *
+     * @return boolean
+     */
+    function firstRun()
+    {
+        //TODO: Remove hardcoding and do it dynamicly when more files has to be added.
+        //return !file_exists(OST_ROOT.'mxvpsh.php');
+        return false;
+    }
+
+    /**
+     * Necessary functionality to configure first run of the application
+     */
+    function configureFirstRun()
+    {
+        //copy(SUPERHANDLER_INSTALLFILES_DIR.'mxvpsh.php',OST_ROOT.'mxvpsh.php');
+        return true;
+    }
+
+    function needUpgrade()
+    {
+        return false;//file_exists(SUPERHANDLER_INSTALLFILES_DIR.'updatefiles');
+    }
+
+    function configureUpgrade()
+    {
+        //copy(SUPERHANDLER_INSTALLFILES_DIR.'mxvpsh.php',OST_ROOT.'mxvpsh.php');
+        //if(!file_exists(SUPERHANDLER_INSTALLFILES_DIR.'keepfile')){
+        // unlink(SUPERHANDLER_INSTALLFILES_DIR.'updatefiles');
+        //}
+    }
+
+    /**
+     * Kicks off database installation scripts
+     *
+     * @return boolean
+     */
+    function createDBTables()
+    {
+    }
+
+    //################################## URL Handling #############################
+    //http://[OSTicketWebRoot]/scp/dispatcher.php/my_plugin/my_controller/arguments
+    //OST Don't let me use this URL and I don't want to debug this. ATM
+
+    /**
+     * Uninstall hook.
+     *
+     * @param type $errors
+     * @return boolean
+     */
+    function pre_uninstall(&$errors)
+    {
+        //if(file_exists(OST_ROOT.'mxvpsh.php')){
+        ///  unlink(OST_ROOT.'mxvpsh.php');
+        //}
+        return true;
+    }
+
+    //################################## MY STUFF #################################
+
+    function apiFilterExec($data)
+    {
+        $this->filter_type = $data['type'];
+        if ($this->filter_type === self::FILTERAPIASSIGN || $this->filter_type === self::FILTERAPIAFTER) {
+            $this->filter_api_info = $data['info'];
+            $this->filter_api_config = $data['config'];
+        }
+    }
+
+    /**
+     * Run cron jobs
+     * @param array $data Data
+     */
+    public function runCron($data)
+    {
+        global $ost;
+        $cfg = Multihost::getInstance()->getDefaultConfig();
+        //Get undispatched tickets and sen mail to marcin and clemens:
+        $file = '/tmp/ost_unassigned_send';
+        date_default_timezone_set('Europe/Berlin'); //Set the timezone manualy
+        $ignoreDepID = 18; //Gridmax
+        //Auto Bomb:
+//        $query = Ticket::objects();
+//        $query->filter(array('status__state' => 'open'));
+//        $query->filter(array('ticket_id' => '10712'));
+//        $query->filter(Q::not(array('dept_id' => $ignoreDepID)));
+//        /**@var Ticket $ticket */
+//        foreach ($query as $ticket) {
+//            $ticketID = $ticket->getId();
+//            var_dump($ticketID);
+//            $feQuery = DynamicFormEntry::objects();
+//            $feQuery->filter(Q::all(array('object_type' => 'T')),Q::all(array('object_id' => $ticketID)));
+//            /**@var DynamicFormEntry $dfe*/
+//            foreach ($feQuery as $dfe){
+//                $dfeID = $dfe->getId();
+//                var_dump($dfe->getAnswers());
+//            }
+//
+//        }
+        if (date('H') == '15' && !(date('N') == 6 || date('N') == 7) && !file_exists($file)) {
+            print_r("Send Mail notification");
+            $date = date("Y-m-d H:i:s");
+            `echo $date > $file`;
+
+            //General Headers
+            $header = "From: {$cfg->getAdminEmail()}\r\n";
+            $header .= "MIME-Version: 1.0\r\n";
+            $header .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+
+            //Unassigned Ticktes
+            $unassignedUID = Staff::getIdByUsername('unassigned');
+            $query = Ticket::objects();
+            $query->filter(array('status__state' => 'open'));
+            $query->filter(
+                Q::any(array(
+                    Q::any(array('staff_id' => 0)),
+                    Q::any(array('staff_id' => $unassignedUID)),
+                )),
+                Q::not(array('dept_id' => $ignoreDepID))
+            );
+            $query->order_by('created');
+            $body = "<html><body><h1>Unassined Tickets (" . date('Y-m-d') . "):</h1>
+                <table border=\"1\" cellpadding=\"2\" cellspacing=\"0\">
+                <tr>
+                <th>Ticket ID</th>
+                <th>Subject</th>
+                <th>Deparment</th>
+                <th>Created</th>
+                <th>URL</th>
+                </tr>";
+            $_host = 'https://service.mixvoip.com/scp/tickets.php?id=';
+            /**@var Ticket $ticket */
+            foreach ($query as $ticket) {
+                $url = $_host . $ticket->getId();
+                $subject = htmlentities($ticket->getSubject());
+                $deparment = $ticket->getDeptName();
+                $body .= "
+                <tr>
+                <td>{$ticket->getNumber()}</td>
+                <td>$subject</td>
+                <td>$deparment</td>
+                <td>{$ticket->getCreateDate()}</td>
+                <td><a href=\"$url\">$url</a></td>
+                </tr>
+                ";
+            }
+            $body .= "</table></body>";
+            $dests = array('claures@mixvoip.com', 'marcin@mixvoip.com', 'ckistinger@mixvoip.com');
+            foreach ($dests as $dest) {
+                $_header = $header . "To: $dest\r\n";
+                mail($dest, 'Unassigned Tickets from ' . $date, $body, $_header);
+            }
+
+            //Users on holiday tickets:
+            $soopData = file_get_contents("https://soop.mixvoip.com/Phone/getActiveUser/all/?apiKey=4gNGngbt3hEYiNQskHTy2skZ1QsFqwzCcIfEkIg3");
+            $soopData = json_decode($soopData,true);
+            $notifyStatus = array(3,4);
+            $allowedGroups = array(14,20); //14 == support lvl1, 20 == support lvl2
+            $hoildayUsers = array();
+            $send = false;
+            $body = "<html><body><h1>Absent/Holiday Tickets (" . date('Y-m-d') . "):</h1>
+                <table border=\"1\" cellpadding=\"2\" cellspacing=\"0\">
+                <tr>
+                <th>Ticket ID</th>
+                <th>Subject</th>
+                <th>Deparment</th>
+                <th>Created</th>
+                <th>URL</th>
+                </tr>";
+            foreach ($soopData as $data){
+                if(in_array($data['Phone']['status'],$notifyStatus) && in_array($data['Phone']['group_id'],$allowedGroups)){
+                    if(isset($data['Phone']['email']) && !empty($data['Phone']['email'])) {
+                        $username = substr($data['Phone']['email'],0,strpos($data['Phone']['email'],'@'));
+                        $UID = Staff::getIdByUsername($username);
+                        $query2 = Ticket::objects();
+                        $query2->filter(array('status__state' => 'open'));
+                        $query2->filter(
+                            Q::any(array('staff_id' => $UID))
+                        );
+                        $query2->order_by('created');
+                        $_body = '';
+                        foreach ($query2 as $ticket){
+                            $url = $_host . $ticket->getId();
+                            $subject = htmlentities($ticket->getSubject());
+                            $deparment = $ticket->getDeptName();
+                            $_body .= "
+                            <tr>
+                            <td>{$ticket->getNumber()}</td>
+                            <td>$subject</td>
+                            <td>$deparment</td>
+                            <td>{$ticket->getCreateDate()}</td>
+                            <td><a href=\"$url\">$url</a></td>
+                            </tr>
+                            ";
+                        }
+                        if($_body != ''){
+                            $send = true;
+                            $_st = ($data['Phone']['status'] == 3)?'Holiday':'Absent';
+                            $body .= "<tr>
+                            <th>{$data['Phone']['firstname']} {$data['Phone']['lastname']} [$_st]</th>
+                            </tr>". $_body;
+                        }
+                    }
+                }
+            }
+
+            $body .= "</table></body>";
+            if($send) {
+                foreach ($dests as $dest) {
+                    $_header = $header . "To: $dest\r\n";
+                    mail($dest, 'Absent/Holiday Tickets from ' . $date, $body, $_header);
+                }
+            }
+
+        }
+        if (date('H') == '20' && file_exists($file))
+            `rm $file`;
+    }
+
+    function myLoggerMail($data)
+    {
+        global $ost;
+        //print_r($data);
+        //file_put_contents('/tmp/ost_cl.txt',print_r($data,true),FILE_APPEND);
+        try {
+            $dsn = 'mysql:host=localhost;dbname=' . DBNAME;
+            $conn = new PDO($dsn, DBUSER, DBPASS);
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $stmt = $conn->prepare("INSERT INTO `ost_mxvp_maillog` (`channel`,`result`,`messageID`,`to`,`headers`,`body`) VALUES (:chan , :res , :msgid , :mto , :head , :body);");
+            $stmt->bindValue(':chan', $data['type'], PDO::PARAM_STR);
+            $stmt->bindValue(':res', $data['result'], PDO::PARAM_STR);
+            $stmt->bindValue(':msgid', $data['messageId'], PDO::PARAM_STR);
+            $stmt->bindValue(':mto', $data['to'], PDO::PARAM_STR);
+            $stmt->bindValue(':head', json_encode($data['headers']), PDO::PARAM_STR);
+            $stmt->bindValue(':body', $data['body'], PDO::PARAM_STR);
+            $stmt->execute();
+        } catch (PDOException $e) {
+            //echo $e->getMessage();
+            //die(' in pain');
+        }
+    }
+
+    /**
+     * @param Ticket $ticket
+     */
+    function ticketCreated($ticket)
+    {
+        if (isset($this->filter_api_config, $this->filter_api_info, $this->filter_type) && ($this->filter_type === self::FILTERAPIASSIGN || $this->filter_type === self::FILTERAPIAFTER)) {
+            $config = $this->filter_api_config;
+            $info = $this->filter_api_info;
+            $info['mxvp_ticketID'] = $ticket->ht['ticket_id'];
+            $info['mxvp_ticketNO'] = $ticket->ht['number'];
+            $deps = Dept::getDepartments();
+            $info['mxvp_depName'] = $deps[$ticket->ht['dept_id']];
+            if ($config['headers'] == '') {
+                $config['headers'] = array();
+            } else {
+                $config['headers'] = explode("\n", $config['headers']);
+            }
+            $config['url'] = MXVPTools::replaceVariables($config['url'], $info);
+            $config['postFields'] = MXVPTools::replaceVariables($config['postFields'], $info);
+            switch ($config['reqType']) {
+                case 'POST':
+                    $out = MXVPTools::doPost($config['url'], $config['postFields'], $config['headers']);
+                    break;
+                case 'GET':
+                default:
+                    $out = MXVPTools::doGet($config['url'], $config['headers']);
+                    break;
+            }
+            if ($config['useResponse'] == 1) {
+                $result = json_decode($out);
+                if ($result !== false) {
+                    if (isset($result->close) && $result->close) {
+                        if (!isset($result->agent)) $result->agent = 'unassigned';
+                    }
+                    if (isset($result->agent)) {
+                        if (isset($result->rule)) $rule = $result->rule;
+                        else $rule = 'API Auto Assign';
+                        /**Staff $staff*/
+                        $staff = Staff::lookup($result->agent);
+                        if (!$staff->canAccessDept($ticket->getDeptId())) {
+                            $ticket->setDeptId($staff->getDeptId());
+                        }
+                        $ticket->assignToStaff($result->agent, $rule, false);
+                    }
+                    if (isset($result->close) && $result->close)
+                        $ticket->setStatusId(3);
+                    $ticket->save(true);
+                }
+            }
+            $this->filter_api_config = null;
+            $this->filter_api_info = null;
+        }
+    }
+
+    /**
+     * Function called after a ticket has been created
+     * @param $data from the ticket
+     */
+    function ticketAssigned($data)
+    {
+        global $ost;
+        $cfg = Multihost::getInstance()->getDefaultConfig();
+        //Notification on assigment:
+        //Departments to use Notification on assigment
+        $sendNotificationDepartments = array('Sales', 'Five.lu', 'Legal', 'Marketing');
+        //Single user to use Notification on assigment
+        $sendNotificationUsers = array('claures');
+        /** @var Ticket $ticket */
+        $ticket = $data['ticket'];
+        /** @var Staff $staff */
+        $staff = null;
+        /** @var Team $team */
+        $team = null;
+        if ($data['assignee'] instanceof Staff) {
+            $staff = $data['assignee'];
+            $username = $staff->getUserName();
+        } else if ($data['assignee'] instanceof Team) {
+            $team = $data['assignee'];
+            $username = '';
+        }
+        $deptName = $ticket->getDeptName();
+        if (in_array($deptName, $sendNotificationDepartments) || in_array($username, $sendNotificationUsers)) {
+            $sub = $ticket->getSubject();
+            $tno = $ticket->getNumber();
+            $from = $ticket->getOwner()->getEmail();
+            $link = 'https://service.mixvoip.com/scp/tickets.php?id=' . $ticket->getId();
+            $url = 'https://chat.mixvoip.com/hooks/h3vyKTnWGvfsz9h3Z/QHb6BYrZJHr3qXbtSvXGjzsHW4E3KyLnM4x4CLuwn5nhz9ro';
+            $notification = json_encode(array(
+                "text" => "Ticket: " . $tno . " (" . $link . ")\nin department: " . $deptName . "\nFrom: *" . $from . "*" . "\nSubject: *" . $sub . "*",
+                "channel" => "@$username",
+                "username" => "New Ticket assinged to you:",
+                "icon_emoji" => ":tickets:"
+            ));
+            $headers = array('Content-Type: application/json');
+            MXVPTools::doPost($url, $notification, $headers);
+        }
+    }
+
+    function ticketMessageAdded($data)
+    {
+        global $ost;
+        $cfg = Multihost::getInstance()->getDefaultConfig();
+        //Notification on assigment:
+        //Departments to use Notification on reopen add
+        $sendNotificationDepartments = array(/*'Sales', 'Five.lu', 'Legal', 'Marketing'*/);
+        //Single user to use Notification on assigment
+        $sendNotificationUsers = array('claures');
+        /** @var Ticket $ticket */
+        $ticket = $data['ticket'];
+        /** @var Staff $staff */
+        $staff = null;
+        /** @var Team $team */
+        $team = null;
+        if ($data['assignee'] instanceof Staff) {
+            $staff = $data['assignee'];
+            $username = $staff->getUserName();
+        } else if ($data['assignee'] instanceof Team) {
+            $team = $data['assignee'];
+            $username = '';
+        }
+        $deptName = $ticket->getDeptName();
+        if (in_array($deptName, $sendNotificationDepartments) || in_array($username, $sendNotificationUsers)) {
+            $sub = $ticket->getSubject();
+            $tno = $ticket->getNumber();
+            $from = $ticket->getOwner()->getEmail();
+            $link = 'https://service.mixvoip.com/scp/tickets.php?id=' . $ticket->getId();
+            $url = 'https://chat.mixvoip.com/hooks/h3vyKTnWGvfsz9h3Z/QHb6BYrZJHr3qXbtSvXGjzsHW4E3KyLnM4x4CLuwn5nhz9ro';
+            $notification = json_encode(array(
+                "text" => "Ticket Status Change: " . $tno . " (" . $link . ")\nin department: " . $deptName . "\nFrom: *" . $from . "*" . "\nSubject: *" . $sub . "*",
+                "channel" => "@$username",
+                "username" => "New Ticket assinged to you:",
+                "icon_emoji" => ":tickets:"
+            ));
+            $headers = array('Content-Type: application/json');
+            MXVPTools::doPost($url, $notification, $headers);
+        }
+    }
+
+    //API Calls
+    function apiCalled()
+    {
+
+    }
+}

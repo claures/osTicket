@@ -1,5 +1,7 @@
 <?php
-if(!defined('OSTSTAFFINC') || !$staff || !$thisstaff) die('Access Denied');
+if (!defined('OSTSTAFFINC') || !$staff || !$thisstaff) {
+	die('Access Denied');
+}
 ?>
 
 <form action="profile.php" method="post" class="save" autocomplete="off">
@@ -19,7 +21,7 @@ if(!defined('OSTSTAFFINC') || !$staff || !$thisstaff) die('Access Denied');
         <tr><td colspan="2"><div>
         <div class="avatar pull-left" style="margin: 10px 15px; width: 100px; height: 100px;">
 <?php       $avatar = $staff->getAvatar();
-            echo $avatar;
+			echo $avatar;
 if ($avatar->isChangeable()) { ?>
           <div style="text-align: center">
             <a class="button no-pjax"
@@ -52,10 +54,10 @@ if ($avatar->isChangeable()) { ?>
           <td>
             <input type="text" size="20" maxlength="64" style="width: 145px" name="firstname"
               autofocus value="<?php echo Format::htmlchars($staff->firstname); ?>"
-              placeholder="<?php echo __("First Name"); ?>" />
+              placeholder="<?php echo __('First Name'); ?>" />
             <input type="text" size="20" maxlength="64" style="width: 145px" name="lastname"
               value="<?php echo Format::htmlchars($staff->lastname); ?>"
-              placeholder="<?php echo __("Last Name"); ?>" />
+              placeholder="<?php echo __('Last Name'); ?>" />
             <div class="error"><?php echo $errors['firstname']; ?></div>
             <div class="error"><?php echo $errors['lastname']; ?></div>
           </td>
@@ -100,7 +102,7 @@ if ($avatar->isChangeable()) { ?>
         </tr>
         <?php if ($bk = $staff->getAuthBackend()) { ?>
         <tr>
-          <td><?php echo __("Backend"); ?></td>
+          <td><?php echo __('Backend'); ?></td>
           <td><?php echo $bk->getName(); ?></td>
         </tr>
         <?php } ?>
@@ -158,8 +160,8 @@ if ($avatar->isChangeable()) { ?>
           <th colspan="2">
             <?php echo __('Preferences'); ?>
             <div><small><?php echo __(
-            "Profile preferences and settings"
-          ); ?>
+	'Profile preferences and settings'
+); ?>
             </small></div>
           </th>
         </tr>
@@ -169,11 +171,11 @@ if ($avatar->isChangeable()) { ?>
                 <select name="max_page_size">
                     <option value="0">&mdash; <?php echo __('System Default');?> &mdash;</option>
                     <?php
-                    $pagelimit = $staff->max_page_size ?: $cfg->getPageSize();
-                    for ($i = 5; $i <= 100; $i += 5) {
-                        $sel=($pagelimit==$i)?'selected="selected"':'';
-                         echo sprintf('<option value="%d" %s>'.__('show %s records').'</option>',$i,$sel,$i);
-                    } ?>
+					$pagelimit = $staff->max_page_size ?: $cfg->getPageSize();
+					for ($i = 5; $i <= 200; $i += 5) {
+						$sel = ($pagelimit == $i) ? 'selected="selected"' : '';
+						echo sprintf('<option value="%d" %s>' . __('show %s records') . '</option>', $i, $sel, $i);
+					} ?>
                 </select> <?php echo __('per page.');?>
             </td>
         </tr>
@@ -185,14 +187,19 @@ if ($avatar->isChangeable()) { ?>
                 <select name="auto_refresh_rate">
                   <option value="0">&mdash; <?php echo __('Disabled');?> &mdash;</option>
                   <?php
-                  $y=1;
-                   for($i=1; $i <=30; $i+=$y) {
-                     $sel=($staff->auto_refresh_rate==$i)?'selected="selected"':'';
-                     echo sprintf('<option value="%d" %s>%s</option>', $i, $sel,
-                        sprintf(_N('Every minute', 'Every %d minutes', $i), $i));
-                     if($i>9)
-                        $y=2;
-                   } ?>
+				  $y = 1;
+				   for ($i = 1; $i <= 30; $i += $y) {
+				   	$sel = ($staff->auto_refresh_rate == $i) ? 'selected="selected"' : '';
+				   	echo sprintf(
+					 	'<option value="%d" %s>%s</option>',
+					 	$i,
+					 	$sel,
+					 	sprintf(_N('Every minute', 'Every %d minutes', $i), $i)
+					 );
+				   	if ($i > 9) {
+				   		$y = 2;
+				   	}
+				   } ?>
                 </select>
             </td>
         </tr>
@@ -204,21 +211,28 @@ if ($avatar->isChangeable()) { ?>
             <td>
                 <select name="default_from_name">
                   <?php
-                   $options=array(
-                           'email' => __("Email Address Name"),
-                           'dept' => sprintf(__("Department Name (%s)"),
-                               __('if public' /* This is used in 'Department's Name (>if public<)' */)),
-                           'mine' => __('My Name'),
-                           '' => '— '.__('System Default').' —',
-                           );
-                  if ($cfg->hideStaffName())
-                    unset($options['mine']);
+				   $options = array(
+				   	'email' => __('Email Address Name'),
+				   	'dept' => sprintf(
+				   		__('Department Name (%s)'),
+				   		__('if public' /* This is used in 'Department's Name (>if public<)' */)
+				   	),
+				   	'mine' => __('My Name'),
+				   	'' => '— ' . __('System Default') . ' —',
+				   );
+				  if ($cfg->hideStaffName()) {
+				  	unset($options['mine']);
+				  }
 
-                  foreach($options as $k=>$v) {
-                      echo sprintf('<option value="%s" %s>%s</option>',
-                                $k,($staff->default_from_name==$k)?'selected="selected"':'',$v);
-                  }
-                  ?>
+				  foreach ($options as $k => $v) {
+				  	echo sprintf(
+					  	'<option value="%s" %s>%s</option>',
+					  	$k,
+					  	($staff->default_from_name == $k) ? 'selected="selected"' : '',
+					  	$v
+					  );
+				  }
+				  ?>
                 </select>
                 <div class="error"><?php echo $errors['default_from_name']; ?></div>
             </td>
@@ -230,18 +244,20 @@ if ($avatar->isChangeable()) { ?>
             <td>
                 <select name="thread_view_order">
                   <?php
-                   $options=array(
-                           'desc' => __('Descending'),
-                           'asc' => __('Ascending'),
-                           '' => '— '.__('System Default').' —',
-                           );
-                  foreach($options as $k=>$v) {
-                      echo sprintf('<option value="%s" %s>%s</option>',
-                                $k
-                                ,($staff->thread_view_order == $k) ? 'selected="selected"' : ''
-                                ,$v);
-                  }
-                  ?>
+				   $options = array(
+				   	'desc' => __('Descending'),
+				   	'asc' => __('Ascending'),
+				   	'' => '— ' . __('System Default') . ' —',
+				   );
+				  foreach ($options as $k => $v) {
+				  	echo sprintf(
+					  	'<option value="%s" %s>%s</option>',
+					  	$k,
+					  	($staff->thread_view_order == $k) ? 'selected="selected"' : '',
+					  	$v
+					  );
+				  }
+				  ?>
                 </select>
                 <div class="error"><?php echo $errors['thread_view_order']; ?></div>
             </td>
@@ -254,13 +270,19 @@ if ($avatar->isChangeable()) { ?>
                 <select name="default_signature_type">
                   <option value="none" selected="selected">&mdash; <?php echo __('None');?> &mdash;</option>
                   <?php
-                   $options=array('mine'=>__('My Signature'),'dept'=>sprintf(__('Department Signature (%s)'),
-                       __('if set' /* This is used in 'Department Signature (>if set<)' */)));
-                  foreach($options as $k=>$v) {
-                      echo sprintf('<option value="%s" %s>%s</option>',
-                                $k,($staff->default_signature_type==$k)?'selected="selected"':'',$v);
-                  }
-                  ?>
+				   $options = array('mine' => __('My Signature'), 'dept' => sprintf(
+				  	__('Department Signature (%s)'),
+				  	__('if set' /* This is used in 'Department Signature (>if set<)' */)
+				  ));
+				  foreach ($options as $k => $v) {
+				  	echo sprintf(
+					  	'<option value="%s" %s>%s</option>',
+					  	$k,
+					  	($staff->default_signature_type == $k) ? 'selected="selected"' : '',
+					  	$v
+					  );
+				  }
+				  ?>
                 </select>
                 <div class="error"><?php echo $errors['default_signature_type']; ?></div>
             </td>
@@ -274,11 +296,15 @@ if ($avatar->isChangeable()) { ?>
                   <option value="none" selected="selected">&mdash; <?php echo __('None');?> &mdash;</option>
                   <?php
 
-                  foreach(Export::$paper_sizes as $v) {
-                      echo sprintf('<option value="%s" %s>%s</option>',
-                                $v,($staff->default_paper_size==$v)?'selected="selected"':'',__($v));
-                  }
-                  ?>
+				  foreach (Export::$paper_sizes as $v) {
+				  	echo sprintf(
+					  	'<option value="%s" %s>%s</option>',
+					  	$v,
+					  	($staff->default_paper_size == $v) ? 'selected="selected"' : '',
+					  	__($v)
+					  );
+				  }
+				  ?>
                 </select>
                 <div class="error"><?php echo $errors['default_paper_size']; ?></div>
             </td>
@@ -294,9 +320,9 @@ if ($avatar->isChangeable()) { ?>
             <td><?php echo __('Time Zone');?>:</td>
             <td>
                 <?php
-                $TZ_NAME = 'timezone';
-                $TZ_TIMEZONE = $staff->timezone;
-                include STAFFINC_DIR.'templates/timezone.tmpl.php'; ?>
+				$TZ_NAME = 'timezone';
+				$TZ_TIMEZONE = $staff->timezone;
+				include STAFFINC_DIR . 'templates/timezone.tmpl.php'; ?>
                 <div class="error"><?php echo $errors['timezone']; ?></div>
             </td>
         </tr>
@@ -304,15 +330,16 @@ if ($avatar->isChangeable()) { ?>
             <td>
                 <select name="datetime_format">
 <?php
-    $datetime_format = $staff->datetime_format;
-    foreach (array(
-    'relative' => __('Relative Time'),
-    '' => '— '.__('System Default').' —',
-) as $v=>$name) { ?>
+	$datetime_format = $staff->datetime_format;
+	foreach (array(
+		'relative' => __('Relative Time'),
+		'' => '— ' . __('System Default') . ' —',
+	) as $v => $name) { ?>
                     <option value="<?php echo $v; ?>" <?php
-                    if ($v == $datetime_format)
-                        echo 'selected="selected"';
-                    ?>><?php echo $name; ?></option>
+					if ($v == $datetime_format) {
+						echo 'selected="selected"';
+					}
+					?>><?php echo $name; ?></option>
 <?php } ?>
                 </select>
             </td>
@@ -322,14 +349,14 @@ if ($avatar->isChangeable()) { ?>
             <td><?php echo __('Preferred Language'); ?>:</td>
             <td>
         <?php
-        $langs = Internationalization::getConfiguredSystemLanguages(); ?>
+		$langs = Internationalization::getConfiguredSystemLanguages(); ?>
                 <select name="lang">
                     <option value="">&mdash; <?php echo __('Use Browser Preference'); ?> &mdash;</option>
-<?php foreach($langs as $l) {
-    $selected = ($staff->lang == $l['code']) ? 'selected="selected"' : ''; ?>
-                    <option value="<?php echo $l['code']; ?>" <?php echo $selected;
-                        ?>><?php echo Internationalization::getLanguageDescription($l['code']); ?></option>
-<?php } ?>
+<?php foreach ($langs as $l) {
+			$selected = ($staff->lang == $l['code']) ? 'selected="selected"' : ''; ?>
+                    <option value="<?php echo $l['code']; ?>" <?php echo $selected; ?>><?php echo Internationalization::getLanguageDescription($l['code']); ?></option>
+<?php
+		} ?>
                 </select>
                 <span class="error">&nbsp;<?php echo $errors['lang']; ?></span>
             </td>
@@ -341,11 +368,12 @@ if ($avatar->isChangeable()) { ?>
             <td>
                 <select name="locale">
                     <option value=""><?php echo __('Use Language Preference'); ?></option>
-<?php foreach (Internationalization::allLocales() as $code=>$name) { ?>
+<?php foreach (Internationalization::allLocales() as $code => $name) { ?>
                     <option value="<?php echo $code; ?>" <?php
-                        if ($code == $staff->locale)
-                            echo 'selected="selected"';
-                    ?>><?php echo $name; ?></option>
+						if ($code == $staff->locale) {
+							echo 'selected="selected"';
+						}
+					?>><?php echo $name; ?></option>
 <?php } ?>
                 </select>
             </td>
@@ -363,9 +391,10 @@ if ($avatar->isChangeable()) { ?>
           <th colspan="2">
             <?php echo __('Signature'); ?>
             <div><small><?php echo __(
-            "Optional signature used on outgoing emails.")
-            .' '.
-            __('Signature is made available as a choice, on ticket reply.'); ?>
+						'Optional signature used on outgoing emails.'
+					)
+			. ' ' .
+			__('Signature is made available as a choice, on ticket reply.'); ?>
             </small></div>
           </th>
         </tr>

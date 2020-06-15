@@ -70,6 +70,8 @@ if ($thisstaff
         echo $thisstaff->getLanguage(); ?>/js"></script>
 <?php } ?>
 <script type="text/javascript" src="<?php echo ROOT_PATH; ?>scp/js/mxvp.js?9ae093d"></script>
+<script>hideAllEntry();</script>
+
 </body>
 </html>
 <?php } # endif X_PJAX ?>

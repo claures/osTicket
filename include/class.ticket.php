@@ -2484,6 +2484,7 @@ class Ticket extends TicketModel
     {
         global $thisstaff, $cfg;
 
+
         if (!$vars['poster'] && $thisstaff)
             $vars['poster'] = $thisstaff;
 
@@ -2582,6 +2583,26 @@ class Ticket extends TicketModel
                 if (isset($cc_mail) && $cc_mail !== '')
                     $options['cc'] = preg_replace("/(\r\n|\r|\n)/s", '', trim($cc_mail));
             }
+
+		if (strpos($msg['body'], '#__FEEDBACKLINK__#') !== false){
+			$responseId = $response->getId();
+			$ticketId = $this->getId();
+			$token = md5("{$ticketId}feedbackticketresponse{$responseId}");
+			$url = "https://service.mixvoip.com/feedback/?type=ticket&t_id={$ticketId}&r_id={$responseId}&token={$token}";
+
+			$feedbackLink = "<a href='{$url}' style='font-weight:900;text-decoration:underline;'>here</a>";
+			$feedbackMessage = "<hr><br>Was this answer helpful? Give your feedback {$feedbackLink}<br>";
+
+
+			$msg['body'] = str_replace('#__FEEDBACKLINK__#', $feedbackMessage, $msg['body']);
+			//var_dump($msg);die;
+		}
+		/*else{
+			$msg['body'] = str_replace('#__FEEDBACKLINK__#', '', $msg['body']);
+		}*/
+
+
+
             $email->send($user, $msg['subj'], $msg['body'], $attachments,
                 $options);
         }
