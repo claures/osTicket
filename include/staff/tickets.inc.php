@@ -152,13 +152,13 @@ switch ($queue_name) {
 		$cdatas = $cdata->filter(array('profile_id' => ''))->all();
             echo $cdata->getQuery();*/
 
-$sql='SELECT ticket_id FROM '.TICKET_TABLE.' T1 ,ost_ticket__cdata T2  '
+$sql='SELECT T1.ticket_id FROM '.TICKET_TABLE.' T1 ,ost_ticket__cdata T2  '
 
 	.' WHERE T2.profile_id = "" '
 
 	.' AND T1.ticket_id = T2.ticket_id'
 
-    .' AND T1.lastupdate > 2020-01-01 00:00:00'
+    .' AND T1.lastupdate > "2020-01-01 00:00:00"'
 
 	.' ORDER BY T1.created';
 
