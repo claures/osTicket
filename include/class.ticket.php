@@ -256,6 +256,7 @@ class TicketCData extends VerySimpleModel
     static $meta = array(
         'table' => TICKET_CDATA_TABLE,
         'pk' => array('ticket_id'),
+		'select_related' => 'lastupdate',
         'joins' => array(
             'ticket' => array(
                 'constraint' => array('ticket_id' => 'TicketModel.ticket_id'),
