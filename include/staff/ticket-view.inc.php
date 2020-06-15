@@ -566,7 +566,7 @@ foreach (DynamicFormEntry::forTicket($ticket->getId()) as $form) {
 					if (count($displayed) == 0) {
 						continue;
 					} ?>
-    <table class="ticket_info custom-data" cellspacing="0" cellpadding="0" width="940" border="0">
+    <table class="ticket_info " cellspacing="0" cellpadding="0" width="940" border="0">
     <thead>
         <th colspan="2"><?php echo Format::htmlchars($form->getTitle()); ?></th>
     </thead>
