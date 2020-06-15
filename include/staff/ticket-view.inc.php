@@ -609,7 +609,7 @@ foreach (DynamicFormEntry::forTicket($ticket->getId()) as $form) {
 						if (count($arrPid) > 1) {
 							$arrLinks = array();
 							foreach ($arrPid as $pid) {
-								$arrLinks[] = "<a href='/scripts/link_profile.php?ticket_id={$ticket->getId()}&pid={$pid}'></a>";
+								$arrLinks[] = "<a href='/scripts/link_profile.php?ticket_id={$ticket->getId()}&pid={$pid}'>$pid</a>";
 								//var_dump($pid);
 							}
 							echo  implode(' ', $arrLinks);
