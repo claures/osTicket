@@ -146,10 +146,10 @@ switch ($queue_name) {
     case 'test':
 		$status = 'test';
 		$staffId = $thisstaff->getId();
-		$results_type = __('Unassigned Tickets');
+		$results_type = __('Unassigned Profile');
 		$tickets->filter(Q::any(array(
-			Q::all(array('staff_id' => 0, 'team_id' => 0)),
-			Q::all(array('staff_id' => $unassignedUID)),
+			Q::all(array('profile_id' => '',)),
+
 		)));
 		$queue_sort_options = array('updated', 'priority,updated',
 			'priority,created', 'priority,due', 'due', 'answered', 'number',
