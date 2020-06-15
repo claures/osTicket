@@ -497,9 +497,7 @@ $tickets2->filter(array('ticket_id__in' => $tickets->values_flat('ticket_id')));
 
 // Transfer the order_by from the original tickets
 $tickets2->order_by($orig_tickets->getSortFields());
-if ($_GET['status'] == 'test') {
-	echo $tickets->getQuery();
-}
+
 $tickets = $tickets2;
 
 // Save the query to the session for exporting
