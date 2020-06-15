@@ -147,23 +147,18 @@ switch ($queue_name) {
 		$status = 'test';
 		$cdata = TicketCData::objects();
 		$results_type = __('Unassigned Profile');
-		//$cdatas=$cdata->filter(array('profile_id'=> ''))->all();
-		//$arrTicket=array();
-		Ticket::getMeta()->addJoin('cdata', array(
-			'constraint' => array(
-				'ticket_id' => 'cdata.ticket_id',
-                Q::not(array('cdata.profile_id' => ''))
-				)
-        ));
+		$cdatas=$cdata->filter(array('profile_id'=> ''))->all();
+		$arrTicket=array();
 
-	/*	foreach($cdatas as $data){
+
+	foreach($cdatas as $data){
 			$arrTicket[] = $data->ticket_id;
         }
-var_dump($arrTicket);*/
-		/*$tickets->options(Q::any(array(
+
+		$tickets->options(Q::any(array(
 		        //'ticket_id IN'=> '('.implode(',',$arrTicket).')'
-            'ticket_id'=>$arrTicket
-        )));*/
+            'ticket_id__in'=>$arrTicket
+        )));
 		$queue_sort_options = array('updated', 'priority,updated',
 			'priority,created', 'priority,due', 'due', 'answered', 'number',
 			'hot');
