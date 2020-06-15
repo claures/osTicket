@@ -578,7 +578,21 @@ foreach (DynamicFormEntry::forTicket($ticket->getId()) as $form) {
             <td width="200"><?php
 echo Format::htmlchars($label); ?>:</th>
             <td><?php
-echo $v; ?></td>
+				if ($label == 'PID') {
+					$arrPid = explode(';', $v);
+					if (count($arrPid) > 1) {
+						$arrLinks = array();
+						foreach ($arrPid as $pid) {
+							$arrLinks[] = $pid;//"<a href='/scripts/link_profile.php?ticket_id={$ticket->getId()}&pid={$pid}'></a>";
+						}
+						echo implode(' ', $arrLinks);
+					} else {
+						echo $v;
+					}
+				} else {
+					echo $v;
+				}
+				?></td>
         </tr>
 <?php
 	} ?>

@@ -145,18 +145,30 @@ switch ($queue_name) {
 		break;
 	case 'test':
 		$status = 'open';
+		/*
+				$cdata = TicketCData::objects();
+				$cdata->select_related('ticket');
+				$results_type = __('Unassigned Profile');
+				$cdatas = $cdata->filter(array('profile_id' => ''))->all();
+					echo $cdata->getQuery();*/
 
-        $cdata = TicketCData::objects();
-        $cdata->select_related('ticket');
-		$results_type = __('Unassigned Profile');
-		$cdatas = $cdata->filter(array('profile_id' => ''))->all();
-            echo $cdata->getQuery();
-		$arrTicket = array();
-var_dump($cdatas);
+		$sql = 'SELECT T1.ticket_id FROM ' . TICKET_TABLE . ' T1 ,ost_ticket__cdata T2  '
 
-	foreach ($cdatas as $data) {
-		$arrTicket[] = $data->ticket_id;
-	}
+			. ' WHERE T2.profile_id = "" '
+
+			. ' AND T1.ticket_id = T2.ticket_id'
+
+			. ' AND T1.lastupdate > "2020-01-01 00:00:00"'
+
+			. ' ORDER BY T1.created';
+
+
+		if (($res = db_query($sql)) && db_num_rows($res)) {
+
+			while ($ticketId = db_fetch_row($res)) {
+				$arrTicket[] = $ticketId[0];
+			}
+		}
 
 		$tickets->filter(array(
 			//'ticket_id IN'=> '('.implode(',',$arrTicket).')'
@@ -485,9 +497,7 @@ $tickets2->filter(array('ticket_id__in' => $tickets->values_flat('ticket_id')));
 
 // Transfer the order_by from the original tickets
 $tickets2->order_by($orig_tickets->getSortFields());
-if ($_GET['status'] == 'test') {
-	echo $tickets->getQuery();
-}
+
 $tickets = $tickets2;
 
 // Save the query to the session for exporting
