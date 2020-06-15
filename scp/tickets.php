@@ -116,13 +116,13 @@ if ($_POST && !$errors):
 			$msg = sprintf(
 				__('%s: Reply posted successfully'),
 				sprintf(
-							__('Ticket #%s'),
-							sprintf(
-								'<a href="tickets.php?id=%d"><b>%s</b></a>',
-								$ticket->getId(),
-								$ticket->getNumber()
-							)
-						)
+					__('Ticket #%s'),
+					sprintf(
+						'<a href="tickets.php?id=%d"><b>%s</b></a>',
+						$ticket->getId(),
+						$ticket->getNumber()
+					)
+				)
 			);
 
 			// Clear attachment list

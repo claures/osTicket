@@ -308,6 +308,7 @@ $.refreshTicketView = function(interval) {
 
       clearInterval(refresh);
       $.pjax({url: document.location.href, container:'#pjax-container'});
+      console.log('HEY');
     }, interval);
     $(document).on('pjax:start', function() {
         clearInterval(refresh);

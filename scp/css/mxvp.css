@@ -128,3 +128,7 @@ background:hotpink;
 table.ticket_info.custom-data td:first-child {
 	font-weight: bold;
 }
+
+#tickets .table td {
+	max-width: 400px;
+}
