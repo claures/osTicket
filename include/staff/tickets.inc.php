@@ -158,6 +158,7 @@ switch ($queue_name) {
 		        //'ticket_id IN'=> '('.implode(',',$arrTicket).')'
             'ticket_id'=>$arrTicket
         )));
+        var_dump($tickets->__toString());
 		$queue_sort_options = array('updated', 'priority,updated',
 			'priority,created', 'priority,due', 'due', 'answered', 'number',
 			'hot');
