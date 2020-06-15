@@ -153,7 +153,7 @@ switch ($queue_name) {
 		foreach($cdatas as $data){
 			$arrTicket[] = $data->ticket_id;
         }
-
+var_dump($arrTicket);
 		$tickets->filter(Q::any(array(
 		        //'ticket_id IN'=> '('.implode(',',$arrTicket).')'
             'ticket_id'=>$arrTicket
