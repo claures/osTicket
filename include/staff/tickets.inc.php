@@ -148,7 +148,7 @@ switch ($queue_name) {
 		$cdata = TicketCData::objects();
 		$results_type = __('Unassigned Profile');
 		$cdatas=$cdata->filter(array('profile_id'=> ''))->all();
-		$arrTicket=array()
+		$arrTicket=array();
 
 		foreach($cdatas as $data){
 			$arrTicket[] = $data->ticket_id;
