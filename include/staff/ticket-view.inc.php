@@ -588,7 +588,12 @@ echo Format::htmlchars($label); ?>:</th>
 						}
 						echo implode(' ', $arrLinks);
 					} else {
-						echo $v;
+						echo ' <span class="action-button pull-right"
+                data-dropdown="#action-dropdown-assignpid"
+                data-placement="bottom"
+                data-toggle="tooltip"
+              data-title="Assign to profile"
+                >'.$v.'</span>';
 					}
 				} else {
 					echo $v;
