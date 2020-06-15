@@ -12,7 +12,7 @@ TicketForm::ensureDynamicDataView();
 
 // Figure out REFRESH url — which might not be accurate after posting a
 // response
-list($path, ) = explode('?', $_SERVER['REQUEST_URI'], 2);
+list($path,) = explode('?', $_SERVER['REQUEST_URI'], 2);
 $args = array();
 parse_str($_SERVER['QUERY_STRING'], $args);
 
@@ -143,27 +143,31 @@ switch ($queue_name) {
 			'priority,created', 'priority,due', 'due', 'answered', 'number',
 			'hot');
 		break;
-    case 'test':
+	case 'test':
 		$status = 'open';
 
-		$cdata = TicketCData::objects();
-		$cdata->$meta['joins'] = array('ticket' => array(
-			'constraint' => array('ticket_id' => 'TicketModel.ticket_id'),
+
+		TicketCData::getMeta()->addJoin('ticket', array(
+			'constraint' => array(
+				'ticket_id' => 'TicketModel.ticket_id',
+			)
 		));
+        $cdata = TicketCData::objects();
+
 		$results_type = __('Unassigned Profile');
-		$cdatas=$cdata->filter(array('profile_id'=> ''))->all();
+		$cdatas = $cdata->filter(array('profile_id' => ''))->all();
             echo $cdata->getQuery();
-		$arrTicket=array();
+		$arrTicket = array();
 var_dump($cdatas);
 
-	foreach($cdatas as $data){
-			$arrTicket[] = $data->ticket_id;
-        }
+	foreach ($cdatas as $data) {
+		$arrTicket[] = $data->ticket_id;
+	}
 
 		$tickets->filter(array(
-		        //'ticket_id IN'=> '('.implode(',',$arrTicket).')'
-            'ticket_id__in'=>$arrTicket
-        ));
+			//'ticket_id IN'=> '('.implode(',',$arrTicket).')'
+			'ticket_id__in' => $arrTicket
+		));
 		$queue_sort_options = array('updated', 'priority,updated',
 			'priority,created', 'priority,due', 'due', 'answered', 'number',
 			'hot');
@@ -228,7 +232,7 @@ var_dump($cdatas);
 	default:
 	case 'search':
 		$queue_sort_options = array('updated', 'priority,updated', 'priority,created',
-			'priority,due', 'due',  'answered',
+			'priority,due', 'due', 'answered',
 			'closed', 'number', 'hot');
 		// Consider basic search
 		if ($_REQUEST['query']) {
@@ -261,7 +265,7 @@ var_dump($cdatas);
 			unset($_SESSION[$queue_key]);
 			break;
 		} // Apply user filter
-		elseif (isset($_GET['uid']) && ($user = User::lookup($_GET['uid']))) {
+        elseif (isset($_GET['uid']) && ($user = User::lookup($_GET['uid']))) {
 			$tickets->filter(array('user__id' => $_GET['uid']));
 			$results_type = sprintf(
 				'%s — %s',
@@ -461,7 +465,7 @@ switch ($sort_cols) {
 			break;
 		}
 
-		// no break
+	// no break
 	case 'priority,updated':
 		$tickets->order_by('cdata__:priority__priority_urgency', $orm_dir_r);
 	// Fall through for columns defined for `updated`
@@ -487,9 +491,9 @@ $tickets2->filter(array('ticket_id__in' => $tickets->values_flat('ticket_id')));
 
 // Transfer the order_by from the original tickets
 $tickets2->order_by($orig_tickets->getSortFields());
-    if($_GET['status'] == 'test') {
-		echo $tickets->getQuery();
-	}
+if ($_GET['status'] == 'test') {
+	echo $tickets->getQuery();
+}
 $tickets = $tickets2;
 
 // Save the query to the session for exporting
@@ -549,7 +553,7 @@ $tickets->constrain(array('lock' => array(
 <div id='basic_search'>
     <div class="pull-right" style="height:25px">
         <span class="valign-helper"></span>
-        <?php
+		<?php
 		require STAFFINC_DIR . 'templates/queue-sort.tmpl.php';
 		?>
     </div>
@@ -583,10 +587,12 @@ return false;">
             <div class="pull-left flush-left">
                 <h2><a href="<?php echo $refresh_url; ?>"
                        title="<?php echo __('Refresh'); ?>"><i class="icon-refresh"></i> <?php echo
-						$results_type; ?></a></h2><a href='tickets.php?status=mxvp&mxvptype=user&mxvpid=<?php echo $thisstaff->getId();?>'>My tickets</a>
+						$results_type; ?></a></h2><a
+                        href='tickets.php?status=mxvp&mxvptype=user&mxvpid=<?php echo $thisstaff->getId(); ?>'>My
+                    tickets</a>
             </div>
             <div class="pull-right flush-right">
-                <?php
+				<?php
 				if ($count) {
 					Ticket::agentActions($thisstaff, array('status' => $status));
 				} ?>
@@ -596,7 +602,7 @@ return false;">
 </div>
 <div class="clear"></div>
 <form action="tickets.php" method="POST" name='tickets' id="tickets">
-    <?php csrf_token(); ?>
+	<?php csrf_token(); ?>
     <input type="hidden" name="a" value="mass_process">
     <input type="hidden" name="do" id="action" value="">
     <input type="hidden" name="status" value="<?php echo
@@ -604,12 +610,12 @@ return false;">
     <table class="list table table-hover table-bordered table-sm">
         <thead>
         <tr>
-            <?php
+			<?php
 			if ($thisstaff->canManageTickets()) { ?>
                 <th max-width="1.5em">&nbsp;</th>
-            <?php } ?>
+			<?php } ?>
 
-            <?php
+			<?php
 			$colNum = 10;
 			// Swap some columns based on the queue.
 			if ($queue_name == 'assigned') {
@@ -671,7 +677,7 @@ return false;">
         </tr>
         </thead>
         <tbody>
-        <?php
+		<?php
 		// Setup Subject field for display
 		$subject_field = TicketForm::getInstance()->getField('subject');
 		$class = 'row1';
@@ -730,17 +736,17 @@ return false;">
 				$statusClass = 'status_open';
 			} ?>
             <tr id="<?php echo $T['ticket_id']; ?>" class="<?= $statusClass ?>">
-                <?php if ($thisstaff->canManageTickets()) {
-				$sel = false;
-				if ($ids && in_array($T['ticket_id'], $ids)) {
-					$sel = true;
-				} ?>
+				<?php if ($thisstaff->canManageTickets()) {
+					$sel = false;
+					if ($ids && in_array($T['ticket_id'], $ids)) {
+						$sel = true;
+					} ?>
                     <td align="center" class="nohover">
                         <input class="ckb" type="checkbox" name="tids[]"
                                value="<?php echo $T['ticket_id']; ?>" <?php echo $sel ? 'checked="checked"' : ''; ?>>
                     </td>
-                <?php
-			} ?>
+					<?php
+				} ?>
                 <td title="<?php echo $T['user__default_email__address']; ?>" nowrap>
                     <a class="Icon <?php echo strtolower($T['source']); ?>Ticket preview"
                        title="Preview Ticket"
@@ -748,24 +754,24 @@ return false;">
                        data-preview="#tickets/<?php echo $T['ticket_id']; ?>/preview"
                     ><?php echo $tid; ?></a></td>
                 <td align="center" nowrap>
-                    <?php
+					<?php
 					echo Format::datetime($T[$date_col ?: 'lastupdate']) ?: $date_fallback; ?>
                 </td>
                 <td>
                     <div
                             class="<?php if ($flag) { ?>Icon <?php echo $flag; ?>Ticket <?php } ?>link truncate"
-                        <?php if ($flag) { ?> title="<?php echo ucfirst($flag); ?> Ticket" <?php } ?>
+						<?php if ($flag) { ?> title="<?php echo ucfirst($flag); ?> Ticket" <?php } ?>
                             href="tickets.php?id=<?php echo $T['ticket_id']; ?>"><?php echo $subject; ?></div>
-                    <?php
+					<?php
 					if ($T['attachment_count']) {
 						echo '<i class="small icon-paperclip icon-flip-horizontal" data-toggle="tooltip" title="'
 							. $T['attachment_count'] . '"></i>';
 					}
-			if ($threadcount > 1) { ?>
+					if ($threadcount > 1) { ?>
                         <span class="pull-right faded-more"><i class="icon-comments-alt"></i>
                             <small><?php echo $threadcount; ?></small>
                         </span>
-                    <?php } ?>
+					<?php } ?>
                 </td>
                 <td nowrap>
                     <div class="ticket-subject"><?php
@@ -774,39 +780,40 @@ return false;">
 								. $T['collab_count'] . '"><i class="icon-group"></i></span>';
 						} ?><span class="truncate" style=""><?php
 							$un = new UsersName($T['user__name']);
-			echo Format::htmlchars($un) . ' &lt;' . Format::htmlchars($T['user__default_email__address']) . '&gt;'; ?></span></div>
+							echo Format::htmlchars($un) . ' &lt;' . Format::htmlchars($T['user__default_email__address']) . '&gt;'; ?></span>
+                    </div>
                 </td>
-                <?php
+				<?php
 				$displaystatus = TicketStatus::getLocalById($T['status_id'], 'value', $T['status__name']);
-			if ($T['isanswered'] && $T['status_id'] < 2) {
-				$displaystatus = 'Answered';
-			}
-			if (!strcasecmp($T['status__state'], 'open')) {
-				$displaystatus = "<b>$displaystatus</b>";
-			}
-			echo "<td>$displaystatus</td>"; ?>
+				if ($T['isanswered'] && $T['status_id'] < 2) {
+					$displaystatus = 'Answered';
+				}
+				if (!strcasecmp($T['status__state'], 'open')) {
+					$displaystatus = "<b>$displaystatus</b>";
+				}
+				echo "<td>$displaystatus</td>"; ?>
                 <td class="nohover ticketPrio" align="center"
                     style="background-color:<?php echo $T['cdata__:priority__priority_color']; ?>;">
-                    <?php echo $T['cdata__:priority__priority_desc']; ?></td>
+					<?php echo $T['cdata__:priority__priority_desc']; ?></td>
                 <td nowrap><span class="truncate" style="max-width: 169px"><?php
 						echo ($T['staff_id'] == $thisstaff->getId()) ? '<b>' . Format::htmlchars($lc) . '</b>' : Format::htmlchars($lc); ?></span>
                 </td>
-                <?php if (isset($queue_columns['dept']) && $showassigned) {
-							/**@var $_dept Dept */
-							$_dept = Dept::lookup($T['dept_id']);
-							$lc2 = $_dept->getFullName();
-							//$lc2 = Dept::getLocalById($T['dept_id'], 'name', $T['dept__name']);
+				<?php if (isset($queue_columns['dept']) && $showassigned) {
+					/**@var $_dept Dept */
+					$_dept = Dept::lookup($T['dept_id']);
+					$lc2 = $_dept->getFullName();
+					//$lc2 = Dept::getLocalById($T['dept_id'], 'name', $T['dept__name']);
 					?>
                     <td nowrap><span class="truncate" style="max-width: 169px">
                         <?php echo Format::htmlchars($lc2); ?></span>
                     </td>
-                <?php
-						} ?>
+					<?php
+				} ?>
                 <td nowrap>
-                    <?= $teamName ?>
+					<?= $teamName ?>
                 </td>
             </tr>
-            <?php
+			<?php
 		} //end of foreach
 		if (!$total) {
 			$ferror = __('There are no tickets matching your criteria.');
@@ -816,26 +823,26 @@ return false;">
         <tfoot>
         <tr>
             <td colspan="<?= $colNum ?>">
-                <?php if ($total && $thisstaff->canManageTickets()) { ?>
-                    <?php echo __('Select'); ?>:&nbsp;
+				<?php if ($total && $thisstaff->canManageTickets()) { ?>
+					<?php echo __('Select'); ?>:&nbsp;
                     <a id="selectAll" href="#ckb"><?php echo __('All'); ?></a>&nbsp;&nbsp;
                     <a id="selectNone" href="#ckb"><?php echo __('None'); ?></a>&nbsp;&nbsp;
                     <a id="selectToggle" href="#ckb"><?php echo __('Toggle'); ?></a>&nbsp;&nbsp;
-                <?php } else {
-			echo '<i>';
-			echo $ferror ? Format::htmlchars($ferror) : __('Query returned 0 results.');
-			echo '</i>';
-		} ?>
+				<?php } else {
+					echo '<i>';
+					echo $ferror ? Format::htmlchars($ferror) : __('Query returned 0 results.');
+					echo '</i>';
+				} ?>
             </td>
         </tr>
         </tfoot>
     </table>
-    <?php
+	<?php
 	if ($total > 0) { //if we actually had any tickets returned.
 	?>
     <div>
         <span class="faded pull-right"><?php echo $pageNav->showing(); ?></span>
-        <?php
+		<?php
 		echo __('Page') . ':' . $pageNav->getPageLinks() . '&nbsp;';
 		echo sprintf(
 			'<a class="export-csv no-pjax" href="?%s">%s</a>',
@@ -854,7 +861,7 @@ return false;">
     <a class="close" href=""><i class="icon-remove-circle"></i></a>
     <hr/>
     <p class="confirm-action" style="display:none;" id="mark_overdue-confirm">
-        <?php echo __('Are you sure you want to flag the selected tickets as <font color="red"><b>overdue</b></font>?'); ?>
+		<?php echo __('Are you sure you want to flag the selected tickets as <font color="red"><b>overdue</b></font>?'); ?>
     </p>
     <div><?php echo __('Please confirm to continue.'); ?></div>
     <hr style="margin-top:1em"/>
