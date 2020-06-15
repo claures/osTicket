@@ -149,7 +149,7 @@ switch ($queue_name) {
 		$results_type = __('Unassigned Profile');
 		$cdatas=$cdata->filter(array('profile_id'=> ''))->all();
 		$arrTicket=array();
-
+var_dump($cdatas);
 
 	foreach($cdatas as $data){
 			$arrTicket[] = $data->ticket_id;
