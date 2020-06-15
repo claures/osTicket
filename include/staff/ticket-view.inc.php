@@ -609,7 +609,7 @@ foreach (DynamicFormEntry::forTicket($ticket->getId()) as $form) {
 						if (count($arrPid) > 1) {
 							$arrLinks = array();
 							foreach ($arrPid as $pid) {
-								$arrLinks[] = "<a href='/scripts/link_profile.php?ticket_id={$ticket->getId()}&pid={$pid}'>$pid</a>";
+								$arrLinks[] = "<span class='assignTicketToPid' data-ticketId='{$ticket->getId()}' data-profileId='$pid'>$pid</span>";
 								//var_dump($pid);
 							}
 							echo  implode(' ', $arrLinks);
@@ -1193,6 +1193,25 @@ $tcount = $ticket->getThreadEntries($types)->count();
         $('.contact-btn').click(function () {
             $('#side-box').toggleClass('open-box');
         });
+
+       $('.assignTicketToPid').click(function(){
+           let tid = $(this).data('ticketid');
+           let profile_id = $(this).data('profileid');
+           $.ajax({
+               method: 'POST',
+               url: '../scripts/link_profile.php.php',
+               data: {
+                   ticket_id: tid,
+                   pid: profile_id,
+               },
+               dataType: 'json'
+           }).success(function (data) {
+               if (data.success) {
+                   location.reload();
+               }
+           });
+
+       })
     });
 
 </script>

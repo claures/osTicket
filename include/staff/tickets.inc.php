@@ -160,6 +160,8 @@ switch ($queue_name) {
 
 			. ' AND T1.lastupdate > "2020-01-01 00:00:00"'
 
+            .' AND  T1.status_id IN (1,7)'
+
 			. ' ORDER BY T1.created';
 
 
