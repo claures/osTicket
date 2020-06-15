@@ -155,7 +155,8 @@ switch ($queue_name) {
         }
 
 		$tickets->filter(Q::any(array(
-		        'ticket_id IN'=> '('.implode(',',$arrTicket).')'
+		        //'ticket_id IN'=> '('.implode(',',$arrTicket).')'
+            'ticket_id'=>$arrTicket
         )));
 		$queue_sort_options = array('updated', 'priority,updated',
 			'priority,created', 'priority,due', 'due', 'answered', 'number',
