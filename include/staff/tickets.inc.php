@@ -149,12 +149,12 @@ switch ($queue_name) {
 		$results_type = __('Unassigned Profile');
 		//$cdatas=$cdata->filter(array('profile_id'=> ''))->all();
 		//$arrTicket=array();
-		Ticket::getMeta()->addJoin('OstTicket__cdata', array(
+		Ticket::getMeta()->addJoin('cdata', array(
 			'constraint' => array(
-				'ticket_id' => 'OstTicket__cdata.ticket_id',
+				'ticket_id' => 'cdata.ticket_id',
 				)
-		,
-			'null' => true
+
+
         ));
 
 	/*	foreach($cdatas as $data){
