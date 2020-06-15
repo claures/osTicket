@@ -583,9 +583,10 @@ echo Format::htmlchars($label); ?>:</th>
 					if (count($arrPid) > 1) {
 						$arrLinks = array();
 						foreach ($arrPid as $pid) {
-							$arrLinks[] = $pid;//"<a href='/scripts/link_profile.php?ticket_id={$ticket->getId()}&pid={$pid}'></a>";
+							$arrLinks[] = "<a href='/scripts/link_profile.php?ticket_id={$ticket->getId()}&pid={$pid}'></a>";
+							var_dump($pid);
 						}
-						echo implode(' ', $arrLinks);
+						echo Format::htmlchars(implode(' ', $arrLinks));
 					} else {
 						echo $v;
 					}
