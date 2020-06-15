@@ -145,12 +145,29 @@ switch ($queue_name) {
 		break;
 	case 'test':
 		$status = 'open';
-
+/*
         $cdata = TicketCData::objects();
         $cdata->select_related('ticket');
 		$results_type = __('Unassigned Profile');
 		$cdatas = $cdata->filter(array('profile_id' => ''))->all();
-            echo $cdata->getQuery();
+            echo $cdata->getQuery();*/
+
+$sql='SELECT ticket_id FROM '.TICKET_TABLE.' T1 ,ost_ticket__cdata T2  '
+
+	.' WHERE T2.profile_id = "" '
+
+	.' AND T1.ticket_id = T2.ticket_id'
+
+    .' AND T1.lastupdate > 2020-01-01 00:00:00'
+
+	.' ORDER BY T1.created';
+
+if(($res=db_query($sql)) && db_num_rows($res)) {
+
+	while ($test = db_fetch_row($res)) {
+        var_dump($test);
+	}
+}die;
 		$arrTicket = array();
 var_dump($cdatas);
 
