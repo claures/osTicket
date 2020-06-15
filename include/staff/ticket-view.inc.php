@@ -1195,8 +1195,8 @@ $tcount = $ticket->getThreadEntries($types)->count();
         });
 
        $('.assignTicketToPid').click(function(){
-           let tid = $(this).data('ticketid');
-           let profile_id = $(this).data('profileid');
+           var tid = $(this).data('ticketid');
+           var profile_id = $(this).data('profileid');
            $.ajax({
                method: 'POST',
                url: '../scripts/link_profile.php',
