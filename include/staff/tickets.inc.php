@@ -166,7 +166,7 @@ switch ($queue_name) {
 		if (($res = db_query($sql)) && db_num_rows($res)) {
 
 			while ($ticketId = db_fetch_row($res)) {
-				$arrTicket[] = $ticketId;
+				$arrTicket[] = $ticketId[0];
 			}
 		}
 
