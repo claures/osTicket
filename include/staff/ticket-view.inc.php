@@ -1199,7 +1199,7 @@ $tcount = $ticket->getThreadEntries($types)->count();
            let profile_id = $(this).data('profileid');
            $.ajax({
                method: 'POST',
-               url: '../scripts/link_profile.php.php',
+               url: '../scripts/link_profile.php',
                data: {
                    ticket_id: tid,
                    pid: profile_id,
