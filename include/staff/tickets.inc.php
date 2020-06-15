@@ -147,10 +147,7 @@ switch ($queue_name) {
 		$status = 'test';
 		$staffId = $thisstaff->getId();
 		$results_type = __('Unassigned Profile');
-		$tickets->filter(Q::any(array(
-			Q::all(array('profile_id' => '',)),
-
-		)));
+		$tickets->filter(array('profile_id'=> ''));
 		$queue_sort_options = array('updated', 'priority,updated',
 			'priority,created', 'priority,due', 'due', 'answered', 'number',
 			'hot');
