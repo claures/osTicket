@@ -152,6 +152,7 @@ switch ($queue_name) {
 		Ticket::getMeta()->addJoin('cdata', array(
 			'constraint' => array(
 				'ticket_id' => 'cdata.ticket_id',
+                Q::not(array('cdata.profile_id' => ''))
 				)
         ));
 
