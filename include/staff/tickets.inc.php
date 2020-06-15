@@ -147,6 +147,9 @@ switch ($queue_name) {
 		$status = 'open';
 
 		$cdata = TicketCData::objects();
+		$cdata->$meta['joins'] = array('ticket' => array(
+			'constraint' => array('ticket_id' => 'TicketModel.ticket_id'),
+		));
 		$results_type = __('Unassigned Profile');
 		$cdatas=$cdata->filter(array('profile_id'=> ''))->all();
             echo $cdata->getQuery();
