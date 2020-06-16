@@ -1413,19 +1413,18 @@ class TicketsAjaxAPI extends AjaxController
 				ini_set('display_errors', 1);
 				ini_set('display_startup_errors', 1);
 				error_reporting(E_ALL);
-				require_once '/var/www/service.mixvoip.com/scripts/include/config.php';
 
-				$sql = 'INSERT INTO `internalcontacts`(`id`, `firstname`, `lastname`, `email`,`number1`)' .
-					"VALUES (NULL,{$_POST['firstname']},{$_POST['lastname']},$email,{$_POST['number']})";
-				$db->query($sql, 'WRITE');
-				$ContactId = $db->insert_id();
-				$sql2 = 'INSERT INTO `internalcontacts_profiles`(`id`, `internalcontact_id`, `profile_id`, `linkedby`, `linkeddate`, `jobtitle`)'
-					. "VALUES (NULL,$contactId,{$_POST['profile_id']},'TicketSystem')";
-				$db->query($sql2, 'WRITE');
-				$sql = 'UPDATE ost_ticket__cdata SET profile_id = "'.$_POST['profile_id'].'" '
-					. ' WHERE ticket_id = "'.$tid.'" ';
+				$ch = curl_init('https://service.mixvoip.com/scripts/guess_profile.php');
+				curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+				curl_setopt($ch, CURLOPT_POST, 1);
+				curl_setopt($ch, CURLOPT_POSTFIELDS, $_POST);
+				$output = curl_exec($ch);
+				curl_close($ch);
+				$return = json_decode($output, true);
+				if($return['success'])Http::response(200, 'updated and assigned');
+				else Http::response(500, 'not updated and nots assigned');
 
-				if ($res = db_query($sql))Http::response(200, 'updated and assigned');
 			}
 
 			include STAFFINC_DIR . 'templates/assign-profile.tmpl.php';
