@@ -45,7 +45,7 @@ $action = $info[':action'] ?: ('#');
             <tr><td colspan=2>
              <?php
 
-             $options = array('template' => 'simple', 'form_id' => 'assign');
+             $options = array('template' => 'dynamic-form-simple.tmpl.php', 'form_id' => 'assign');
              $form->render(true,'Assign profile',$options);
              ?>
             </td> </tr>
