@@ -4989,9 +4989,8 @@ ob_start();
 			'placeholder' => '',
 			'translatable' => false,
 			'autofocus' => true,
-			'disabled' => 'not',
+			'name' => 'not',
 			'maxlength' => 255,
-			'readonly' => false,
 			'classes' => 'mxvpField'
 		);
 	}
