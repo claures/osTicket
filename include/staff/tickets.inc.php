@@ -167,7 +167,7 @@ switch ($queue_name) {
 
 			. ' ORDER BY T1.created';
 
-		var_dump($sql);
+
 
 
 		if (($res = db_query($sql)) && db_num_rows($res)) {
