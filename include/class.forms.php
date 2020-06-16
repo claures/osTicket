@@ -4991,6 +4991,7 @@ ob_start();
 			'autofocus' => true,
 			'disabled' => false,
 			'maxlength' => 255,
+			'readonly' => false,
 			'classes' => 'mxvpField'
 		);
 	}
