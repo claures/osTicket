@@ -1366,6 +1366,7 @@ class TicketsAjaxAPI extends AjaxController
 		if (($res = db_query($sql)) && db_num_rows($res)) {
 			$queryResult = null;
 			while ($result = db_fetch_row($res)) {
+				var_dump($result);
 				$queryResult = $result[0];
 			}
 			if (!empty($queryResult)) {
@@ -1413,6 +1414,7 @@ class TicketsAjaxAPI extends AjaxController
 			/*	ini_set('display_errors', 1);
 				ini_set('display_startup_errors', 1);
 				error_reporting(E_ALL);*/
+			var_dump($email);
 			$_POST['email'] = $email;
 				$ch = curl_init('https://service.mixvoip.com/scripts/createInternalContact.php');
 				curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
