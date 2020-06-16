@@ -1350,10 +1350,10 @@ class TicketsAjaxAPI extends AjaxController {
 
 		$form = new Form();
 		$fields = array();
-		$fields[] = new FormField(array('type' => 'text','label' => 'Firstname','required' => true))->widget = 'TextboxWidget';
-		$fields[] = new FormField(array('type' => 'text','label' => 'Lastname','required' => true))->widget = 'TextboxWidget';
-		$fields[] = new FormField(array('type' => 'text','label' => 'Number'))->widget = 'TextboxWidget';;
-		$fields[] = new FormField(array('type' => 'text','label' => 'Profile','required' => true))->widget = 'TextboxWidget';;
+		$fields[] = new FormField(array('type' => 'text','label' => 'Firstname','required' => true));
+		$fields[] = new FormField(array('type' => 'text','label' => 'Lastname','required' => true));
+		$fields[] = new FormField(array('type' => 'text','label' => 'Number'));
+		$fields[] = new FormField(array('type' => 'text','label' => 'Profile','required' => true));
 		$form->setFields($fields);
 
 		if ($_POST && $form->isValid()) {
