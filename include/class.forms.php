@@ -4989,7 +4989,7 @@ ob_start();
 			'placeholder' => '',
 			'translatable' => false,
 			'autofocus' => true,
-			'disabled' => false,
+			'disabled' => 'not',
 			'maxlength' => 255,
 			'readonly' => false,
 			'classes' => 'mxvpField'
