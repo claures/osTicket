@@ -1359,40 +1359,75 @@ class TicketsAjaxAPI extends AjaxController
 		if (!($ticket = Ticket::lookup($tid)))
 			Http::response(404, __('No such ticket'));
 
-
-		$errors = array();
-		$info = array(
-			':title' => sprintf(__('Ticket #%s: %s'),
-				$ticket->getNumber(),
-				sprintf('%s %s',
-					__('Assign'),
-					__('to profile')
-				)),
-			':action' => sprintf('#tickets/%d/assign/profile%s',
-				$ticket->getId(),
-				($target ? "/$target" : '')),
-		);
-
-		$form = new Form();
-		$fields = array();
-		$fields[] = new MXVPField(array('type' => 'text', 'label' => 'Firstname' , 'id'=> 'firstname', 'required' => true));
-		$fields[] = new MXVPField(array('type' => 'text', 'label' => 'Lastname', 'id'=> 'lastname','required' => true));
-		$fields[] = new MXVPField(array('type' => 'text', 'label' => 'Number','id'=> 'number'));
-		$fields[] = new MXVPField(array(
-			'type' => 'text',
-			'label' => 'Profile',
-			'required' => true,
-			'id'=> 'profile_id',
-			'config' => array('placeholder' => 'Profile','translatable' => false,'autofocus' => true,'disabled'=>false,'maxlength' => 255,'classes' => 'mxvpField')
-		));
-		$form->setFields($fields);
-
-		if ($_POST ) {
-			var_dump($_POST);
-
+		$sql = 'SELECT U.address FROM ' . TICKET_TABLE . ' T1 , ost_user_email U'
+			. " WHERE T1.ticket_id = {$tid}"
+			. ' AND U.user_id = T1.user_id';
+		$email = null;
+		if (($res = db_query($sql)) && db_num_rows($res)) {
+			$queryResult = null;
+			while ($result = db_fetch_row($res)) {
+				$queryResult = $result[0];
+			}
+			if (!empty($queryResult)) {
+				$email = $queryResult['address'];
+			}
 		}
+		$ch = curl_init('https://service.mixvoip.com/scripts/guess_profile.php');
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_POST, 1);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, array('ticket_id' => $tid, 'email' => $email));
+		$output = curl_exec($ch);
+		curl_close($ch);
+		$return = json_decode($output, true);
+		$success = $return['success'];
+		if (!$success) {
+			$errors = array();
+			$info = array(
+				':title' => sprintf(__('Ticket #%s: %s'),
+					$ticket->getNumber(),
+					sprintf('%s %s',
+						__('Assign'),
+						__('to profile')
+					)),
+				':action' => sprintf('#tickets/%d/assign/profile%s',
+					$ticket->getId(),
+					($target ? "/$target" : '')),
+			);
 
-		include STAFFINC_DIR . 'templates/assign-profile.tmpl.php';
+			$form = new Form();
+			$fields = array();
+			$fields[] = new MXVPField(array('type' => 'text', 'label' => 'Firstname', 'id' => 'firstname', 'required' => true));
+			$fields[] = new MXVPField(array('type' => 'text', 'label' => 'Lastname', 'id' => 'lastname', 'required' => true));
+			$fields[] = new MXVPField(array('type' => 'text', 'label' => 'Number', 'id' => 'number'));
+			$fields[] = new MXVPField(array(
+				'type' => 'text',
+				'label' => 'Profile',
+				'required' => true,
+				'id' => 'profile_id',
+				'config' => array('placeholder' => 'Profile', 'translatable' => false, 'autofocus' => true, 'disabled' => false, 'maxlength' => 255, 'classes' => 'mxvpField')
+			));
+			$form->setFields($fields);
+			$email = '';
+			if ($_POST) {
+				require_once '/var/www/service.mixvoip.com/scripts/include/config.php';
+				$sql = 'INSERT INTO `internalcontacts`(`id`, `firstname`, `lastname`, `email`,`number1`)' .
+					"VALUES (NULL,{$_POST['firstname']},{$_POST['lastname']},$email,{$_POST['number']})";
+				$db->query($sql, 'WRITE');
+				$ContactId = $db->insert_id();
+				$sql2 = 'INSERT INTO `internalcontacts_profiles`(`id`, `internalcontact_id`, `profile_id`, `linkedby`, `linkeddate`, `jobtitle`)'
+					. "VALUES (NULL,$contactId,{$_POST['profile_id']},'TicketSystem')";
+				$db->query($sql2, 'WRITE');
+				$sql = 'UPDATE ost_ticket__cdata SET profile_id = "'.$_POST['profile_id'].'" '
+					. ' WHERE ticket_id = "'.$tid.'" ';
+
+				if (($res = db_query($sql))Http::response(200, 'updated and assigned');
+			}
+
+			include STAFFINC_DIR . 'templates/assign-profile.tmpl.php';
+		} else {
+			Http::response(301, 'Redirect');
+		}
 	}
 }
 
