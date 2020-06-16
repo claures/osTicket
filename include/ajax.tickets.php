@@ -1328,6 +1328,50 @@ class TicketsAjaxAPI extends AjaxController {
 	function assignProfile($tid, $target=null) {
 		global $thisstaff;
 
+		if (!($ticket=Ticket::lookup($tid)))
+			Http::response(404, __('No such ticket'));
+
+
+
+		$errors = array();
+		$info = array(
+			':title' => sprintf(__('Ticket #%s: %s'),
+				$ticket->getNumber(),
+				sprintf('%s %s',
+					$ticket->isAssigned() ?
+						__('Reassign') :  __('Assign'),
+					!strcasecmp($target, 'agents') ?
+						__('to an Agent') : __('to a Team')
+				)),
+			':action' => sprintf('#tickets/%d/assign%s',
+				$ticket->getId(),
+				($target  ? "/$target": '')),
+		);
+
+		$form = new Form();
+		$fields = array();
+		$fields[] = new FormField(array('type' => 'text','label' => 'Firstname','required' => true));
+		$fields[] = new FormField(array('type' => 'text','label' => 'Lastname','required' => true));
+		$fields[] = new FormField(array('type' => 'text','label' => 'Number'));
+		$fields[] = new FormField(array('type' => 'text','label' => 'Profile','required' => true));
+		$form->setFields($fields);
+
+		if ($_POST && $form->isValid()) {
+			if ($ticket->assign($form, $errors)) {
+				$_SESSION['::sysmsgs']['msg'] = sprintf(
+					__('%s successfully'),
+					sprintf(
+						__('%s assigned to %s'),
+						__('Ticket'),
+						$form->getAssignee())
+				);
+				Http::response(201, $ticket->getId());
+			}
+
+			$form->addErrors($errors);
+			$info['error'] = $errors['err'] ?: __('Unable to assign ticket');
+		}
+
 		include STAFFINC_DIR . 'templates/assign-profile.tmpl.php';
 	}
 }
