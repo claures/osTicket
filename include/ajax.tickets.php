@@ -1387,11 +1387,9 @@ class TicketsAjaxAPI extends AjaxController
 		));
 		$form->setFields($fields);
 
-		if ($_POST && $form->isValid()) {
-			debug($_POST);
+		if ($_POST ) {
+			var_dump($_POST);
 
-			$form->addErrors($errors);
-			//$info['error'] = $errors['err'] ?: __('Unable to assign ticket');
 		}
 
 		include STAFFINC_DIR . 'templates/assign-profile.tmpl.php';
