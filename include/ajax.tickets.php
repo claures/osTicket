@@ -1355,7 +1355,9 @@ class TicketsAjaxAPI extends AjaxController
 	function assignProfile($tid, $target = null)
 	{
 		global $thisstaff;
-
+		ini_set('display_errors', 1);
+		ini_set('display_startup_errors', 1);
+		error_reporting(E_ALL);
 		if (!($ticket = Ticket::lookup($tid)))
 			Http::response(404, __('No such ticket'));
 
