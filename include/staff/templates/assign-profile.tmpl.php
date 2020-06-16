@@ -1,8 +1,6 @@
 <?php
 global $cfg;
 
-$form = $form ?: AssignmentForm::instantiate($info);
-
 if (!$info[':title'])
     $info[':title'] = __('Assign Profile');
 ?>
