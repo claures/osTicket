@@ -143,14 +143,8 @@ switch ($queue_name) {
 			'priority,created', 'priority,due', 'due', 'answered', 'number',
 			'hot');
 		break;
-	case 'test':
+	case 'nopid':
 		$status = 'open';
-		/*
-				$cdata = TicketCData::objects();
-				$cdata->select_related('ticket');
-				$results_type = __('Unassigned Profile');
-				$cdatas = $cdata->filter(array('profile_id' => ''))->all();
-					echo $cdata->getQuery();*/
 
 		$sql = 'SELECT T1.ticket_id FROM ' . TICKET_TABLE . ' T1 ,ost_ticket__cdata T2  '
 
@@ -173,7 +167,6 @@ switch ($queue_name) {
 		}
 
 		$tickets->filter(array(
-			//'ticket_id IN'=> '('.implode(',',$arrTicket).')'
 			'ticket_id__in' => $arrTicket
 		));
 		$queue_sort_options = array('updated', 'priority,updated',

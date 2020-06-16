@@ -457,6 +457,15 @@ $nav->addSubMenu(
 	($_REQUEST['status'] == 'waiting')
 );
 
+$nav->addSubMenu(
+	array(
+		'desc' => __('Unassigned to profile'),
+		'title' => __('Unassigned to profile'),
+		'href' => 'tickets.php?status=nopid',
+		'iconclass' => 'Ticket'),
+	($_REQUEST['status'] == 'nopid')
+);
+
 if ($stats['overdue']) {
 	$nav->addSubMenu(
 		array('desc' => __('Overdue') . ' (' . number_format($stats['overdue']) . ')',

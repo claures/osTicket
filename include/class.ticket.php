@@ -2185,6 +2185,7 @@ class Ticket extends TicketModel
         global $thisstaff;
 
         $evd = array();
+
         $assignee = $form->getAssignee();
         if ($assignee instanceof Staff) {
             $dept = $this->getDept();
