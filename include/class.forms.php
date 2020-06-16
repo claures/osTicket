@@ -4985,11 +4985,11 @@ ob_start();
 	class MXVPField extends FormField
 	{
 		static $widget = 'TextboxWidget';
-		static $_config = array(
+		var $_config = array(
 			'placeholder' => '',
 			'translatable' => false,
 			'autofocus' => true,
-			'disabled' => false,
+			'name' => 'not',
 			'maxlength' => 255,
 			'classes' => 'mxvpField'
 		);

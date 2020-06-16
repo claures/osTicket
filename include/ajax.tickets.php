@@ -1365,43 +1365,31 @@ class TicketsAjaxAPI extends AjaxController
 			':title' => sprintf(__('Ticket #%s: %s'),
 				$ticket->getNumber(),
 				sprintf('%s %s',
-					$ticket->isAssigned() ?
-						__('Reassign') : __('Assign'),
-					!strcasecmp($target, 'agents') ?
-						__('to an Agent') : __('to a Team')
+					__('Assign'),
+					__('to profile')
 				)),
-			':action' => sprintf('#tickets/%d/assign%s',
+			':action' => sprintf('#tickets/%d/assign/profile%s',
 				$ticket->getId(),
 				($target ? "/$target" : '')),
 		);
 
 		$form = new Form();
 		$fields = array();
-		$fields[] = new MXVPField(array('type' => 'text', 'label' => 'Firstname', 'required' => true));
-		$fields[] = new MXVPField(array('type' => 'text', 'label' => 'Lastname', 'required' => true));
-		$fields[] = new MXVPField(array('type' => 'text', 'label' => 'Number'));
+		$fields[] = new MXVPField(array('type' => 'text', 'label' => 'Firstname' , 'id'=> 'firstname', 'required' => true));
+		$fields[] = new MXVPField(array('type' => 'text', 'label' => 'Lastname', 'id'=> 'lastname','required' => true));
+		$fields[] = new MXVPField(array('type' => 'text', 'label' => 'Number','id'=> 'number'));
 		$fields[] = new MXVPField(array(
 			'type' => 'text',
 			'label' => 'Profile',
 			'required' => true,
+			'id'=> 'profile_id',
 			'config' => array('placeholder' => 'Profile','translatable' => false,'autofocus' => true,'disabled'=>false,'maxlength' => 255,'classes' => 'mxvpField')
 		));
 		$form->setFields($fields);
 
-		if ($_POST && $form->isValid()) {
-			if ($ticket->assign($form, $errors)) {
-				$_SESSION['::sysmsgs']['msg'] = sprintf(
-					__('%s successfully'),
-					sprintf(
-						__('%s assigned to %s'),
-						__('Ticket'),
-						$form->getAssignee())
-				);
-				Http::response(201, $ticket->getId());
-			}
+		if ($_POST ) {
+			var_dump($_POST);
 
-			$form->addErrors($errors);
-			$info['error'] = $errors['err'] ?: __('Unable to assign ticket');
 		}
 
 		include STAFFINC_DIR . 'templates/assign-profile.tmpl.php';
