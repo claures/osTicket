@@ -159,7 +159,7 @@ switch ($queue_name) {
 
 			. ' AND T1.ticket_id = T2.ticket_id'
 
-            . ' AND U.user_id = T1.user_id AND '.$notlikeEmail
+            . ' AND U.user_id = T1.user_id AND '.$notLikeEmail
 
 			. ' AND T1.lastupdate > "2020-01-01 00:00:00"'
 
