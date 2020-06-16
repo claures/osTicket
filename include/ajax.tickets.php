@@ -1408,7 +1408,7 @@ class TicketsAjaxAPI extends AjaxController
 				'config' => array('placeholder' => 'Profile', 'translatable' => false, 'autofocus' => true, 'disabled' => false, 'maxlength' => 255, 'classes' => 'mxvpField')
 			));
 			$form->setFields($fields);
-			$email = '';
+
 			if ($_POST) {
 			/*	ini_set('display_errors', 1);
 				ini_set('display_startup_errors', 1);
@@ -1426,6 +1426,8 @@ class TicketsAjaxAPI extends AjaxController
 
 				if($return['success'])Http::response(200, 'updated and assigned');
 				else Http::response(500, 'not updated and nots assigned');
+			/*	$sql = 'UPDATE ost_ticket__cdata SET profile_id = "'.$_POST['profile_id'].'" '
+					. ' WHERE ticket_id = "'.$tid.'" ';*/
 
 			}
 
