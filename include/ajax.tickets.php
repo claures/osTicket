@@ -1370,7 +1370,7 @@ class TicketsAjaxAPI extends AjaxController
 				$queryResult = $result[0];
 			}
 			if (!empty($queryResult)) {
-				$email = $queryResult['address'];
+				$email = $queryResult;
 			}
 		}
 		$ch = curl_init('https://service.mixvoip.com/scripts/guess_profile.php');
