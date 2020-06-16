@@ -119,13 +119,13 @@ $(document).on('click', '.save.pending', function () {
 
 //Shortcuts
 
-function isTicketView(){
+function isTicketView() {
     return $('.quickCloseTicket').length > 0;
 }
 
 $(document).on('keydown', function (evt) {
     //Help: ctrl+alt+h
-    if(isTicketView()) {
+    if (isTicketView()) {
         if ((evt.metaKey || evt.ctrlKey) && evt.altKey && evt.key == 'h')
             alert("ctrl+alt+h : Help\nctrl+alt+t : Transfer\nctrl+alt+x : Close Ticket\nctrl+alt+c : Claim Ticket\nctrl+alt+u : Scroll to top");
         if ((evt.metaKey || evt.ctrlKey) && evt.altKey && evt.key == 't') {
@@ -154,7 +154,7 @@ $(document).on('keydown', function (evt) {
 
 //add collapse feature
 
-function hideAllEntry(){
+function hideAllEntry() {
 
     let count = $('.thread-entry').not('.system').length;
     if (count > 5) {
@@ -168,12 +168,10 @@ function hideAllEntry(){
 }
 
 
-
 hideAllEntry();
 
 
-
-$("#pjax-container").ajaxSuccess(function(){
+$("#pjax-container").ajaxSuccess(function () {
     hideAllEntry();
 });
 
@@ -185,8 +183,22 @@ $('body').on('click', '.thread-entry .header', function () {
 })
 
 
-$('body').on('click','.saveclose',function(e){
-e.preventDefault();
-$('.status').val(3)
-$(this).parents('form').find('.save').trigger('click');
+$('body').on('click', '.saveclose', function (e) {
+    e.preventDefault();
+    $('.status').val(3)
+    $(this).parents('form').find('.save').trigger('click');
 })
+
+$('body').on('click', '.assignToprofile', function (e) {
+    e.preventDefault();
+    var url = 'ajax.php/'
+        + $(this).attr('href').substr(1);
+    var $redirect = $(this).data('redirect');
+    //var $options = $(this).data('dialog');
+    $.dialog(url, [201], function (xhr) {
+        if (!!$redirect)
+            window.location.href = $redirect;
+        else
+            $.pjax.reload('#pjax-container');
+    });
+});

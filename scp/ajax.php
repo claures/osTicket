@@ -144,6 +144,8 @@ $dispatcher = patterns('',
         url_post('^(?P<id>\d+)/release', 'releaseLock')
     )),
     url('^/tickets/', patterns('ajax.tickets.php:TicketsAjaxAPI',
+		url('^(?P<tid>\d+)/assign/profile$', 'assignProfile'),
+		url_get('^(?P<tid>\d+)/assign/profile$', 'assignProfile'),
         url_get('^(?P<tid>\d+)/change-user$', 'changeUserForm'),
         url_post('^(?P<tid>\d+)/change-user$', 'changeUser'),
         url_get('^(?P<tid>\d+)/user$', 'viewUser'),

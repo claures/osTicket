@@ -143,20 +143,23 @@ switch ($queue_name) {
 			'priority,created', 'priority,due', 'due', 'answered', 'number',
 			'hot');
 		break;
-	case 'test':
+	case 'nopid':
 		$status = 'open';
-		/*
-				$cdata = TicketCData::objects();
-				$cdata->select_related('ticket');
-				$results_type = __('Unassigned Profile');
-				$cdatas = $cdata->filter(array('profile_id' => ''))->all();
-					echo $cdata->getQuery();*/
+		$results_type = __('Unassigned to profile');
+		$domainBlacklist = array('smartcall.be', 'mixvoip.net', 'mixvoip.com', 'ipfix.be');
+		$notLikeEmail = array();
+		foreach ($domainBlacklist as $domain){
+		    $notLikeEmail[] = " U.address NOT LIKE '%$domain' ";
+        }
+        $notLikeEmail = implode(' AND ',$notLikeEmail);
 
-		$sql = 'SELECT T1.ticket_id FROM ' . TICKET_TABLE . ' T1 ,ost_ticket__cdata T2  '
+		$sql = 'SELECT T1.ticket_id FROM ' . TICKET_TABLE . ' T1 ,ost_ticket__cdata T2  , ost_user_email U'
 
 			. ' WHERE T2.profile_id = "" '
 
 			. ' AND T1.ticket_id = T2.ticket_id'
+
+            . ' AND U.user_id = T1.user_id AND '.$notLikeEmail
 
 			. ' AND T1.lastupdate > "2020-01-01 00:00:00"'
 
@@ -173,7 +176,6 @@ switch ($queue_name) {
 		}
 
 		$tickets->filter(array(
-			//'ticket_id IN'=> '('.implode(',',$arrTicket).')'
 			'ticket_id__in' => $arrTicket
 		));
 		$queue_sort_options = array('updated', 'priority,updated',
@@ -750,6 +752,9 @@ return false;">
                     <td align="center" class="nohover">
                         <input class="ckb" type="checkbox" name="tids[]"
                                value="<?php echo $T['ticket_id']; ?>" <?php echo $sel ? 'checked="checked"' : ''; ?>>
+                        <?php if(isset($_GET['status']) && $_GET['status'] == 'nopid') { ?>
+                        <a class="assignToprofile" href="#tickets/<?php echo $T['ticket_id']; ?>/assign/profile" data-redirect="tickets.php?status=pid"><?php echo __('Assign'); ?></a>&nbsp;&nbsp;
+                        <?php } ?>
                     </td>
 					<?php
 				} ?>
