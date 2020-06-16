@@ -1323,5 +1323,12 @@ class TicketsAjaxAPI extends AjaxController {
 
         include STAFFINC_DIR . 'templates/task-view.tmpl.php';
     }
+
+    /* Assign profile */
+	function assignProfile($tid, $target=null) {
+		global $thisstaff;
+
+		include STAFFINC_DIR . 'templates/assign-profile.tmpl.php';
+	}
 }
 ?>
