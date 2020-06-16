@@ -192,8 +192,7 @@ $('body').on('click', '.saveclose', function (e) {
 $('body').on('click', '.assignToprofile', function (e) {
     e.preventDefault();
     var url = 'ajax.php/'
-        + $(this).attr('href').substr(1)
-        + '?_uid=' + new Date().getTime();
+        + $(this).attr('href').substr(1);
     var $redirect = $(this).data('redirect');
     //var $options = $(this).data('dialog');
     $.dialog(url, [201], function (xhr) {
