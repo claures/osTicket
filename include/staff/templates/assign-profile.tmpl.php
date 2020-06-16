@@ -1,6 +1,8 @@
 <?php
 global $cfg;
-
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 if (!$info[':title'])
     $info[':title'] = __('Assign Profile');
 ?>
