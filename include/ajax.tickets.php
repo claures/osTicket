@@ -1410,10 +1410,9 @@ class TicketsAjaxAPI extends AjaxController
 			$form->setFields($fields);
 			$email = '';
 			if ($_POST) {
-				ini_set('display_errors', 1);
+			/*	ini_set('display_errors', 1);
 				ini_set('display_startup_errors', 1);
-				error_reporting(E_ALL);
-
+				error_reporting(E_ALL);*/
 				$ch = curl_init('https://service.mixvoip.com/scripts/createInternalContact.php');
 				curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
