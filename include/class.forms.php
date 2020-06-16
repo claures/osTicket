@@ -4498,5 +4498,6 @@ class FieldUnchanged extends Exception {}
 
 class MXVPField extends FormField {
 	static $widget = 'TextboxWidget';
+
     }
 ?>
