@@ -1367,8 +1367,7 @@ class TicketsAjaxAPI extends AjaxController
 				sprintf('%s %s',
 					$ticket->isAssigned() ?
 						__('Reassign') : __('Assign'),
-					!strcasecmp($target, 'agents') ?
-						__('to an Agent') : __('to a Team')
+					__('to profile')
 				)),
 			':action' => sprintf('#tickets/%d/assign%s',
 				$ticket->getId(),
