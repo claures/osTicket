@@ -1388,19 +1388,10 @@ class TicketsAjaxAPI extends AjaxController
 		$form->setFields($fields);
 
 		if ($_POST && $form->isValid()) {
-			if ($ticket->assign($form, $errors)) {
-				$_SESSION['::sysmsgs']['msg'] = sprintf(
-					__('%s successfully'),
-					sprintf(
-						__('%s assigned to %s'),
-						__('Ticket'),
-						$form->getAssignee())
-				);
-				Http::response(201, $ticket->getId());
-			}
+			debug($_POST);
 
 			$form->addErrors($errors);
-			$info['error'] = $errors['err'] ?: __('Unable to assign ticket');
+			//$info['error'] = $errors['err'] ?: __('Unable to assign ticket');
 		}
 
 		include STAFFINC_DIR . 'templates/assign-profile.tmpl.php';
