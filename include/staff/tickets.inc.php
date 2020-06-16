@@ -145,7 +145,7 @@ switch ($queue_name) {
 		break;
 	case 'nopid':
 		$status = 'open';
-
+		$results_type = __('Unassigned to pid');
 		$sql = 'SELECT T1.ticket_id FROM ' . TICKET_TABLE . ' T1 ,ost_ticket__cdata T2  '
 
 			. ' WHERE T2.profile_id = "" '
