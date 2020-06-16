@@ -752,7 +752,7 @@ return false;">
                     <td align="center" class="nohover">
                         <input class="ckb" type="checkbox" name="tids[]"
                                value="<?php echo $T['ticket_id']; ?>" <?php echo $sel ? 'checked="checked"' : ''; ?>>
-                        <?php if(isset($_GET['status']) && $_GET['status'] == 'pid') { ?>
+                        <?php if(isset($_GET['status']) && $_GET['status'] == 'nopid') { ?>
                         <a class="assignToprofile" href="#tickets/<?php echo $T['ticket_id']; ?>/assign-profile/" data-redirect="tickets.php?status=pid"><?php echo __('Assign'); ?></a>&nbsp;&nbsp;
                         <?php } ?>
                     </td>
