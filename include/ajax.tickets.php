@@ -1355,9 +1355,7 @@ class TicketsAjaxAPI extends AjaxController
 	function assignProfile($tid, $target = null)
 	{
 		global $thisstaff;
-		ini_set('display_errors', 1);
-		ini_set('display_startup_errors', 1);
-		error_reporting(E_ALL);
+
 		if (!($ticket = Ticket::lookup($tid)))
 			Http::response(404, __('No such ticket'));
 
@@ -1412,7 +1410,11 @@ class TicketsAjaxAPI extends AjaxController
 			$form->setFields($fields);
 			$email = '';
 			if ($_POST) {
+				ini_set('display_errors', 1);
+				ini_set('display_startup_errors', 1);
+				error_reporting(E_ALL);
 				require_once '/var/www/service.mixvoip.com/scripts/include/config.php';
+
 				$sql = 'INSERT INTO `internalcontacts`(`id`, `firstname`, `lastname`, `email`,`number1`)' .
 					"VALUES (NULL,{$_POST['firstname']},{$_POST['lastname']},$email,{$_POST['number']})";
 				$db->query($sql, 'WRITE');
