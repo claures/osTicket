@@ -1421,7 +1421,7 @@ class TicketsAjaxAPI extends AjaxController
 				$sql = 'UPDATE ost_ticket__cdata SET profile_id = "'.$_POST['profile_id'].'" '
 					. ' WHERE ticket_id = "'.$tid.'" ';
 
-				if (($res = db_query($sql))Http::response(200, 'updated and assigned');
+				if ($res = db_query($sql))Http::response(200, 'updated and assigned');
 			}
 
 			include STAFFINC_DIR . 'templates/assign-profile.tmpl.php';
