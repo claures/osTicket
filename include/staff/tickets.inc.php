@@ -149,7 +149,7 @@ switch ($queue_name) {
 		$domainBlacklist = array('smartcall.be', 'mixvoip.net', 'mixvoip.com', 'ipfix.be');
 		$notLikeEmail = array();
 		foreach ($domainBlacklist as $domain){
-		    $notLikeEmail[] = " U.address NOT LIKE %$domain";
+		    $notLikeEmail[] = " U.address NOT LIKE '%$domain' ";
         }
         $notLikeEmail = implode(' AND ',$notLikeEmail);
 
