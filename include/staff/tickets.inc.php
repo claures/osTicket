@@ -146,11 +146,20 @@ switch ($queue_name) {
 	case 'nopid':
 		$status = 'open';
 		$results_type = __('Unassigned to profile');
-		$sql = 'SELECT T1.ticket_id FROM ' . TICKET_TABLE . ' T1 ,ost_ticket__cdata T2  '
+		$domainBlacklist = array('smartcall.be', 'mixvoip.net', 'mixvoip.com', 'ipfix.be');
+		$notLikeEmail = array();
+		foreach ($domainBlacklist as $domain){
+		    $notLikeEmail[] = " U.address NOT LIKE $domain";
+        }
+        $notLikeEmail = implode(' AND ',$notLikeEmail);
+
+		$sql = 'SELECT T1.ticket_id FROM ' . TICKET_TABLE . ' T1 ,ost_ticket__cdata T2  , ost_user_email U'
 
 			. ' WHERE T2.profile_id = "" '
 
 			. ' AND T1.ticket_id = T2.ticket_id'
+
+            . ' AND U.user_id = T1.user_id AND '.$notlikeEmail
 
 			. ' AND T1.lastupdate > "2020-01-01 00:00:00"'
 
