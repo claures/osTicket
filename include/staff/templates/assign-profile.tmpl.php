@@ -44,7 +44,7 @@ $action = $info[':action'] ?: ('#');
              <?php
 
              $options = array('template' => 'simple', 'form_id' => 'assign');
-             $form->render($options);
+             $form->render(true,'Assign profile',$options);
              ?>
             </td> </tr>
         </tbody>
