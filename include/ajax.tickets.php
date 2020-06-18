@@ -1414,7 +1414,7 @@ class TicketsAjaxAPI extends AjaxController
 			/*	ini_set('display_errors', 1);
 				ini_set('display_startup_errors', 1);
 				error_reporting(E_ALL);*/
-			var_dump($email);
+			//var_dump($email);
 			$_POST['email'] = $email;
 				$ch = curl_init('https://service.mixvoip.com/scripts/createInternalContact.php');
 				curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -1423,7 +1423,7 @@ class TicketsAjaxAPI extends AjaxController
 				curl_setopt($ch, CURLOPT_POSTFIELDS, $_POST);
 				$output = curl_exec($ch);
 				curl_close($ch);
-				echo $output;
+				//echo $output;
 				$return = json_decode($output, true);
 
 				if($return['success'])Http::response(200, 'updated and assigned');
