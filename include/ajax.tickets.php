@@ -1423,8 +1423,8 @@ class TicketsAjaxAPI extends AjaxController
 				curl_setopt($ch, CURLOPT_POSTFIELDS, $_POST);
 				$output = curl_exec($ch);
 				curl_close($ch);
-				echo $output;
-				//$return = json_decode($output, true);
+				//echo $output;
+				$return = json_decode($output, true);
 
 				if($return['success'])Http::response(200, 'updated and assigned');
 				else Http::response(500, 'not updated and nots assigned');
