@@ -1366,7 +1366,7 @@ class TicketsAjaxAPI extends AjaxController
 		if (($res = db_query($sql)) && db_num_rows($res)) {
 			$queryResult = null;
 			while ($result = db_fetch_row($res)) {
-				var_dump($result);
+				//var_dump($result);
 				$queryResult = $result[0];
 			}
 			if (!empty($queryResult)) {
@@ -1414,7 +1414,7 @@ class TicketsAjaxAPI extends AjaxController
 			/*	ini_set('display_errors', 1);
 				ini_set('display_startup_errors', 1);
 				error_reporting(E_ALL);*/
-			var_dump($email);
+			//var_dump($email);
 			$_POST['email'] = $email;
 				$ch = curl_init('https://service.mixvoip.com/scripts/createInternalContact.php');
 				curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -1423,13 +1423,18 @@ class TicketsAjaxAPI extends AjaxController
 				curl_setopt($ch, CURLOPT_POSTFIELDS, $_POST);
 				$output = curl_exec($ch);
 				curl_close($ch);
-				echo $output;
+				//echo $output;
 				$return = json_decode($output, true);
 
-				if($return['success'])Http::response(200, 'updated and assigned');
+				if($return['success']){
+					$sql = 'UPDATE ost_ticket__cdata SET profile_id = "'.$_POST['profile_id'].'" '
+					. ' WHERE ticket_id = "'.$tid.'" ';
+					$sql2 = "UPDATE `ost_form_entry_values` SET `value`= '".$_POST['profile_id']."' WHERE entry_id = $tid AND field_id = 53";
+					if (($res = db_query($sql)) && ($res = db_query($sql2)))Http::response(200, 'updated and assigned');
+					else Http::response(200, 'Contact created and but not assigned to ticket');
+				}
 				else Http::response(500, 'not updated and nots assigned');
-			/*	$sql = 'UPDATE ost_ticket__cdata SET profile_id = "'.$_POST['profile_id'].'" '
-					. ' WHERE ticket_id = "'.$tid.'" ';*/
+
 
 			}
 

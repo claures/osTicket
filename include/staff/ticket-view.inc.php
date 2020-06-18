@@ -606,6 +606,7 @@ foreach (DynamicFormEntry::forTicket($ticket->getId()) as $form) {
                 <td><?php
 					if ($label == 'PID') {
 						$arrPid = explode(';', $v);
+						//var_dump($stuff);
 						if (count($arrPid) > 1) {
 							$arrLinks = array();
 							foreach ($arrPid as $pid) {
