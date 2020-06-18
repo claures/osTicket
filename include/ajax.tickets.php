@@ -1435,9 +1435,11 @@ class TicketsAjaxAPI extends AjaxController
 							$selectEntryId = $entry[0];
 						}
 					}
-					$sql2 = "UPDATE `ost_form_entry_values` SET `value`= '".$_POST['profile_id']."' WHERE entry_id = $selectEntryId AND field_id = 53";
-					if (($res = db_query($sql)) && ($res = db_query($sql2)))Http::response(200, 'updated and assigned');
-					else Http::response(200, 'Contact created and but not assigned to ticket');
+					if(isset($selectEntryId)) {
+						$sql2 = "UPDATE `ost_form_entry_values` SET `value`= '" . $_POST['profile_id'] . "' WHERE entry_id = $selectEntryId AND field_id = 53";
+						if (($res = db_query($sql)) && ($res = db_query($sql2))) Http::response(200, 'updated and assigned');
+						else Http::response(200, 'Contact created and but not assigned to ticket');
+					}else Http::response(200, 'Contact created and but not assigned to ticket');
 				}
 				else Http::response(500, 'not updated and nots assigned');
 
