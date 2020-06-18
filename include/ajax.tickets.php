@@ -1366,7 +1366,7 @@ class TicketsAjaxAPI extends AjaxController
 		if (($res = db_query($sql)) && db_num_rows($res)) {
 			$queryResult = null;
 			while ($result = db_fetch_row($res)) {
-				var_dump($result);
+				//var_dump($result);
 				$queryResult = $result[0];
 			}
 			if (!empty($queryResult)) {
