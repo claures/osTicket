@@ -1426,10 +1426,14 @@ class TicketsAjaxAPI extends AjaxController
 				//echo $output;
 				$return = json_decode($output, true);
 
-				if($return['success'])Http::response(200, 'updated and assigned');
+				if($return['success']){
+					$sql = 'UPDATE ost_ticket__cdata SET profile_id = "'.$_POST['profile_id'].'" '
+					. ' WHERE ticket_id = "'.$tid.'" ';
+					if (($res = db_query($sql)))Http::response(200, 'updated and assigned');
+					else Http::response(200, 'Contact created and but not assigned to ticket');
+				}
 				else Http::response(500, 'not updated and nots assigned');
-			/*	$sql = 'UPDATE ost_ticket__cdata SET profile_id = "'.$_POST['profile_id'].'" '
-					. ' WHERE ticket_id = "'.$tid.'" ';*/
+
 
 			}
 
