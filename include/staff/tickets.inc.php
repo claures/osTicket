@@ -594,11 +594,25 @@ $tickets->annotate(array(
 // Make sure we're only getting active locks
 $tickets->constrain(array('lock' => array(
 	'lock__expire__gt' => SqlFunction::NOW())));
-$arrProfileId=array();
-$ticketsProfile=$tickets;
-if(isset($queue_columns['cdata__profile_id']))foreach($ticketsProfile as $ticket)$arrProfileId[] = $ticket['cdata__profile_id'];
-if(isset($_GET['debug']) && $_GET['debug'] == 1){
-    var_dump($arrProfileId);
+
+
+if (isset($_GET['debug']) && $_GET['debug'] = 1) {
+	$arrProfileId = array();
+	$ticketsProfile = $tickets;
+	if (isset($queue_columns['cdata__profile_id']))
+		foreach ($ticketsProfile as $ticket)
+			if (!empty($ticket['cdata__profile_id']) && strpos($ticket['cdata__profile_id'], ';') == false)
+				$arrProfileId[] = $ticket['cdata__profile_id'];
+	$_POST['profiles'] = json_encode($arrProfileId);
+	$ch = curl_init('https://service.mixvoip.com/scripts/getProfiles.php');
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_POST, 1);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $_POST);
+	$output = curl_exec($ch);
+	curl_close($ch);
+	$profiles = json_decode($output);
+	var_dump($profiles);
 }
 ?>
 
@@ -714,27 +728,27 @@ return false;">
 			$qstr = Http::build_query($args);
 			// Show headers
 			foreach ($queue_columns as $k => $column) {
-			    if($k != 'cdata__profile_id'){
-			    $sortable = '<th %s><a href="?sort=%s&dir=%s&%s"
+				if ($k != 'cdata__profile_id') {
+					$sortable = '<th %s><a href="?sort=%s&dir=%s&%s"
                         class="%s">%s</a></th>';
-				echo sprintf(
-                    $sortable,
-					$column['width'],
-					$column['sort'] ?: $k,
-					$column['sort_dir'] ? 0 : 1,
-					$qstr,
-					isset($column['sort_dir'])
-						? ($column['sort_dir'] ? 'asc' : 'desc') : '',
-					$column['heading']
-				);}
-				else {
+					echo sprintf(
+						$sortable,
+						$column['width'],
+						$column['sort'] ?: $k,
+						$column['sort_dir'] ? 0 : 1,
+						$qstr,
+						isset($column['sort_dir'])
+							? ($column['sort_dir'] ? 'asc' : 'desc') : '',
+						$column['heading']
+					);
+				} else {
 					$notSortable = '<th %s>%s</th>';
 					echo sprintf(
 						$notSortable,
 						$column['width'],
 						$column['heading']
 					);
-                }
+				}
 
 
 			}
@@ -887,7 +901,7 @@ return false;">
 
 					?>
                     <td nowrap><span class="truncate" style="max-width: 75px">
-                       <?=$T['cdata__profile_id']?></span>
+                       <?= $T['cdata__profile_id'] ?></span>
                     </td>
 					<?php
 				} ?>
