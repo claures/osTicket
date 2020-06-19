@@ -825,14 +825,21 @@ return false;">
                     <td align="center" class="nohover">
                         <input class="ckb" type="checkbox" name="tids[]"
                                value="<?php echo $T['ticket_id']; ?>" <?php echo $sel ? 'checked="checked"' : ''; ?>>
-						<?php if (isset($_GET['status']) && $_GET['status'] == 'nopid') { ?>
+						<?php if (isset($_GET['status']) && $_GET['status'] == 'nopid' && empty(trim($T['cdata__profile_id'])) ) { ?>
                             <a class="assignToprofile" href="#tickets/<?php echo $T['ticket_id']; ?>/assign/profile"
                                data-redirect="tickets.php?status=pid"><?php echo __('Assign'); ?></a>&nbsp;&nbsp;
-						<?php } ?>
-						<?php if (isset($T['cdata__profile_id']) && isset($_GET['status']) && $_GET['status'] == 'nopid') { ?>
-                            <a class="assignToprofile" href="#tickets/<?php echo $T['ticket_id']; ?>/assign/profile"
-                               data-redirect="tickets.php?status=pid"><?php echo $T['cdata__profile_id'] ?></a>&nbsp;&nbsp;
-						<?php } ?>
+						<?php }elseif (strpos($T['cdata__profile_id'], ';') != false) {
+						$arrPid = explode(';', $T['cdata__profile_id']);
+						//var_dump($stuff);
+						if (count($arrPid) > 1) {
+							$arrLinks = array();
+							foreach ($arrPid as $pid) {
+								$arrLinks[] = "<span class='assignTicketToPid' data-ticketId='{$T['ticket_id']}' data-profileId='$pid'>$pid</span>";
+								//var_dump($pid);
+							}
+							echo implode(' ', $arrLinks);
+						} ?>
+
                     </td>
 					<?php
 				} ?>
