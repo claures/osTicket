@@ -594,7 +594,11 @@ $tickets->annotate(array(
 // Make sure we're only getting active locks
 $tickets->constrain(array('lock' => array(
 	'lock__expire__gt' => SqlFunction::NOW())));
-
+$arrProfileId=array();
+if(isset($queue_columns['cdata__profile_id']))foreach($tickets as $ticket)$arrProfileId[] = $ticket['cdata__profile_id'];
+if(isset($_GET['debug']) && $_GET['debug'] == 1){
+    var_dump($arrProfileId);
+}
 ?>
 
 <!-- SEARCH FORM START -->
