@@ -146,7 +146,7 @@ switch ($queue_name) {
 	case 'nopid':
 		$status = 'open';
 		$results_type = __('Unassigned to profile');
-		$domainBlacklist = array('smartcall.be', 'mixvoip.net', 'mixvoip.com', 'ipfix.be');
+	/*	$domainBlacklist = array('smartcall.be', 'mixvoip.net', 'mixvoip.com', 'ipfix.be');
 		$notLikeEmail = array();
 		foreach ($domainBlacklist as $domain){
 		    $notLikeEmail[] = " 'user__address__like' '%$domain' ";
