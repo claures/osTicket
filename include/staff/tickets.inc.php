@@ -709,9 +709,11 @@ return false;">
 			$qstr = Http::build_query($args);
 			// Show headers
 			foreach ($queue_columns as $k => $column) {
+			    if($k != 'cdata__profile_id'){
+			    $sortable = '<th %s><a href="?sort=%s&dir=%s&%s"
+                        class="%s">%s</a></th>';
 				echo sprintf(
-					'<th %s><a href="?sort=%s&dir=%s&%s"
-                        class="%s">%s</a></th>',
+                    $sortable,
 					$column['width'],
 					$column['sort'] ?: $k,
 					$column['sort_dir'] ? 0 : 1,
@@ -719,7 +721,17 @@ return false;">
 					isset($column['sort_dir'])
 						? ($column['sort_dir'] ? 'asc' : 'desc') : '',
 					$column['heading']
-				);
+				);}
+				else {
+					$notSortable = '<th %s>%s</th>';
+					echo sprintf(
+						$notSortable,
+						$column['width'],
+						$column['heading']
+					);
+                }
+
+
 			}
 			?>
         </tr>
