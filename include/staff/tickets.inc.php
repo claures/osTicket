@@ -910,7 +910,8 @@ return false;">
 						 }
                        }elseif(strpos($T['cdata__profile_id'],';') != false){
 						   echo $T['cdata__profile_id'];
-                       } else echo 'not linked';
+                       } else echo "<a class='assignToprofile' href='#tickets/[$T['ticket_id'];}/assign/profile'
+                               data-redirect='tickets.php?status=open'><?php echo __('Assign'); ?></a>";
 
                        ?></span>
                     </td>
