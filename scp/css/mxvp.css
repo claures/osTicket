@@ -135,12 +135,16 @@ table.ticket_info.custom-data td:first-child {
 
 .assignTicketToPid {
 	height: 15px;
-	width: fit-content;
+	width: calc(100% - 10px);
 	padding: 5px;
 	border: 1px solid lightgray;
+	margin-bottom: 2px;
+	display: block;
 	background: white;
+	animation-fill-mode: backwards;
 	cursor: pointer;
-}
+	text-align: center;
+
 
 .assignTicketToPid:hover {
 	background: #00aa00;
