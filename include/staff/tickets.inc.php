@@ -840,7 +840,7 @@ return false;">
 						//var_dump($pid);
 					}
 					echo implode(' ', $arrLinks);
-				} ?>
+				}} ?>
             </td>
 		<?php
 		} ?>
