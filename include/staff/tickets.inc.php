@@ -612,6 +612,7 @@ if (isset($_GET['debug']) && $_GET['debug'] = 1) {
 	$output = curl_exec($ch);
 	curl_close($ch);
 	$profiles = json_decode($output);
+
 	//var_dump($tickets);
 }
 ?>
@@ -901,7 +902,17 @@ return false;">
 
 					?>
                     <td nowrap><span class="truncate" style="max-width: 75px">
-                       <?= $T['cdata__profile_id'] ?></span>
+                       <?php
+					   if(!empty(trim($T['cdata__profile_id'])) && strpos($T['cdata__profile_id'],';') == false){
+					     if(isset($profiles[$T['cdata__profile_id']])) {
+							 $name = $profiles[$T['cdata__profile_id']];
+							 echo "<a href='https://ssh.mixvoip.com:12663/briviere.backend/Profile/summaryView/{$T['cdata__profile_id']}' target='_blank'/>$name</a>";
+						 }
+                       }elseif(strpos($T['cdata__profile_id'],';') != false){
+						   echo $T['cdata__profile_id'];
+                       } else echo 'not linked';
+
+                       ?></span>
                     </td>
 					<?php
 				} ?>
