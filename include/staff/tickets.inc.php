@@ -601,7 +601,7 @@ if (isset($_GET['debug']) && $_GET['debug'] = 1) {
 	$ticketsProfile = $tickets;
 	if (isset($queue_columns['cdata__profile_id']))
 		foreach ($ticketsProfile as $ticket)
-			if (!empty($ticket['cdata__profile_id']) && strpos($ticket['cdata__profile_id'], ';') == false)
+			if (!empty(trim($ticket['cdata__profile_id'])) && strpos($ticket['cdata__profile_id'], ';') == false)
 				$arrProfileId[] = $ticket['cdata__profile_id'];
 	var_dump($arrProfileId);
 	$_POST['profiles'] = json_encode($arrProfileId);
@@ -614,7 +614,7 @@ if (isset($_GET['debug']) && $_GET['debug'] = 1) {
 	curl_close($ch);
 	$profiles = json_decode($output);
 	var_dump($profiles);
-	var_dump($tickets);
+	//var_dump($tickets);
 }
 ?>
 
