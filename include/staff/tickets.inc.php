@@ -178,13 +178,13 @@ switch ($queue_name) {
 		$tickets->filter(array(Q::any(array(
 			'cdata__profile_id__like' => '%;%',
 			'cdata__profile_id' => '',
-			Q::all(array(
-			        Q::not(array( 'user__address__like' => '%mixvoip.net')),
-					Q::not(array( 'user__address__like' => '%mixvoip.com')),
-					Q::not(array( 'user__address__like' => '%smartcall.be')),
-					Q::not(array( 'user__address__like' => '%ipfix.be'))
-                )
             ))
+		));
+		$tickets->filter(Q::all(array(
+			Q::not(array( 'user__address__like' => '%mixvoip.net')),
+			Q::not(array( 'user__address__like' => '%mixvoip.com')),
+			Q::not(array( 'user__address__like' => '%smartcall.be')),
+			Q::not(array( 'user__address__like' => '%ipfix.be'))
 		)));
 		$queue_sort_options = array('updated', 'priority,updated',
 			'priority,created', 'priority,due', 'due', 'answered', 'number',
