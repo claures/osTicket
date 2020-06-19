@@ -763,156 +763,157 @@ return false;">
 		$class = 'row1';
 		$total = 0;
 		$ids = ($errors && $_POST['tids'] && is_array($_POST['tids'])) ? $_POST['tids'] : null;
-		foreach ($tickets as $T) {
-			//if (isset($_GET['debug']) && $_GET['debug'] == 1) var_dump($T);
-			$teamName = Team::getLocalById($T['team_id'], 'name', $T['team__name']);
-			$agentName = new AgentsName($T['staff__firstname'] . ' ' . $T['staff__lastname']);
-			//f($T['staff_id'] == $thisstaff->getId()) $agentName .= " (Me)";
-			if (!isset($teamName) && $queue_name == 'assigned') { //On the my ticket view show myself as bold if no team
-				$teamName = "<b>$agentName</b>";
-			} elseif (!isset($teamName)) {
-				$teamName = '';
-			} elseif ($queue_name == 'assigned' && !empty(trim($agentName)) && $T['staff_id'] != $unassignedUID) {
-				$teamName .= ' / ' . $agentName;
-			}
-			if ($T['staff_id'] == $thisstaff->getId()) {
-				$teamName = "<b>$teamName<b/>";
-			}
-			$total += 1;
-			$tag = $T['staff_id'] ? 'assigned' : 'openticket';
-			$flag = null;
-			if ($T['lock__staff_id'] && $T['lock__staff_id'] != $thisstaff->getId()) {
-				$flag = 'locked';
-			} elseif ($T['isoverdue']) {
-				$flag = 'overdue';
-			}
+		foreach ($tickets
 
-			$lc = '';
-			if ($showassigned) {
-				if ($T['staff_id']) {
-					$lc = $agentName;
-				} elseif ($T['team_id']) {
-					$lc = Team::getLocalById($T['team_id'], 'name', $T['team__name']);
-				}
-			} else {
-				$lc = Dept::getLocalById($T['dept_id'], 'name', $T['dept__name']);
-			}
-			$tid = $T['number'];
-			$subject = $subject_field->display($subject_field->to_php($T['cdata__subject']));
-			$threadcount = $T['thread_count'];
-			if (!strcasecmp($T['status__state'], 'open') && !$T['isanswered'] && !$T['lock__staff_id']) {
-				$tid = sprintf('<b>%s</b>', $tid);
-			}
+		as $T) {
+		//if (isset($_GET['debug']) && $_GET['debug'] == 1) var_dump($T);
+		$teamName = Team::getLocalById($T['team_id'], 'name', $T['team__name']);
+		$agentName = new AgentsName($T['staff__firstname'] . ' ' . $T['staff__lastname']);
+		//f($T['staff_id'] == $thisstaff->getId()) $agentName .= " (Me)";
+		if (!isset($teamName) && $queue_name == 'assigned') { //On the my ticket view show myself as bold if no team
+			$teamName = "<b>$agentName</b>";
+		} elseif (!isset($teamName)) {
+			$teamName = '';
+		} elseif ($queue_name == 'assigned' && !empty(trim($agentName)) && $T['staff_id'] != $unassignedUID) {
+			$teamName .= ' / ' . $agentName;
+		}
+		if ($T['staff_id'] == $thisstaff->getId()) {
+			$teamName = "<b>$teamName<b/>";
+		}
+		$total += 1;
+		$tag = $T['staff_id'] ? 'assigned' : 'openticket';
+		$flag = null;
+		if ($T['lock__staff_id'] && $T['lock__staff_id'] != $thisstaff->getId()) {
+			$flag = 'locked';
+		} elseif ($T['isoverdue']) {
+			$flag = 'overdue';
+		}
 
-			$statusClass = '';
-			if (strtolower($T['status__name']) === 'closed' || strtolower($T['status__name']) === 'resolved') {
-				$statusClass = 'status_closed';
-			} elseif ($T['isanswered']) {
-				$statusClass = 'status_answered';
-			} elseif ($T['isoverdue']) {
-				$statusClass = 'status_overdue';
-			} elseif (strtolower($T['status__name']) === 'spam') {
-				$statusClass = 'status_spam';
-			} elseif (strtolower($T['status__name']) === 'open') {
-				$statusClass = 'status_open';
+		$lc = '';
+		if ($showassigned) {
+			if ($T['staff_id']) {
+				$lc = $agentName;
+			} elseif ($T['team_id']) {
+				$lc = Team::getLocalById($T['team_id'], 'name', $T['team__name']);
+			}
+		} else {
+			$lc = Dept::getLocalById($T['dept_id'], 'name', $T['dept__name']);
+		}
+		$tid = $T['number'];
+		$subject = $subject_field->display($subject_field->to_php($T['cdata__subject']));
+		$threadcount = $T['thread_count'];
+		if (!strcasecmp($T['status__state'], 'open') && !$T['isanswered'] && !$T['lock__staff_id']) {
+			$tid = sprintf('<b>%s</b>', $tid);
+		}
+
+		$statusClass = '';
+		if (strtolower($T['status__name']) === 'closed' || strtolower($T['status__name']) === 'resolved') {
+			$statusClass = 'status_closed';
+		} elseif ($T['isanswered']) {
+			$statusClass = 'status_answered';
+		} elseif ($T['isoverdue']) {
+			$statusClass = 'status_overdue';
+		} elseif (strtolower($T['status__name']) === 'spam') {
+			$statusClass = 'status_spam';
+		} elseif (strtolower($T['status__name']) === 'open') {
+			$statusClass = 'status_open';
+		} ?>
+        <tr id="<?php echo $T['ticket_id']; ?>" class="<?= $statusClass ?>">
+			<?php if ($thisstaff->canManageTickets()) {
+			$sel = false;
+			if ($ids && in_array($T['ticket_id'], $ids)) {
+				$sel = true;
 			} ?>
-            <tr id="<?php echo $T['ticket_id']; ?>" class="<?= $statusClass ?>">
-				<?php if ($thisstaff->canManageTickets()) {
-					$sel = false;
-					if ($ids && in_array($T['ticket_id'], $ids)) {
-						$sel = true;
-					} ?>
-                    <td align="center" class="nohover">
-                        <input class="ckb" type="checkbox" name="tids[]"
-                               value="<?php echo $T['ticket_id']; ?>" <?php echo $sel ? 'checked="checked"' : ''; ?>>
-						<?php if (isset($_GET['status']) && $_GET['status'] == 'nopid' && empty(trim($T['cdata__profile_id'])) ) { ?>
-                            <a class="assignToprofile" href="#tickets/<?php echo $T['ticket_id']; ?>/assign/profile"
-                               data-redirect="tickets.php?status=pid"><?php echo __('Assign'); ?></a>&nbsp;&nbsp;
-						<?php }elseif (strpos($T['cdata__profile_id'], ';') != false) {
-						$arrPid = explode(';', $T['cdata__profile_id']);
-						//var_dump($stuff);
-						if (count($arrPid) > 1) {
-							$arrLinks = array();
-							foreach ($arrPid as $pid) {
-								$arrLinks[] = "<span class='assignTicketToPid' data-ticketId='{$T['ticket_id']}' data-profileId='$pid'>$pid</span>";
-								//var_dump($pid);
-							}
-							echo implode(' ', $arrLinks);
-						} ?>
-
-                    </td>
-					<?php
-				} ?>
-                <td title="<?php echo $T['user__default_email__address']; ?>" nowrap>
-                    <a class="Icon <?php echo strtolower($T['source']); ?>Ticket preview"
-                       title="Preview Ticket"
-                       href="tickets.php?id=<?php echo $T['ticket_id']; ?>"
-                       data-preview="#tickets/<?php echo $T['ticket_id']; ?>/preview"
-                    ><?php echo $tid; ?></a></td>
-                <td align="center" nowrap>
-					<?php
-					echo Format::datetime($T[$date_col ?: 'lastupdate']) ?: $date_fallback; ?>
-                </td>
-                <td>
-                    <div
-                            class="<?php if ($flag) { ?>Icon <?php echo $flag; ?>Ticket <?php } ?>link truncate"
-						<?php if ($flag) { ?> title="<?php echo ucfirst($flag); ?> Ticket" <?php } ?>
-                            href="tickets.php?id=<?php echo $T['ticket_id']; ?>"><?php echo $subject; ?></div>
-					<?php
-					if ($T['attachment_count']) {
-						echo '<i class="small icon-paperclip icon-flip-horizontal" data-toggle="tooltip" title="'
-							. $T['attachment_count'] . '"></i>';
+            <td align="center" class="nohover">
+                <input class="ckb" type="checkbox" name="tids[]"
+                       value="<?php echo $T['ticket_id']; ?>" <?php echo $sel ? 'checked="checked"' : ''; ?>>
+				<?php if (isset($_GET['status']) && $_GET['status'] == 'nopid' && empty(trim($T['cdata__profile_id']))) { ?>
+                    <a class="assignToprofile" href="#tickets/<?php echo $T['ticket_id']; ?>/assign/profile"
+                       data-redirect="tickets.php?status=pid"><?php echo __('Assign'); ?></a>&nbsp;&nbsp;
+				<?php }elseif (strpos($T['cdata__profile_id'], ';') != false) {
+				$arrPid = explode(';', $T['cdata__profile_id']);
+				//var_dump($stuff);
+				if (count($arrPid) > 1) {
+					$arrLinks = array();
+					foreach ($arrPid as $pid) {
+						$arrLinks[] = "<span class='assignTicketToPid' data-ticketId='{$T['ticket_id']}' data-profileId='$pid'>$pid</span>";
+						//var_dump($pid);
 					}
-					if ($threadcount > 1) { ?>
-                        <span class="pull-right faded-more"><i class="icon-comments-alt"></i>
+					echo implode(' ', $arrLinks);
+				} ?>
+            </td>
+		<?php
+		} ?>
+            <td title="<?php echo $T['user__default_email__address']; ?>" nowrap>
+                <a class="Icon <?php echo strtolower($T['source']); ?>Ticket preview"
+                   title="Preview Ticket"
+                   href="tickets.php?id=<?php echo $T['ticket_id']; ?>"
+                   data-preview="#tickets/<?php echo $T['ticket_id']; ?>/preview"
+                ><?php echo $tid; ?></a></td>
+            <td align="center" nowrap>
+				<?php
+				echo Format::datetime($T[$date_col ?: 'lastupdate']) ?: $date_fallback; ?>
+            </td>
+            <td>
+                <div
+                        class="<?php if ($flag) { ?>Icon <?php echo $flag; ?>Ticket <?php } ?>link truncate"
+					<?php if ($flag) { ?> title="<?php echo ucfirst($flag); ?> Ticket" <?php } ?>
+                        href="tickets.php?id=<?php echo $T['ticket_id']; ?>"><?php echo $subject; ?></div>
+				<?php
+				if ($T['attachment_count']) {
+					echo '<i class="small icon-paperclip icon-flip-horizontal" data-toggle="tooltip" title="'
+						. $T['attachment_count'] . '"></i>';
+				}
+				if ($threadcount > 1) { ?>
+                    <span class="pull-right faded-more"><i class="icon-comments-alt"></i>
                             <small><?php echo $threadcount; ?></small>
                         </span>
-					<?php } ?>
-                </td>
-                <td nowrap>
-                    <div class="ticket-subject"><?php
-						if ($T['collab_count']) {
-							echo '<span class="pull-right faded-more" data-toggle="tooltip" title="'
-								. $T['collab_count'] . '"><i class="icon-group"></i></span>';
-						} ?><span class="truncate" style=""><?php
-							$un = new UsersName($T['user__name']);
-							echo Format::htmlchars($un) . ' &lt;' . Format::htmlchars($T['user__default_email__address']) . '&gt;'; ?></span>
-                    </div>
+				<?php } ?>
+            </td>
+            <td nowrap>
+                <div class="ticket-subject"><?php
+					if ($T['collab_count']) {
+						echo '<span class="pull-right faded-more" data-toggle="tooltip" title="'
+							. $T['collab_count'] . '"><i class="icon-group"></i></span>';
+					} ?><span class="truncate" style=""><?php
+						$un = new UsersName($T['user__name']);
+						echo Format::htmlchars($un) . ' &lt;' . Format::htmlchars($T['user__default_email__address']) . '&gt;'; ?></span>
+                </div>
+            </td>
+			<?php
+			$displaystatus = TicketStatus::getLocalById($T['status_id'], 'value', $T['status__name']);
+			if ($T['isanswered'] && $T['status_id'] < 2) {
+				$displaystatus = 'Answered';
+			}
+			if (!strcasecmp($T['status__state'], 'open')) {
+				$displaystatus = "<b>$displaystatus</b>";
+			}
+			echo "<td>$displaystatus</td>"; ?>
+            <td class="nohover ticketPrio" align="center"
+                style="background-color:<?php echo $T['cdata__:priority__priority_color']; ?>;">
+				<?php echo $T['cdata__:priority__priority_desc']; ?></td>
+            <td nowrap><span class="truncate" style="max-width: 169px"><?php
+					echo ($T['staff_id'] == $thisstaff->getId()) ? '<b>' . Format::htmlchars($lc) . '</b>' : Format::htmlchars($lc); ?></span>
+            </td>
+			<?php if (isset($queue_columns['dept']) && $showassigned) {
+				/**@var $_dept Dept */
+				$_dept = Dept::lookup($T['dept_id']);
+				$lc2 = $_dept->getFullName();
+				//$lc2 = Dept::getLocalById($T['dept_id'], 'name', $T['dept__name']);
+				?>
+                <td nowrap><span class="truncate" style="max-width: 169px">
+                        <?php echo Format::htmlchars($lc2); ?></span>
                 </td>
 				<?php
-				$displaystatus = TicketStatus::getLocalById($T['status_id'], 'value', $T['status__name']);
-				if ($T['isanswered'] && $T['status_id'] < 2) {
-					$displaystatus = 'Answered';
-				}
-				if (!strcasecmp($T['status__state'], 'open')) {
-					$displaystatus = "<b>$displaystatus</b>";
-				}
-				echo "<td>$displaystatus</td>"; ?>
-                <td class="nohover ticketPrio" align="center"
-                    style="background-color:<?php echo $T['cdata__:priority__priority_color']; ?>;">
-					<?php echo $T['cdata__:priority__priority_desc']; ?></td>
-                <td nowrap><span class="truncate" style="max-width: 169px"><?php
-						echo ($T['staff_id'] == $thisstaff->getId()) ? '<b>' . Format::htmlchars($lc) . '</b>' : Format::htmlchars($lc); ?></span>
-                </td>
-				<?php if (isset($queue_columns['dept']) && $showassigned) {
-					/**@var $_dept Dept */
-					$_dept = Dept::lookup($T['dept_id']);
-					$lc2 = $_dept->getFullName();
-					//$lc2 = Dept::getLocalById($T['dept_id'], 'name', $T['dept__name']);
-					?>
-                    <td nowrap><span class="truncate" style="max-width: 169px">
-                        <?php echo Format::htmlchars($lc2); ?></span>
-                    </td>
-					<?php
-				} ?>
+			} ?>
 
-                <td nowrap>
-					<?= $teamName ?>
-                </td>
-				<?php if (isset($queue_columns['cdata__profile_id'])) {
+            <td nowrap>
+				<?= $teamName ?>
+            </td>
+			<?php if (isset($queue_columns['cdata__profile_id'])) {
 
-					?>
-                    <td style="max-width: 100px"><span class="" style="max-width: 100px">
+				?>
+                <td style="max-width: 100px"><span class="" style="max-width: 100px">
                        <?php
 					   if (!empty(trim($T['cdata__profile_id'])) && strpos($T['cdata__profile_id'], ';') == false) {
 						   if (isset($profiles[$T['cdata__profile_id']])) {
@@ -933,11 +934,11 @@ return false;">
 					   } else echo "<a class='assignToprofile' href='#tickets/{$T['ticket_id']}/assign/profile' data-redirect='tickets.php?status=open'>Assign</a>";
 
 					   ?></span>
-                    </td>
-					<?php
-				} ?>
-            </tr>
-			<?php
+                </td>
+				<?php
+			} ?>
+        </tr>
+		<?php
 		} //end of foreach
 		if (!$total) {
 			$ferror = __('There are no tickets matching your criteria.');
