@@ -829,6 +829,10 @@ return false;">
                             <a class="assignToprofile" href="#tickets/<?php echo $T['ticket_id']; ?>/assign/profile"
                                data-redirect="tickets.php?status=pid"><?php echo __('Assign'); ?></a>&nbsp;&nbsp;
 						<?php } ?>
+						<?php if (isset($T['cdata__profile_id']) && $_GET['status'] == 'nopid') { ?>
+                            <a class="assignToprofile" href="#tickets/<?php echo $T['ticket_id']; ?>/assign/profile"
+                               data-redirect="tickets.php?status=pid"><?php echo $T['cdata__profile_id'] ?></a>&nbsp;&nbsp;
+						<?php } ?>
                     </td>
 					<?php
 				} ?>
