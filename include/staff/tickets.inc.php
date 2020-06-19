@@ -861,9 +861,18 @@ return false;">
                     </td>
 					<?php
 				} ?>
+
                 <td nowrap>
 					<?= $teamName ?>
                 </td>
+				<?php if (isset($queue_columns['profile_id'])) {
+
+					?>
+                    <td nowrap><span class="truncate" style="max-width: 169px">
+                       <?=$T['cdata__profile_id']?></span>
+                    </td>
+					<?php
+				} ?>
             </tr>
 			<?php
 		} //end of foreach
