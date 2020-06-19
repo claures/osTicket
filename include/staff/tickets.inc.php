@@ -155,7 +155,7 @@ switch ($queue_name) {
 
 		$sql = 'SELECT T1.ticket_id FROM ' . TICKET_TABLE . ' T1 ,ost_ticket__cdata T2  , ost_user_email U'
 
-			. ' WHERE T2.profile_id = "" '
+			. ' WHERE (T2.profile_id = "" OR T2.profile_id like "%;%" )'
 
 			. ' AND T1.ticket_id = T2.ticket_id'
 
