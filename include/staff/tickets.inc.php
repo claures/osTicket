@@ -914,7 +914,7 @@ return false;">
 						   if (count($arrPid) > 1) {
 							   $arrLinks = array();
 							   foreach ($arrPid as $pid) {
-								   $arrLinks[] = "<span class='assignTicketToPid' data-ticketId='{$ticket->getId()}' data-profileId='$pid'>$pid</span>";
+								   $arrLinks[] = "<span class='assignTicketToPid' data-ticketId='{$T['ticket_id']}' data-profileId='$pid'>$pid</span>";
 								   //var_dump($pid);
 							   }
 							   echo implode(' ', $arrLinks);
