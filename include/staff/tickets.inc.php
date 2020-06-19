@@ -181,7 +181,7 @@ switch ($queue_name) {
             ))
 		));
 		$tickets->filter(
-			 Q::not(array('user__emails__address__endswith' => 'mixvoip.net')),
+			 Q::not(array('user__emails__address__endswith' => 'mixvoip.net'))
 		);
 		$tickets->filter(Q::not(array('user__address__endswith' => 'mixvoip.com')));
 		$tickets->filter(Q::not(array('user__address__endswith' => 'smartcall.be')));
