@@ -525,7 +525,6 @@ $tickets->values(
 	'source',
 	'cdata__:priority__priority_color',
 	'cdata__:priority__priority_desc',
-	'cdata__:profile_io',
 	'status_id',
 	'status__name',
 	'status__state',
@@ -695,7 +694,6 @@ return false;">
 		$total = 0;
 		$ids = ($errors && $_POST['tids'] && is_array($_POST['tids'])) ? $_POST['tids'] : null;
 		foreach ($tickets as $T) {
-		    if(isset($_GET['debug']) && $_GET['debug'] == 1)var_dump($T);
 			$teamName = Team::getLocalById($T['team_id'], 'name', $T['team__name']);
 			$agentName = new AgentsName($T['staff__firstname'] . ' ' . $T['staff__lastname']);
 			//f($T['staff_id'] == $thisstaff->getId()) $agentName .= " (Me)";
