@@ -611,7 +611,7 @@ if (isset($_GET['debug']) && $_GET['debug'] = 1) {
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $_POST);
 	$output = curl_exec($ch);
 	curl_close($ch);
-	$profiles = json_decode($output,true);
+	$profiles = json_decode($output, true);
 
 	//var_dump($tickets);
 }
@@ -903,16 +903,25 @@ return false;">
 					?>
                     <td nowrap><span class="" style="max-width: 100px">
                        <?php
-					   if(!empty(trim($T['cdata__profile_id'])) && strpos($T['cdata__profile_id'],';') == false){
-					     if(isset($profiles[$T['cdata__profile_id']])) {
-							 $name = $profiles[$T['cdata__profile_id']];
-							 echo "<a href='https://ssh.mixvoip.com:12663/briviere.backend/Profile/summaryView/{$T['cdata__profile_id']}' target='_blank'/>$name</a>";
-						 }
-                       }elseif(strpos($T['cdata__profile_id'],';') != false){
-						   echo $T['cdata__profile_id'];
-                       } else echo "<a class='assignToprofile' href='#tickets/{$T['ticket_id']}/assign/profile' data-redirect='tickets.php?status=open'>Assign</a>";
+					   if (!empty(trim($T['cdata__profile_id'])) && strpos($T['cdata__profile_id'], ';') == false) {
+						   if (isset($profiles[$T['cdata__profile_id']])) {
+							   $name = $profiles[$T['cdata__profile_id']];
+							   echo "<a href='https://ssh.mixvoip.com:12663/briviere.backend/Profile/summaryView/{$T['cdata__profile_id']}' target='_blank'/>$name</a>";
+						   }
+					   } elseif (strpos($T['cdata__profile_id'], ';') != false) {
+						   $arrPid = explode(';', $T['cdata__profile_id']);
+						   //var_dump($stuff);
+						   if (count($arrPid) > 1) {
+							   $arrLinks = array();
+							   foreach ($arrPid as $pid) {
+								   $arrLinks[] = "<span class='assignTicketToPid' data-ticketId='{$ticket->getId()}' data-profileId='$pid'>$pid</span>";
+								   //var_dump($pid);
+							   }
+							   echo implode(' ', $arrLinks);
+						   }
+					   } else echo "<a class='assignToprofile' href='#tickets/{$T['ticket_id']}/assign/profile' data-redirect='tickets.php?status=open'>Assign</a>";
 
-                       ?></span>
+					   ?></span>
                     </td>
 					<?php
 				} ?>
