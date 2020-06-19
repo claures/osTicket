@@ -614,6 +614,7 @@ if (isset($_GET['debug']) && $_GET['debug'] = 1) {
 	curl_close($ch);
 	$profiles = json_decode($output);
 	var_dump($profiles);
+	var_dump($tickets);
 }
 ?>
 
