@@ -546,9 +546,11 @@ if (isset($_GET['debug']) && $_GET['debug'] == 1) {
 		'staff__lastname',
 		'team__name'
 	);
-	$queue_columns['cdata__profile_id']['heading'] = 'Customer';
-	$queue_columns['cdata__profile_id']['width'] = '20';
-	$queue_columns['cdata__profile_id']['sort'] = 'cdata__profile_id';
+	if($_GET['status'] != 'nopid') {
+		$queue_columns['cdata__profile_id']['heading'] = 'Customer';
+		$queue_columns['cdata__profile_id']['width'] = '20';
+		$queue_columns['cdata__profile_id']['sort'] = 'cdata__profile_id';
+	}
 } else {
 	$tickets->values(
 		'lock__staff_id',
