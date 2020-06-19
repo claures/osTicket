@@ -595,7 +595,8 @@ $tickets->annotate(array(
 $tickets->constrain(array('lock' => array(
 	'lock__expire__gt' => SqlFunction::NOW())));
 $arrProfileId=array();
-if(isset($queue_columns['cdata__profile_id']))foreach($tickets as $ticket)$arrProfileId[] = $ticket['cdata__profile_id'];
+$ticketsProfile=$tickets;
+if(isset($queue_columns['cdata__profile_id']))foreach($ticketsProfile as $ticket)$arrProfileId[] = $ticket['cdata__profile_id'];
 if(isset($_GET['debug']) && $_GET['debug'] == 1){
     var_dump($arrProfileId);
 }
