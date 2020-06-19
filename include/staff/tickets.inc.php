@@ -611,7 +611,7 @@ if (isset($_GET['debug']) && $_GET['debug'] = 1) {
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $_POST);
 	$output = curl_exec($ch);
 	curl_close($ch);
-	$profiles = json_decode($output);
+	$profiles = json_decode($output,true);
 
 	//var_dump($tickets);
 }
