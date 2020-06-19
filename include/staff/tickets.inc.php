@@ -183,9 +183,9 @@ switch ($queue_name) {
 		$tickets->filter(
 			Q::not(array('user__emails__address__endswith' => 'mixvoip.net'))
 		);
-		$tickets->filter(Q::not(array('user__address__endswith' => 'mixvoip.com')));
-		$tickets->filter(Q::not(array('user__address__endswith' => 'smartcall.be')));
-		$tickets->filter(Q::not(array('user__address__endswith' => 'ipfix.be')));
+		$tickets->filter(Q::not(array('user__emails__address__endswith' => 'mixvoip.com')));
+		$tickets->filter(Q::not(array('user__emails__address__endswith' => 'smartcall.be')));
+		$tickets->filter(Q::not(array('user__emails__address__endswith' => 'ipfix.be')));
 		$queue_sort_options = array('updated', 'priority,updated',
 			'priority,created', 'priority,due', 'due', 'answered', 'number',
 			'hot');
