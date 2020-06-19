@@ -146,46 +146,46 @@ switch ($queue_name) {
 	case 'nopid':
 		$status = 'open';
 		$results_type = __('Unassigned to profile');
-	/*	$domainBlacklist = array('smartcall.be', 'mixvoip.net', 'mixvoip.com', 'ipfix.be');
-		$notLikeEmail = array();
-		foreach ($domainBlacklist as $domain){
-		    $notLikeEmail[] = " 'user__address__like' '%$domain' ";
-        }
-        $notLikeEmail = implode(' AND ',$notLikeEmail);
-
-		$sql = 'SELECT T1.ticket_id FROM ' . TICKET_TABLE . ' T1 ,ost_ticket__cdata T2  , ost_user_email U'
-
-			. ' WHERE (T2.profile_id = "" OR T2.profile_id like "%;%" )'
-
-			. ' AND T1.ticket_id = T2.ticket_id'
-
-            . ' AND U.user_id = T1.user_id AND '.$notLikeEmail
-
-			. ' AND T1.lastupdate > "2020-01-01 00:00:00"'
-
-            .' AND  T1.status_id IN (1,7)'
-
-			. ' ORDER BY T1.created';
-
-/*
-		if (($res = db_query($sql)) && db_num_rows($res)) {
-
-			while ($ticketId = db_fetch_row($res)) {
-				$arrTicket[] = $ticketId[0];
+		/*	$domainBlacklist = array('smartcall.be', 'mixvoip.net', 'mixvoip.com', 'ipfix.be');
+			$notLikeEmail = array();
+			foreach ($domainBlacklist as $domain){
+				$notLikeEmail[] = " 'user__address__like' '%$domain' ";
 			}
-		}
-*/
+			$notLikeEmail = implode(' AND ',$notLikeEmail);
+
+			$sql = 'SELECT T1.ticket_id FROM ' . TICKET_TABLE . ' T1 ,ost_ticket__cdata T2  , ost_user_email U'
+
+				. ' WHERE (T2.profile_id = "" OR T2.profile_id like "%;%" )'
+
+				. ' AND T1.ticket_id = T2.ticket_id'
+
+				. ' AND U.user_id = T1.user_id AND '.$notLikeEmail
+
+				. ' AND T1.lastupdate > "2020-01-01 00:00:00"'
+
+				.' AND  T1.status_id IN (1,7)'
+
+				. ' ORDER BY T1.created';
+
+	/*
+			if (($res = db_query($sql)) && db_num_rows($res)) {
+
+				while ($ticketId = db_fetch_row($res)) {
+					$arrTicket[] = $ticketId[0];
+				}
+			}
+	*/
 		$tickets->filter(array(Q::any(array(
 			'cdata__profile_id__like' => '%;%',
 			'cdata__profile_id' => '',
-            ))
+		))
 		));
 		$tickets->filter(
-			 Q::not(array('user__emails__address__endswith' => 'mixvoip.net'))
+			Q::not(array('user__emails__address__endswith' => 'mixvoip.net'))
 		);
-		$tickets->filter(Q::not(array('user__address__endswith' => 'mixvoip.com')));
+		/*$tickets->filter(Q::not(array('user__address__endswith' => 'mixvoip.com')));
 		$tickets->filter(Q::not(array('user__address__endswith' => 'smartcall.be')));
-		$tickets->filter(Q::not(array('user__address__endswith' => 'ipfix.be')));
+		$tickets->filter(Q::not(array('user__address__endswith' => 'ipfix.be')));*/
 		$queue_sort_options = array('updated', 'priority,updated',
 			'priority,created', 'priority,due', 'due', 'answered', 'number',
 			'hot');
@@ -351,7 +351,6 @@ if ($status != 'closed' && $queue_name != 'assigned') {
 if ($status) {
 	$tickets->filter(array('status__state' => $status));
 }
-
 
 
 // Impose visibility constraints
@@ -521,7 +520,7 @@ TicketForm::ensureDynamicDataView();
 
 // Select pertinent columns
 // ------------------------------------------------------------
-if(isset($_GET['debug']) && $_GET['debug'] == 1) {
+if (isset($_GET['debug']) && $_GET['debug'] == 1) {
 	$tickets->values(
 		'lock__staff_id',
 		'staff_id',
@@ -547,7 +546,7 @@ if(isset($_GET['debug']) && $_GET['debug'] == 1) {
 		'staff__lastname',
 		'team__name'
 	);
-}else {
+} else {
 	$tickets->values(
 		'lock__staff_id',
 		'staff_id',
@@ -730,7 +729,7 @@ return false;">
 		$total = 0;
 		$ids = ($errors && $_POST['tids'] && is_array($_POST['tids'])) ? $_POST['tids'] : null;
 		foreach ($tickets as $T) {
-		    if(isset($_GET['debug']) && $_GET['debug'] == 1)var_dump($T);
+			if (isset($_GET['debug']) && $_GET['debug'] == 1) var_dump($T);
 			$teamName = Team::getLocalById($T['team_id'], 'name', $T['team__name']);
 			$agentName = new AgentsName($T['staff__firstname'] . ' ' . $T['staff__lastname']);
 			//f($T['staff_id'] == $thisstaff->getId()) $agentName .= " (Me)";
@@ -791,9 +790,10 @@ return false;">
                     <td align="center" class="nohover">
                         <input class="ckb" type="checkbox" name="tids[]"
                                value="<?php echo $T['ticket_id']; ?>" <?php echo $sel ? 'checked="checked"' : ''; ?>>
-                        <?php if(isset($_GET['status']) && $_GET['status'] == 'nopid') { ?>
-                        <a class="assignToprofile" href="#tickets/<?php echo $T['ticket_id']; ?>/assign/profile" data-redirect="tickets.php?status=pid"><?php echo __('Assign'); ?></a>&nbsp;&nbsp;
-                        <?php } ?>
+						<?php if (isset($_GET['status']) && $_GET['status'] == 'nopid') { ?>
+                            <a class="assignToprofile" href="#tickets/<?php echo $T['ticket_id']; ?>/assign/profile"
+                               data-redirect="tickets.php?status=pid"><?php echo __('Assign'); ?></a>&nbsp;&nbsp;
+						<?php } ?>
                     </td>
 					<?php
 				} ?>
