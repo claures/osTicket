@@ -598,7 +598,7 @@ $tickets->constrain(array('lock' => array(
 
 if (isset($_GET['debug']) && $_GET['debug'] = 1) {
 	$arrProfileId = array();
-	$ticketsProfile = clone $tickets;
+	$ticketsProfile = clone $tickets2;
 	if (isset($queue_columns['cdata__profile_id']))
 		foreach ($ticketsProfile as $ticket)
 			if (!empty(trim($ticket['cdata__profile_id'])) && strpos($ticket['cdata__profile_id'], ';') == false)
