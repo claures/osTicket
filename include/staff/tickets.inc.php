@@ -603,7 +603,6 @@ if (isset($_GET['debug']) && $_GET['debug'] = 1) {
 		foreach ($ticketsProfile as $ticket)
 			if (!empty(trim($ticket['cdata__profile_id'])) && strpos($ticket['cdata__profile_id'], ';') == false)
 				$arrProfileId[] = $ticket['cdata__profile_id'];
-	var_dump($arrProfileId);
 	$_POST['profiles'] = json_encode($arrProfileId);
 	$ch = curl_init('https://service.mixvoip.com/scripts/getProfiles.php');
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -613,7 +612,6 @@ if (isset($_GET['debug']) && $_GET['debug'] = 1) {
 	$output = curl_exec($ch);
 	curl_close($ch);
 	$profiles = json_decode($output);
-	var_dump($profiles);
 	//var_dump($tickets);
 }
 ?>
