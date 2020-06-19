@@ -181,10 +181,10 @@ switch ($queue_name) {
             ))
 		));
 		$tickets->filter(Q::all(array(
-			 'user_address__not_like' => '%mixvoip.net',
-			 'user_address__not_like' => '%mixvoip.com',
-			 'user_address__not_like' => '%smartcall.be',
-			 'user_address__not_like' => '%ipfix.be'
+			 'user__address__notlike' => '%mixvoip.net',
+			 'user__address__notlike' => '%mixvoip.com',
+			 'user__address__notlike' => '%smartcall.be',
+			 'user__address__notlike' => '%ipfix.be'
 		)));
 		$queue_sort_options = array('updated', 'priority,updated',
 			'priority,created', 'priority,due', 'due', 'answered', 'number',
