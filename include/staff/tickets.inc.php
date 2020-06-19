@@ -149,13 +149,13 @@ switch ($queue_name) {
 		$domainBlacklist = array('smartcall.be', 'mixvoip.net', 'mixvoip.com', 'ipfix.be');
 		$notLikeEmail = array();
 		foreach ($domainBlacklist as $domain){
-		    $notLikeEmail[] = " U.address NOT LIKE '%$domain' ";
+		    $notLikeEmail[] = " 'user__address__like' '%$domain' ";
         }
         $notLikeEmail = implode(' AND ',$notLikeEmail);
 
 		$sql = 'SELECT T1.ticket_id FROM ' . TICKET_TABLE . ' T1 ,ost_ticket__cdata T2  , ost_user_email U'
 
-			. ' WHERE T2.profile_id = "" '
+			. ' WHERE (T2.profile_id = "" OR T2.profile_id like "%;%" )'
 
 			. ' AND T1.ticket_id = T2.ticket_id'
 
@@ -167,17 +167,25 @@ switch ($queue_name) {
 
 			. ' ORDER BY T1.created';
 
-
+/*
 		if (($res = db_query($sql)) && db_num_rows($res)) {
 
 			while ($ticketId = db_fetch_row($res)) {
 				$arrTicket[] = $ticketId[0];
 			}
 		}
-
-		$tickets->filter(array(
-			'ticket_id__in' => $arrTicket
+*/
+		$tickets->filter(array(Q::any(array(
+			'cdata__profile_id__like' => '%;%',
+			'cdata__profile_id' => '',
+            ))
 		));
+		$tickets->filter(Q::all(array(
+			 'user__address__not_like' => '%mixvoip.net',
+			 'user__address__not_like' => '%mixvoip.com',
+			 'user__address__not_like' => '%smartcall.be',
+			 'user__address__not_like' => '%ipfix.be'
+		)));
 		$queue_sort_options = array('updated', 'priority,updated',
 			'priority,created', 'priority,due', 'due', 'answered', 'number',
 			'hot');
@@ -343,6 +351,8 @@ if ($status != 'closed' && $queue_name != 'assigned') {
 if ($status) {
 	$tickets->filter(array('status__state' => $status));
 }
+
+
 
 // Impose visibility constraints
 // ------------------------------------------------------------
@@ -511,30 +521,58 @@ TicketForm::ensureDynamicDataView();
 
 // Select pertinent columns
 // ------------------------------------------------------------
-$tickets->values(
-	'lock__staff_id',
-	'staff_id',
-	'isoverdue',
-	'team_id',
-	'ticket_id',
-	'number',
-	'cdata__subject',
-	'user__default_email__address',
-	'source',
-	'cdata__:priority__priority_color',
-	'cdata__:priority__priority_desc',
-	'status_id',
-	'status__name',
-	'status__state',
-	'dept_id',
-	'dept__name',
-	'user__name',
-	'lastupdate',
-	'isanswered',
-	'staff__firstname',
-	'staff__lastname',
-	'team__name'
-);
+if(isset($_GET['debug']) && $_GET['debug'] == 1) {
+	$tickets->values(
+		'lock__staff_id',
+		'staff_id',
+		'isoverdue',
+		'team_id',
+		'ticket_id',
+		'number',
+		'cdata__subject',
+		'user__default_email__address',
+		'source',
+		'cdata__:priority__priority_color',
+		'cdata__:priority__priority_desc',
+		'cdata__profile_id',
+		'status_id',
+		'status__name',
+		'status__state',
+		'dept_id',
+		'dept__name',
+		'user__name',
+		'lastupdate',
+		'isanswered',
+		'staff__firstname',
+		'staff__lastname',
+		'team__name'
+	);
+}else {
+	$tickets->values(
+		'lock__staff_id',
+		'staff_id',
+		'isoverdue',
+		'team_id',
+		'ticket_id',
+		'number',
+		'cdata__subject',
+		'user__default_email__address',
+		'source',
+		'cdata__:priority__priority_color',
+		'cdata__:priority__priority_desc',
+		'status_id',
+		'status__name',
+		'status__state',
+		'dept_id',
+		'dept__name',
+		'user__name',
+		'lastupdate',
+		'isanswered',
+		'staff__firstname',
+		'staff__lastname',
+		'team__name'
+	);
+}
 
 // Add in annotations
 $tickets->annotate(array(
@@ -692,6 +730,7 @@ return false;">
 		$total = 0;
 		$ids = ($errors && $_POST['tids'] && is_array($_POST['tids'])) ? $_POST['tids'] : null;
 		foreach ($tickets as $T) {
+		    if(isset($_GET['debug']) && $_GET['debug'] == 1)var_dump($T);
 			$teamName = Team::getLocalById($T['team_id'], 'name', $T['team__name']);
 			$agentName = new AgentsName($T['staff__firstname'] . ' ' . $T['staff__lastname']);
 			//f($T['staff_id'] == $thisstaff->getId()) $agentName .= " (Me)";
