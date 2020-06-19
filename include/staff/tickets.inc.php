@@ -186,7 +186,7 @@ switch ($queue_name) {
 			 Q::not(array('user__address__endswith' => 'smartcall.be')),
 			 Q::not(array('user__address__endswith' => 'ipfix.be'))
 		)));
-		$queue_sort_options = array('updated', 'priority,updated','profile_id',
+		$queue_sort_options = array('updated', 'priority,updated',
 			'priority,created', 'priority,due', 'due', 'answered', 'number',
 			'hot');
 		break;
