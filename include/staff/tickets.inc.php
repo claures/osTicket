@@ -546,8 +546,9 @@ if (isset($_GET['debug']) && $_GET['debug'] == 1) {
 		'staff__lastname',
 		'team__name'
 	);
-	$queue_columns['profile_id']['heading'] = 'Profile ID';
+	$queue_columns['profile_id']['heading'] = 'PID';
 	$queue_columns['profile_id']['width'] = '20';
+	$queue_columns['profile_id']['sort'] = 'cdata__profile_id';
 } else {
 	$tickets->values(
 		'lock__staff_id',
@@ -868,7 +869,7 @@ return false;">
 				<?php if (isset($queue_columns['profile_id'])) {
 
 					?>
-                    <td nowrap><span class="truncate" style="max-width: 169px">
+                    <td nowrap><span class="truncate" style="max-width: 50px">
                        <?=$T['cdata__profile_id']?></span>
                     </td>
 					<?php
