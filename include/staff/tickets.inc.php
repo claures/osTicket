@@ -178,7 +178,7 @@ switch ($queue_name) {
 		$tickets->filter(array(Q::any(array(
 			'cdata__profile_id__like' => '%;%',
 			'cdata__profile_id' => '',
-			Q::any(array(
+			Q::all(array(
 			        Q::not(array( 'user__address__like' => '%mixvoip.net')),
 					Q::not(array( 'user__address__like' => '%mixvoip.com')),
 					Q::not(array( 'user__address__like' => '%smartcall.be')),
