@@ -149,7 +149,7 @@ switch ($queue_name) {
 		$domainBlacklist = array('smartcall.be', 'mixvoip.net', 'mixvoip.com', 'ipfix.be');
 		$notLikeEmail = array();
 		foreach ($domainBlacklist as $domain){
-		    $notLikeEmail[] = " U.address NOT LIKE '%$domain' ";
+		    $notLikeEmail[] = " 'user__address__like' '%$domain' ";
         }
         $notLikeEmail = implode(' AND ',$notLikeEmail);
 
@@ -167,17 +167,25 @@ switch ($queue_name) {
 
 			. ' ORDER BY T1.created';
 
-
+/*
 		if (($res = db_query($sql)) && db_num_rows($res)) {
 
 			while ($ticketId = db_fetch_row($res)) {
 				$arrTicket[] = $ticketId[0];
 			}
 		}
-
-		$tickets->filter(array(
-			'ticket_id__in' => $arrTicket
-		));
+*/
+		$tickets->filter(array(Q::any(array(
+			'cdata__profile_id__like' => '%;%',
+			'cdata__profile_id' => '',
+			Q::any(array(
+			        Q::not(array( 'user__address__like' => '%mixvoip.net')),
+					Q::not(array( 'user__address__like' => '%mixvoip.com')),
+					Q::not(array( 'user__address__like' => '%smartcall.be')),
+					Q::not(array( 'user__address__like' => '%ipfix.be'))
+                )
+            ))
+		)));
 		$queue_sort_options = array('updated', 'priority,updated',
 			'priority,created', 'priority,due', 'due', 'answered', 'number',
 			'hot');
