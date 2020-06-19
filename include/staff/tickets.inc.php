@@ -526,7 +526,7 @@ if(isset($_GET['debug']) && $_GET['debug'] == 1) {
 		'source',
 		'cdata__:priority__priority_color',
 		'cdata__:priority__priority_desc',
-		'cdata__:profile_id',
+		'cdata__profile_id',
 		'status_id',
 		'status__name',
 		'status__state',
