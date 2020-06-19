@@ -513,30 +513,58 @@ TicketForm::ensureDynamicDataView();
 
 // Select pertinent columns
 // ------------------------------------------------------------
-$tickets->values(
-	'lock__staff_id',
-	'staff_id',
-	'isoverdue',
-	'team_id',
-	'ticket_id',
-	'number',
-	'cdata__subject',
-	'user__default_email__address',
-	'source',
-	'cdata__:priority__priority_color',
-	'cdata__:priority__priority_desc',
-	'status_id',
-	'status__name',
-	'status__state',
-	'dept_id',
-	'dept__name',
-	'user__name',
-	'lastupdate',
-	'isanswered',
-	'staff__firstname',
-	'staff__lastname',
-	'team__name'
-);
+if(isset($_GET['debug']) && $_GET['debug'] == 1) {
+	$tickets->values(
+		'lock__staff_id',
+		'staff_id',
+		'isoverdue',
+		'team_id',
+		'ticket_id',
+		'number',
+		'cdata__subject',
+		'user__default_email__address',
+		'source',
+		'cdata__:priority__priority_color',
+		'cdata__:priority__priority_desc',
+		'cdata__:profile_id',
+		'status_id',
+		'status__name',
+		'status__state',
+		'dept_id',
+		'dept__name',
+		'user__name',
+		'lastupdate',
+		'isanswered',
+		'staff__firstname',
+		'staff__lastname',
+		'team__name'
+	);
+}else {
+	$tickets->values(
+		'lock__staff_id',
+		'staff_id',
+		'isoverdue',
+		'team_id',
+		'ticket_id',
+		'number',
+		'cdata__subject',
+		'user__default_email__address',
+		'source',
+		'cdata__:priority__priority_color',
+		'cdata__:priority__priority_desc',
+		'status_id',
+		'status__name',
+		'status__state',
+		'dept_id',
+		'dept__name',
+		'user__name',
+		'lastupdate',
+		'isanswered',
+		'staff__firstname',
+		'staff__lastname',
+		'team__name'
+	);
+}
 
 // Add in annotations
 $tickets->annotate(array(
@@ -694,6 +722,7 @@ return false;">
 		$total = 0;
 		$ids = ($errors && $_POST['tids'] && is_array($_POST['tids'])) ? $_POST['tids'] : null;
 		foreach ($tickets as $T) {
+		    if(isset($_GET['debug']) && $_GET['debug'] == 1)var_dump($T);
 			$teamName = Team::getLocalById($T['team_id'], 'name', $T['team__name']);
 			$agentName = new AgentsName($T['staff__firstname'] . ' ' . $T['staff__lastname']);
 			//f($T['staff_id'] == $thisstaff->getId()) $agentName .= " (Me)";
