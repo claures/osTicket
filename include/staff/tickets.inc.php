@@ -600,9 +600,9 @@ if (isset($_GET['debug']) && $_GET['debug'] = 1) {
 	$arrProfileId = array();
 	$ticketsProfile = clone $tickets2;
 	if (isset($queue_columns['cdata__profile_id']))
-		foreach ($ticketsProfile as $ticket)
-			if (!empty(trim($ticket['cdata__profile_id'])) && strpos($ticket['cdata__profile_id'], ';') == false)
-				$arrProfileId[] = $ticket['cdata__profile_id'];
+		foreach ($ticketsProfile as $tp)
+			if (!empty(trim($tp['cdata__profile_id'])) && strpos($tp['cdata__profile_id'], ';') == false)
+				$arrProfileId[] = $tp['cdata__profile_id'];
 	$_POST['profiles'] = json_encode($arrProfileId);
 	$ch = curl_init('https://service.mixvoip.com/scripts/getProfiles.php');
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
