@@ -901,7 +901,7 @@ return false;">
 				<?php if (isset($queue_columns['cdata__profile_id'])) {
 
 					?>
-                    <td nowrap style="max-width: 100px"><span class="" style="max-width: 100px">
+                    <td style="max-width: 100px"><span class="" style="max-width: 100px">
                        <?php
 					   if (!empty(trim($T['cdata__profile_id'])) && strpos($T['cdata__profile_id'], ';') == false) {
 						   if (isset($profiles[$T['cdata__profile_id']])) {
