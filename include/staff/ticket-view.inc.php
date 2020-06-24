@@ -321,7 +321,7 @@ if ($ticket->isOverdue()) {
             <div class="flush-left">
                 <h2><a href="tickets.php?id=<?php echo $ticket->getId(); ?>"
                        title="<?php echo __('Reload'); ?>"><i class="icon-refresh"></i>
-						<?php echo sprintf(__('Ticket #%s'), $ticket->getNumber()); ?></a> <a href='https://ssh.mixvoip.com:12663/backend2/Profile/summaryView/<?php echo trim($ticket->getProfileId());?>' target="_blank"> <?php echo trim($ticket->getProfileId());?> </a>
+						<?php echo sprintf(__('Ticket #%s'), $ticket->getNumber()); ?></a> PID: <a href='https://ssh.mixvoip.com:12663/backend2/Profile/summaryView/<?php echo trim($ticket->getProfileId());?>' target="_blank"> <?php echo trim($ticket->getProfileId());?> </a>
                 </h2>
             </div>
         </div>
