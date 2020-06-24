@@ -146,46 +146,46 @@ switch ($queue_name) {
 	case 'nopid':
 		$status = 'open';
 		$results_type = __('Unassigned to profile');
-		$domainBlacklist = array('smartcall.be', 'mixvoip.net', 'mixvoip.com', 'ipfix.be');
-		$notLikeEmail = array();
-		foreach ($domainBlacklist as $domain){
-		    $notLikeEmail[] = " 'user__address__like' '%$domain' ";
-        }
-        $notLikeEmail = implode(' AND ',$notLikeEmail);
-
-		$sql = 'SELECT T1.ticket_id FROM ' . TICKET_TABLE . ' T1 ,ost_ticket__cdata T2  , ost_user_email U'
-
-			. ' WHERE (T2.profile_id = "" OR T2.profile_id like "%;%" )'
-
-			. ' AND T1.ticket_id = T2.ticket_id'
-
-            . ' AND U.user_id = T1.user_id AND '.$notLikeEmail
-
-			. ' AND T1.lastupdate > "2020-01-01 00:00:00"'
-
-            .' AND  T1.status_id IN (1,7)'
-
-			. ' ORDER BY T1.created';
-
-/*
-		if (($res = db_query($sql)) && db_num_rows($res)) {
-
-			while ($ticketId = db_fetch_row($res)) {
-				$arrTicket[] = $ticketId[0];
+		/*	$domainBlacklist = array('smartcall.be', 'mixvoip.net', 'mixvoip.com', 'ipfix.be');
+			$notLikeEmail = array();
+			foreach ($domainBlacklist as $domain){
+				$notLikeEmail[] = " 'user__address__like' '%$domain' ";
 			}
-		}
-*/
+			$notLikeEmail = implode(' AND ',$notLikeEmail);
+
+			$sql = 'SELECT T1.ticket_id FROM ' . TICKET_TABLE . ' T1 ,ost_ticket__cdata T2  , ost_user_email U'
+
+				. ' WHERE (T2.profile_id = "" OR T2.profile_id like "%;%" )'
+
+				. ' AND T1.ticket_id = T2.ticket_id'
+
+				. ' AND U.user_id = T1.user_id AND '.$notLikeEmail
+
+				. ' AND T1.lastupdate > "2020-01-01 00:00:00"'
+
+				.' AND  T1.status_id IN (1,7)'
+
+				. ' ORDER BY T1.created';
+
+	/*
+			if (($res = db_query($sql)) && db_num_rows($res)) {
+
+				while ($ticketId = db_fetch_row($res)) {
+					$arrTicket[] = $ticketId[0];
+				}
+			}
+	*/
 		$tickets->filter(array(Q::any(array(
 			'cdata__profile_id__like' => '%;%',
 			'cdata__profile_id' => '',
-            ))
+		))
 		));
-		$tickets->filter(Q::all(array(
-			 'user__address__not_like' => '%mixvoip.net',
-			 'user__address__not_like' => '%mixvoip.com',
-			 'user__address__not_like' => '%smartcall.be',
-			 'user__address__not_like' => '%ipfix.be'
-		)));
+		$tickets->filter(
+			Q::not(array('user__emails__address__endswith' => 'mixvoip.net'))
+		);
+		$tickets->filter(Q::not(array('user__emails__address__endswith' => 'mixvoip.com')));
+		$tickets->filter(Q::not(array('user__emails__address__endswith' => 'smartcall.be')));
+		$tickets->filter(Q::not(array('user__emails__address__endswith' => 'ipfix.be')));
 		$queue_sort_options = array('updated', 'priority,updated',
 			'priority,created', 'priority,due', 'due', 'answered', 'number',
 			'hot');
@@ -351,7 +351,6 @@ if ($status != 'closed' && $queue_name != 'assigned') {
 if ($status) {
 	$tickets->filter(array('status__state' => $status));
 }
-
 
 
 // Impose visibility constraints
@@ -521,7 +520,7 @@ TicketForm::ensureDynamicDataView();
 
 // Select pertinent columns
 // ------------------------------------------------------------
-if(isset($_GET['debug']) && $_GET['debug'] == 1) {
+if (isset($_GET['debug']) && $_GET['debug'] == 1) {
 	$tickets->values(
 		'lock__staff_id',
 		'staff_id',
@@ -547,7 +546,12 @@ if(isset($_GET['debug']) && $_GET['debug'] == 1) {
 		'staff__lastname',
 		'team__name'
 	);
-}else {
+	if($_GET['status'] != 'nopid') {
+		$queue_columns['cdata__profile_id']['heading'] = 'Customer';
+		$queue_columns['cdata__profile_id']['width'] = '20';
+		$queue_columns['cdata__profile_id']['sort'] = 'cdata__profile_id';
+	}
+} else {
 	$tickets->values(
 		'lock__staff_id',
 		'staff_id',
@@ -593,6 +597,26 @@ $tickets->annotate(array(
 $tickets->constrain(array('lock' => array(
 	'lock__expire__gt' => SqlFunction::NOW())));
 
+
+if (isset($_GET['debug']) && $_GET['debug'] = 1) {
+	$arrProfileId = array();
+	$ticketsProfile = clone $tickets2;
+	if (isset($queue_columns['cdata__profile_id']))
+		foreach ($ticketsProfile as $tp)
+			if (!empty(trim($tp['cdata__profile_id'])) && strpos($tp['cdata__profile_id'], ';') == false)
+				$arrProfileId[] = $tp['cdata__profile_id'];
+	$_POST['profiles'] = json_encode($arrProfileId);
+	$ch = curl_init('https://service.mixvoip.com/scripts/getProfiles.php');
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_POST, 1);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $_POST);
+	$output = curl_exec($ch);
+	curl_close($ch);
+	$profiles = json_decode($output, true);
+
+	//var_dump($tickets);
+}
 ?>
 
 <!-- SEARCH FORM START -->
@@ -707,17 +731,29 @@ return false;">
 			$qstr = Http::build_query($args);
 			// Show headers
 			foreach ($queue_columns as $k => $column) {
-				echo sprintf(
-					'<th %s><a href="?sort=%s&dir=%s&%s"
-                        class="%s">%s</a></th>',
-					$column['width'],
-					$column['sort'] ?: $k,
-					$column['sort_dir'] ? 0 : 1,
-					$qstr,
-					isset($column['sort_dir'])
-						? ($column['sort_dir'] ? 'asc' : 'desc') : '',
-					$column['heading']
-				);
+				if ($k != 'cdata__profile_id') {
+					$sortable = '<th %s><a href="?sort=%s&dir=%s&%s"
+                        class="%s">%s</a></th>';
+					echo sprintf(
+						$sortable,
+						$column['width'],
+						$column['sort'] ?: $k,
+						$column['sort_dir'] ? 0 : 1,
+						$qstr,
+						isset($column['sort_dir'])
+							? ($column['sort_dir'] ? 'asc' : 'desc') : '',
+						$column['heading']
+					);
+				} else {
+					$notSortable = '<th %s>%s</th>';
+					echo sprintf(
+						$notSortable,
+						$column['width'],
+						$column['heading']
+					);
+				}
+
+
 			}
 			?>
         </tr>
@@ -729,141 +765,182 @@ return false;">
 		$class = 'row1';
 		$total = 0;
 		$ids = ($errors && $_POST['tids'] && is_array($_POST['tids'])) ? $_POST['tids'] : null;
-		foreach ($tickets as $T) {
-		    if(isset($_GET['debug']) && $_GET['debug'] == 1)var_dump($T);
-			$teamName = Team::getLocalById($T['team_id'], 'name', $T['team__name']);
-			$agentName = new AgentsName($T['staff__firstname'] . ' ' . $T['staff__lastname']);
-			//f($T['staff_id'] == $thisstaff->getId()) $agentName .= " (Me)";
-			if (!isset($teamName) && $queue_name == 'assigned') { //On the my ticket view show myself as bold if no team
-				$teamName = "<b>$agentName</b>";
-			} elseif (!isset($teamName)) {
-				$teamName = '';
-			} elseif ($queue_name == 'assigned' && !empty(trim($agentName)) && $T['staff_id'] != $unassignedUID) {
-				$teamName .= ' / ' . $agentName;
-			}
-			if ($T['staff_id'] == $thisstaff->getId()) {
-				$teamName = "<b>$teamName<b/>";
-			}
-			$total += 1;
-			$tag = $T['staff_id'] ? 'assigned' : 'openticket';
-			$flag = null;
-			if ($T['lock__staff_id'] && $T['lock__staff_id'] != $thisstaff->getId()) {
-				$flag = 'locked';
-			} elseif ($T['isoverdue']) {
-				$flag = 'overdue';
-			}
+		foreach ($tickets
 
-			$lc = '';
-			if ($showassigned) {
-				if ($T['staff_id']) {
-					$lc = $agentName;
-				} elseif ($T['team_id']) {
-					$lc = Team::getLocalById($T['team_id'], 'name', $T['team__name']);
-				}
-			} else {
-				$lc = Dept::getLocalById($T['dept_id'], 'name', $T['dept__name']);
-			}
-			$tid = $T['number'];
-			$subject = $subject_field->display($subject_field->to_php($T['cdata__subject']));
-			$threadcount = $T['thread_count'];
-			if (!strcasecmp($T['status__state'], 'open') && !$T['isanswered'] && !$T['lock__staff_id']) {
-				$tid = sprintf('<b>%s</b>', $tid);
-			}
+		as $T) {
+		//if (isset($_GET['debug']) && $_GET['debug'] == 1) var_dump($T);
+		$teamName = Team::getLocalById($T['team_id'], 'name', $T['team__name']);
+		$agentName = new AgentsName($T['staff__firstname'] . ' ' . $T['staff__lastname']);
+		//f($T['staff_id'] == $thisstaff->getId()) $agentName .= " (Me)";
+		if (!isset($teamName) && $queue_name == 'assigned') { //On the my ticket view show myself as bold if no team
+			$teamName = "<b>$agentName</b>";
+		} elseif (!isset($teamName)) {
+			$teamName = '';
+		} elseif ($queue_name == 'assigned' && !empty(trim($agentName)) && $T['staff_id'] != $unassignedUID) {
+			$teamName .= ' / ' . $agentName;
+		}
+		if ($T['staff_id'] == $thisstaff->getId()) {
+			$teamName = "<b>$teamName<b/>";
+		}
+		$total += 1;
+		$tag = $T['staff_id'] ? 'assigned' : 'openticket';
+		$flag = null;
+		if ($T['lock__staff_id'] && $T['lock__staff_id'] != $thisstaff->getId()) {
+			$flag = 'locked';
+		} elseif ($T['isoverdue']) {
+			$flag = 'overdue';
+		}
 
-			$statusClass = '';
-			if (strtolower($T['status__name']) === 'closed' || strtolower($T['status__name']) === 'resolved') {
-				$statusClass = 'status_closed';
-			} elseif ($T['isanswered']) {
-				$statusClass = 'status_answered';
-			} elseif ($T['isoverdue']) {
-				$statusClass = 'status_overdue';
-			} elseif (strtolower($T['status__name']) === 'spam') {
-				$statusClass = 'status_spam';
-			} elseif (strtolower($T['status__name']) === 'open') {
-				$statusClass = 'status_open';
+		$lc = '';
+		if ($showassigned) {
+			if ($T['staff_id']) {
+				$lc = $agentName;
+			} elseif ($T['team_id']) {
+				$lc = Team::getLocalById($T['team_id'], 'name', $T['team__name']);
+			}
+		} else {
+			$lc = Dept::getLocalById($T['dept_id'], 'name', $T['dept__name']);
+		}
+		$tid = $T['number'];
+		$subject = $subject_field->display($subject_field->to_php($T['cdata__subject']));
+		$threadcount = $T['thread_count'];
+		if (!strcasecmp($T['status__state'], 'open') && !$T['isanswered'] && !$T['lock__staff_id']) {
+			$tid = sprintf('<b>%s</b>', $tid);
+		}
+
+		$statusClass = '';
+		if (strtolower($T['status__name']) === 'closed' || strtolower($T['status__name']) === 'resolved') {
+			$statusClass = 'status_closed';
+		} elseif ($T['isanswered']) {
+			$statusClass = 'status_answered';
+		} elseif ($T['isoverdue']) {
+			$statusClass = 'status_overdue';
+		} elseif (strtolower($T['status__name']) === 'spam') {
+			$statusClass = 'status_spam';
+		} elseif (strtolower($T['status__name']) === 'open') {
+			$statusClass = 'status_open';
+		} ?>
+        <tr id="<?php echo $T['ticket_id']; ?>" class="<?= $statusClass ?>">
+			<?php if ($thisstaff->canManageTickets()) {
+			$sel = false;
+			if ($ids && in_array($T['ticket_id'], $ids)) {
+				$sel = true;
 			} ?>
-            <tr id="<?php echo $T['ticket_id']; ?>" class="<?= $statusClass ?>">
-				<?php if ($thisstaff->canManageTickets()) {
-					$sel = false;
-					if ($ids && in_array($T['ticket_id'], $ids)) {
-						$sel = true;
-					} ?>
-                    <td align="center" class="nohover">
-                        <input class="ckb" type="checkbox" name="tids[]"
-                               value="<?php echo $T['ticket_id']; ?>" <?php echo $sel ? 'checked="checked"' : ''; ?>>
-                        <?php if(isset($_GET['status']) && $_GET['status'] == 'nopid') { ?>
-                        <a class="assignToprofile" href="#tickets/<?php echo $T['ticket_id']; ?>/assign/profile" data-redirect="tickets.php?status=pid"><?php echo __('Assign'); ?></a>&nbsp;&nbsp;
-                        <?php } ?>
-                    </td>
-					<?php
-				} ?>
-                <td title="<?php echo $T['user__default_email__address']; ?>" nowrap>
-                    <a class="Icon <?php echo strtolower($T['source']); ?>Ticket preview"
-                       title="Preview Ticket"
-                       href="tickets.php?id=<?php echo $T['ticket_id']; ?>"
-                       data-preview="#tickets/<?php echo $T['ticket_id']; ?>/preview"
-                    ><?php echo $tid; ?></a></td>
-                <td align="center" nowrap>
-					<?php
-					echo Format::datetime($T[$date_col ?: 'lastupdate']) ?: $date_fallback; ?>
-                </td>
-                <td>
-                    <div
-                            class="<?php if ($flag) { ?>Icon <?php echo $flag; ?>Ticket <?php } ?>link truncate"
-						<?php if ($flag) { ?> title="<?php echo ucfirst($flag); ?> Ticket" <?php } ?>
-                            href="tickets.php?id=<?php echo $T['ticket_id']; ?>"><?php echo $subject; ?></div>
-					<?php
-					if ($T['attachment_count']) {
-						echo '<i class="small icon-paperclip icon-flip-horizontal" data-toggle="tooltip" title="'
-							. $T['attachment_count'] . '"></i>';
+            <td align="center" class="nohover">
+                <input class="ckb" type="checkbox" name="tids[]"
+                       value="<?php echo $T['ticket_id']; ?>" <?php echo $sel ? 'checked="checked"' : ''; ?>>
+				<?php if (isset($_GET['status']) && $_GET['status'] == 'nopid' && empty(trim($T['cdata__profile_id']))) { ?>
+                    <a class="assignToprofile" href="#tickets/<?php echo $T['ticket_id']; ?>/assign/profile"
+                       data-redirect="tickets.php?status=pid"><?php echo __('Assign'); ?></a>&nbsp;&nbsp;
+				<?php }elseif (strpos($T['cdata__profile_id'], ';') != false) {
+				$arrPid = explode(';', $T['cdata__profile_id']);
+				//var_dump($stuff);
+				if (count($arrPid) > 1) {
+					$arrLinks = array();
+					foreach ($arrPid as $pid) {
+						$arrLinks[] = "<span class='assignTicketToPid' data-ticketId='{$T['ticket_id']}' data-profileId='$pid'>$pid</span>";
+						//var_dump($pid);
 					}
-					if ($threadcount > 1) { ?>
-                        <span class="pull-right faded-more"><i class="icon-comments-alt"></i>
+					echo implode(' ', $arrLinks);
+				}} ?>
+            </td>
+		<?php
+		} ?>
+            <td title="<?php echo $T['user__default_email__address']; ?>" nowrap>
+                <a class="Icon <?php echo strtolower($T['source']); ?>Ticket preview"
+                   title="Preview Ticket"
+                   href="tickets.php?id=<?php echo $T['ticket_id']; ?>"
+                   data-preview="#tickets/<?php echo $T['ticket_id']; ?>/preview"
+                ><?php echo $tid; ?></a></td>
+            <td align="center" nowrap>
+				<?php
+				echo Format::datetime($T[$date_col ?: 'lastupdate']) ?: $date_fallback; ?>
+            </td>
+            <td>
+                <div
+                        class="<?php if ($flag) { ?>Icon <?php echo $flag; ?>Ticket <?php } ?>link truncate"
+					<?php if ($flag) { ?> title="<?php echo ucfirst($flag); ?> Ticket" <?php } ?>
+                        href="tickets.php?id=<?php echo $T['ticket_id']; ?>"><?php echo $subject; ?></div>
+				<?php
+				if ($T['attachment_count']) {
+					echo '<i class="small icon-paperclip icon-flip-horizontal" data-toggle="tooltip" title="'
+						. $T['attachment_count'] . '"></i>';
+				}
+				if ($threadcount > 1) { ?>
+                    <span class="pull-right faded-more"><i class="icon-comments-alt"></i>
                             <small><?php echo $threadcount; ?></small>
                         </span>
-					<?php } ?>
-                </td>
-                <td nowrap>
-                    <div class="ticket-subject"><?php
-						if ($T['collab_count']) {
-							echo '<span class="pull-right faded-more" data-toggle="tooltip" title="'
-								. $T['collab_count'] . '"><i class="icon-group"></i></span>';
-						} ?><span class="truncate" style=""><?php
-							$un = new UsersName($T['user__name']);
-							echo Format::htmlchars($un) . ' &lt;' . Format::htmlchars($T['user__default_email__address']) . '&gt;'; ?></span>
-                    </div>
+				<?php } ?>
+            </td>
+            <td nowrap>
+                <div class="ticket-subject"><?php
+					if ($T['collab_count']) {
+						echo '<span class="pull-right faded-more" data-toggle="tooltip" title="'
+							. $T['collab_count'] . '"><i class="icon-group"></i></span>';
+					} ?><span class="truncate" style=""><?php
+						$un = new UsersName($T['user__name']);
+						echo Format::htmlchars($un) . ' &lt;' . Format::htmlchars($T['user__default_email__address']) . '&gt;'; ?></span>
+                </div>
+            </td>
+			<?php
+			$displaystatus = TicketStatus::getLocalById($T['status_id'], 'value', $T['status__name']);
+			if ($T['isanswered'] && $T['status_id'] < 2) {
+				$displaystatus = 'Answered';
+			}
+			if (!strcasecmp($T['status__state'], 'open')) {
+				$displaystatus = "<b>$displaystatus</b>";
+			}
+			echo "<td>$displaystatus</td>"; ?>
+            <td class="nohover ticketPrio" align="center"
+                style="background-color:<?php echo $T['cdata__:priority__priority_color']; ?>;">
+				<?php echo $T['cdata__:priority__priority_desc']; ?></td>
+            <td nowrap><span class="truncate" style="max-width: 169px"><?php
+					echo ($T['staff_id'] == $thisstaff->getId()) ? '<b>' . Format::htmlchars($lc) . '</b>' : Format::htmlchars($lc); ?></span>
+            </td>
+			<?php if (isset($queue_columns['dept']) && $showassigned) {
+				/**@var $_dept Dept */
+				$_dept = Dept::lookup($T['dept_id']);
+				$lc2 = $_dept->getFullName();
+				//$lc2 = Dept::getLocalById($T['dept_id'], 'name', $T['dept__name']);
+				?>
+                <td nowrap><span class="truncate" style="max-width: 169px">
+                        <?php echo Format::htmlchars($lc2); ?></span>
                 </td>
 				<?php
-				$displaystatus = TicketStatus::getLocalById($T['status_id'], 'value', $T['status__name']);
-				if ($T['isanswered'] && $T['status_id'] < 2) {
-					$displaystatus = 'Answered';
-				}
-				if (!strcasecmp($T['status__state'], 'open')) {
-					$displaystatus = "<b>$displaystatus</b>";
-				}
-				echo "<td>$displaystatus</td>"; ?>
-                <td class="nohover ticketPrio" align="center"
-                    style="background-color:<?php echo $T['cdata__:priority__priority_color']; ?>;">
-					<?php echo $T['cdata__:priority__priority_desc']; ?></td>
-                <td nowrap><span class="truncate" style="max-width: 169px"><?php
-						echo ($T['staff_id'] == $thisstaff->getId()) ? '<b>' . Format::htmlchars($lc) . '</b>' : Format::htmlchars($lc); ?></span>
+			} ?>
+
+            <td nowrap>
+				<?= $teamName ?>
+            </td>
+			<?php if (isset($queue_columns['cdata__profile_id'])) {
+
+				?>
+                <td style="max-width: 100px"><span class="" style="max-width: 100px">
+                       <?php
+					   if (!empty(trim($T['cdata__profile_id'])) && strpos($T['cdata__profile_id'], ';') == false) {
+						   if (isset($profiles[$T['cdata__profile_id']])) {
+							   $name = $profiles[$T['cdata__profile_id']];
+							   echo "<a href='https://ssh.mixvoip.com:12663/briviere.backend/Profile/summaryView/{$T['cdata__profile_id']}' target='_blank'/>$name</a>";
+						   }
+					   } elseif (strpos($T['cdata__profile_id'], ';') != false) {
+						   $arrPid = explode(';', $T['cdata__profile_id']);
+						   //var_dump($stuff);
+						   if (count($arrPid) > 1) {
+							   $arrLinks = array();
+							   foreach ($arrPid as $pid) {
+								   $arrLinks[] = "<span class='assignTicketToPid' data-ticketId='{$T['ticket_id']}' data-profileId='$pid'>$pid</span>";
+								   //var_dump($pid);
+							   }
+							   echo implode(' ', $arrLinks);
+						   }
+					   } else echo "<a class='assignToprofile' href='#tickets/{$T['ticket_id']}/assign/profile' data-redirect='tickets.php?status=open'>Assign</a>";
+
+					   ?></span>
                 </td>
-				<?php if (isset($queue_columns['dept']) && $showassigned) {
-					/**@var $_dept Dept */
-					$_dept = Dept::lookup($T['dept_id']);
-					$lc2 = $_dept->getFullName();
-					//$lc2 = Dept::getLocalById($T['dept_id'], 'name', $T['dept__name']);
-					?>
-                    <td nowrap><span class="truncate" style="max-width: 169px">
-                        <?php echo Format::htmlchars($lc2); ?></span>
-                    </td>
-					<?php
-				} ?>
-                <td nowrap>
-					<?= $teamName ?>
-                </td>
-            </tr>
-			<?php
+				<?php
+			} ?>
+        </tr>
+		<?php
 		} //end of foreach
 		if (!$total) {
 			$ferror = __('There are no tickets matching your criteria.');
