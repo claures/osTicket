@@ -1418,7 +1418,8 @@ class TicketsAjaxAPI extends AjaxController
 				ini_set('display_startup_errors', 1);
 				error_reporting(E_ALL);*/
 			//var_dump($email);
-			$_POST['email'] = $email;
+			//if(empty(trim($ticket->getProfileId()))){
+				$_POST['email'] = $email;
 				$ch = curl_init('https://service.mixvoip.com/scripts/createInternalContact.php');
 				curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -1428,7 +1429,7 @@ class TicketsAjaxAPI extends AjaxController
 				curl_close($ch);
 				//echo $output;
 				$return = json_decode($output, true);
-
+		//	}
 				if($return['success']){
 					$sql = 'UPDATE ost_ticket__cdata SET profile_id = "'.$_POST['profile_id'].'" '
 					. ' WHERE ticket_id = "'.$tid.'" ';
