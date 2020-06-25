@@ -927,7 +927,7 @@ $tcount = $ticket->getThreadEntries($types)->count();
 					                echo implode(' ', $arrLinks);
                                 }
                             }else {
-                                echo $profileId;
+                                echo 'PID: '.$profileId;
                             } 
                         }?>
                     </p>
