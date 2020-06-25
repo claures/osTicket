@@ -154,3 +154,23 @@ table.ticket_info.custom-data td:first-child {
 table.ticket_info {
 	margin-bottom: 20px;
 }
+
+.assignTicketToPid , .assignToprofile {
+	background-color: red;
+	color: white;
+	animation-name: 'blingcolor';
+	animation-duration: '2s';
+	animation-iteration-count: infinite;
+}
+
+@keyframes blingcolor {
+	from {
+		background-color: red;
+		border: 1px dotted yellow;
+	}
+
+	to {
+		background-color: yellow;
+		border: 1px dotted red;
+	}
+}
