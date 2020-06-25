@@ -158,8 +158,8 @@ table.ticket_info {
 a.assignToprofile {
 	background-color: red;
 	color: white;
-	animation-name: 'blingcolor';
-	animation-duration: '2s';
+	animation-name: blingcolor;
+	animation-duration: 2s;
 	animation-iteration-count: infinite;
 }
 
