@@ -605,7 +605,8 @@ foreach (DynamicFormEntry::forTicket($ticket->getId()) as $form) {
                 </th>
                 <td><?php
 					if ($label == 'PID') {
-						$arrPid = explode(';', $v);
+                        $arrPid = explode(';', $v);
+                        $profileId = $v;
 						//var_dump($stuff);
 						if (count($arrPid) > 1) {
 							$arrLinks = array();
@@ -910,7 +911,22 @@ $tcount = $ticket->getThreadEntries($types)->count();
                     <p style="text-align:center;">
                         <input class="save pending" type="submit" value="<?php echo __('Post Reply'); ?>">
                         <input class="saveclose" type="button" value="<?php echo __('Post Reply & Close'); ?>">
-                        <input class="" type="reset" value="<?php echo __('Reset'); ?>">
+                        <input class="" type="reset" value="<?php echo __('Reset'); ?>"> 
+                        <?php if(isset($_GET['DEBUG'])){
+                        <?php if (empty(trim($profileId))) { ?>
+                        <a class="assignToprofile" href="#tickets/<?php echo $ticket->getId(); ?>/assign/profile"
+                              data-redirect="tickets.php?status=pid"><?php echo __('Assign'); ?></a>&nbsp;&nbsp;
+				        <?php }elseif (strpos($profileId, ';') != false) {
+				            $arrPid = explode(';', $profileId);
+				            //var_dump($stuff);
+				            if (count($arrPid) > 1) {
+					        $arrLinks = array();
+					        foreach ($arrPid as $pid) {
+						        $arrLinks[] = "<span class='assignTicketToPid' data-ticketId='{$ticket->getId()}' data-profileId='$pid'>$pid</span>";
+						        //var_dump($pid);
+					        }
+					        echo implode(' ', $arrLinks);
+				        }} }?>
                     </p>
                 </form>
 				<?php
