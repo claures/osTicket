@@ -1396,7 +1396,7 @@ class TicketsAjaxAPI extends AjaxController
 					($target ? "/$target" : '')),
 			);
 		//	try{
-		//	if(!empty(trim($ticket['cdata__profile_id'])))echo 'test';
+			if(!empty(trim($ticket->getProfileId())))echo 'test';
 		//	}catch{ echo 'error';}
 			$form = new Form();
 			$fields = array();
