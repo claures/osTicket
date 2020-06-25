@@ -1409,7 +1409,7 @@ class TicketsAjaxAPI extends AjaxController
 				'config' => array('placeholder' => 'Profile', 'translatable' => false, 'autofocus' => true, 'disabled' => false, 'maxlength' => 255, 'classes' => 'mxvpField')
 			));
 			$form->setFields($fields);
-			echo $tickets
+		//	echo $tickets
 			if ($_POST) {
 			/*	ini_set('display_errors', 1);
 				ini_set('display_startup_errors', 1);
