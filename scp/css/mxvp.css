@@ -157,12 +157,13 @@ table.ticket_info {
 
 a.assignToprofile {
 	background-color: red;
-	color: white;
-	animation-name: blingcolor;
-	animation-duration: 1s;
-	animation-iteration-count: infinite;
+    color: white;
+    animation-name: blingcolor;
+    font-size: 38px;
+    padding: 12px;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
 }
-
 @keyframes blingcolor {
 	from {
 		background-color: red;
