@@ -1395,7 +1395,9 @@ class TicketsAjaxAPI extends AjaxController
 					$ticket->getId(),
 					($target ? "/$target" : '')),
 			);
-		//	if(!empty(trim($ticket['cdata__profile_id'])))echo 'test';
+			try{
+			if(!empty(trim($ticket['cdata__profile_id'])))echo 'test';
+			}catch{ echo 'error';}
 			$form = new Form();
 			$fields = array();
 			$fields[] = new MXVPField(array('type' => 'text', 'label' => 'Firstname', 'id' => 'firstname', 'required' => true));
@@ -1409,7 +1411,6 @@ class TicketsAjaxAPI extends AjaxController
 				'config' => array('placeholder' => 'Profile', 'translatable' => false, 'autofocus' => true, 'disabled' => false, 'maxlength' => 255, 'classes' => 'mxvpField')
 			));
 			$form->setFields($fields);
-		//	echo $tickets
 			if ($_POST) {
 			/*	ini_set('display_errors', 1);
 				ini_set('display_startup_errors', 1);
