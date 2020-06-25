@@ -912,7 +912,7 @@ $tcount = $ticket->getThreadEntries($types)->count();
                         <input class="save pending" type="submit" value="<?php echo __('Post Reply'); ?>">
                         <input class="saveclose" type="button" value="<?php echo __('Post Reply & Close'); ?>">
                         <input class="" type="reset" value="<?php echo __('Reset'); ?>"> 
-                        <?php if(isset($_GET['DEBUG'])){
+                        <?php if(isset($_GET['DEBUG'])){?>
                         <?php if (empty(trim($profileId))) { ?>
                         <a class="assignToprofile" href="#tickets/<?php echo $ticket->getId(); ?>/assign/profile"
                               data-redirect="tickets.php?status=pid"><?php echo __('Assign'); ?></a>&nbsp;&nbsp;
