@@ -166,13 +166,18 @@ a.assignToprofile {
 	transition: none;
 }
 @keyframes blingcolor {
-	from {
+	0% {
 		background-color: red;
 		border: 2px dotted orange !important;
 	}
 
-	to {
+	50% {
 		background-color: orange;
 		border: 2px dotted red !important;
+	}
+
+	to {
+		background-color: red;
+		border: 2px dotted orange !important;
 	}
 }
