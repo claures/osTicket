@@ -920,11 +920,11 @@ $tcount = $ticket->getThreadEntries($types)->count();
 				                $arrPid = explode(';', $profileId);
 				                //var_dump($stuff);
 				                if (count($arrPid) > 1) {
-					            $arrLinks = array();
-					                foreach ($arrPid as $pid) {
-						                    $arrLinks[] = "<span class='assignTicketToPid' data-ticketId='{$ticket->getId()}' data-profileId='$pid'>$pid</span>";
-					                }
-					            echo implode(' ', $arrLinks);
+					                $arrLinks = array();
+					                    foreach ($arrPid as $pid) {
+						                        $arrLinks[] = "<span class='assignTicketToPid' data-ticketId='{$ticket->getId()}' data-profileId='$pid'>$pid</span>";
+					                    }
+					                echo implode(' ', $arrLinks);
                                 }
                             } 
                         }?>
