@@ -914,7 +914,7 @@ $tcount = $ticket->getThreadEntries($types)->count();
                         <input class="" type="reset" value="<?php echo __('Reset'); ?>"> 
                         <?php if(isset($_GET['DEBUG'])){?>
                             <?php if (empty(trim($profileId))) { ?>
-                            <a class="assignToprofile" href="#tickets/<?php echo $ticket->getId(); ?>/assign/profile"
+                            <a class="assignToprofile action-button" href="#tickets/<?php echo $ticket->getId(); ?>/assign/profile"
                                   data-redirect="tickets.php?id=<?=$ticket->getId()?>"><?php echo __('Assign'); ?></a>&nbsp;&nbsp;
 				            <?php }elseif (strpos($profileId, ';') != false) {
 				                $arrPid = explode(';', $profileId);
@@ -922,14 +922,14 @@ $tcount = $ticket->getThreadEntries($types)->count();
 				                if (count($arrPid) > 1) {
 					                $arrLinks = array();
 					                    foreach ($arrPid as $pid) {
-						                        $arrLinks[] = "<span class='assignTicketToPid' data-ticketId='{$ticket->getId()}' data-profileId='$pid'>$pid</span>";
+						                        $arrLinks[] = "<span class='assignTicketToPid action-button' data-ticketId='{$ticket->getId()}' data-profileId='$pid'>$pid</span>";
 					                    }
 					                echo implode(' ', $arrLinks);
                                 }
                             }else {
                                 echo 'PID: '.$profileId;
                                 ?>
-                                <a class="assignToprofile" href="#tickets/<?php echo $ticket->getId(); ?>/assign/profile"
+                                <a class="assignToprofile action-button" href="#tickets/<?php echo $ticket->getId(); ?>/assign/profile"
                                   data-redirect="tickets.php?id=<?=$ticket->getId()?>"><?php echo __('All is wrong'); ?></a>
                                 <?php
                             } 
