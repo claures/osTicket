@@ -1395,7 +1395,7 @@ class TicketsAjaxAPI extends AjaxController
 					$ticket->getId(),
 					($target ? "/$target" : '')),
 			);
-			if(!empty(trim($ticket['cdata__profile_id'])))echo 'test';
+		//	if(!empty(trim($ticket['cdata__profile_id'])))echo 'test';
 			$form = new Form();
 			$fields = array();
 			$fields[] = new MXVPField(array('type' => 'text', 'label' => 'Firstname', 'id' => 'firstname', 'required' => true));
