@@ -928,6 +928,10 @@ $tcount = $ticket->getThreadEntries($types)->count();
                                 }
                             }else {
                                 echo 'PID: '.$profileId;
+                                ?>
+                                <a class="assignToprofile" href="#tickets/<?php echo $ticket->getId(); ?>/assign/profile"
+                                  data-redirect="tickets.php?id=<?=$ticket->getId()?>"><?php echo __('All is wrong'); ?></a>
+                                <?php
                             } 
                         }?>
                     </p>
