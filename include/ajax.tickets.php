@@ -1396,13 +1396,15 @@ class TicketsAjaxAPI extends AjaxController
 					($target ? "/$target" : '')),
 			);
 		//	try{
-			if(!empty(trim($ticket->getProfileId())))echo 'test';
+			
 		//	}catch{ echo 'error';}
 			$form = new Form();
 			$fields = array();
-			$fields[] = new MXVPField(array('type' => 'text', 'label' => 'Firstname', 'id' => 'firstname', 'required' => true));
-			$fields[] = new MXVPField(array('type' => 'text', 'label' => 'Lastname', 'id' => 'lastname', 'required' => true));
-			$fields[] = new MXVPField(array('type' => 'text', 'label' => 'Number', 'id' => 'number'));
+			if(empty(trim($ticket->getProfileId()))){
+				$fields[] = new MXVPField(array('type' => 'text', 'label' => 'Firstname', 'id' => 'firstname', 'required' => true));
+				$fields[] = new MXVPField(array('type' => 'text', 'label' => 'Lastname', 'id' => 'lastname', 'required' => true));
+				$fields[] = new MXVPField(array('type' => 'text', 'label' => 'Number', 'id' => 'number'));
+			}
 			$fields[] = new MXVPField(array(
 				'type' => 'text',
 				'label' => 'Profile',
