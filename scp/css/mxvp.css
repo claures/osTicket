@@ -155,7 +155,7 @@ table.ticket_info {
 	margin-bottom: 20px;
 }
 
-.assignTicketToPid , .assignToprofile {
+.assignToprofile {
 	background-color: red;
 	color: white;
 	animation-name: 'blingcolor';
