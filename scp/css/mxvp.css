@@ -144,7 +144,7 @@ table.ticket_info.custom-data td:first-child {
 	animation-fill-mode: backwards;
 	cursor: pointer;
 	text-align: center;
-
+}
 
 .assignTicketToPid:hover {
 	background: #00aa00;
