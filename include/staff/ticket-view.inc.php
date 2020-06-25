@@ -915,7 +915,7 @@ $tcount = $ticket->getThreadEntries($types)->count();
                         <?php if(isset($_GET['DEBUG'])){?>
                         <?php if (empty(trim($profileId))) { ?>
                         <a class="assignToprofile" href="#tickets/<?php echo $ticket->getId(); ?>/assign/profile"
-                              data-redirect="tickets.php?status=pid"><?php echo __('Assign'); ?></a>&nbsp;&nbsp;
+                              data-redirect="tickets.php?id=<?=$ticket->getId()?>"><?php echo __('Assign'); ?></a>&nbsp;&nbsp;
 				        <?php }elseif (strpos($profileId, ';') != false) {
 				            $arrPid = explode(';', $profileId);
 				            //var_dump($stuff);
