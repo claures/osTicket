@@ -166,11 +166,11 @@ a.assignToprofile {
 @keyframes blingcolor {
 	from {
 		background-color: red;
-		border: 1px dotted yellow;
+		border: 2px dotted orange !important;
 	}
 
 	to {
-		background-color: yellow;
-		border: 1px dotted red;
+		background-color: orange;
+		border: 2px dotted red !important;
 	}
 }
