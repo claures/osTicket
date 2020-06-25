@@ -162,7 +162,8 @@ a.assignToprofile {
     font-size: 38px;
     padding: 12px;
     animation-duration: 0.5s;
-    animation-iteration-count: infinite;
+	animation-iteration-count: infinite;
+	transition: none;
 }
 @keyframes blingcolor {
 	from {
