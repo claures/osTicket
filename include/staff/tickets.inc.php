@@ -933,7 +933,7 @@ return false;">
 							   }
 							   echo implode(' ', $arrLinks);
 						   }
-					   } else echo "<a class='assignToprofile' href='#tickets/{$T['ticket_id']}/assign/profile' data-redirect='tickets.php?status=open'>Assign</a>";
+					   } else echo "<a class='assignToprofile intable' href='#tickets/{$T['ticket_id']}/assign/profile' data-redirect='tickets.php?status=open'>Assign</a>";
 
 					   ?></span>
                 </td>

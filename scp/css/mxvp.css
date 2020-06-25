@@ -155,7 +155,7 @@ table.ticket_info {
 	margin-bottom: 20px;
 }
 
-a.assignToprofile {
+a.assignToprofile:not(.intable) {
 	background-color: red;
     color: white;
     animation-name: blingcolor;
@@ -165,6 +165,7 @@ a.assignToprofile {
 	animation-iteration-count: infinite;
 	transition: none;
 }
+
 @keyframes blingcolor {
 	0% {
 		background-color: red;
