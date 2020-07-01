@@ -196,7 +196,7 @@ $('body').on('click', '.assignToprofile', function (e) {
     var $redirect = $(this).data('redirect');
     //var $options = $(this).data('dialog');
     $.dialog(url, [200,301], function (xhr) {
-        if(xhr.status==301) $.pjax.reload('#pjax-container');
+      //  if(xhr.status==301) $.pjax.reload('#pjax-container');
         $.pjax.reload('#pjax-container');
     });
 });
