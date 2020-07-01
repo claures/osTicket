@@ -1446,8 +1446,6 @@ class TicketsAjaxAPI extends AjaxController
 					}else Http::response(200, 'Contact created and but not assigned to ticket');
 				}
 				else Http::response(500, 'not updated and nots assigned');
-
-
 			}
 
 			include STAFFINC_DIR . 'templates/assign-profile.tmpl.php';
