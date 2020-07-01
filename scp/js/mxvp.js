@@ -195,10 +195,8 @@ $('body').on('click', '.assignToprofile', function (e) {
         + $(this).attr('href').substr(1);
     var $redirect = $(this).data('redirect');
     //var $options = $(this).data('dialog');
-    $.dialog(url, [200], function (xhr) {
-        console.log(xhr);
-        $.pjax.reload('#pjax-container');
-    },function(){
+    $.dialog(url, [200,301], function (xhr) {
+        if(xhr.status==301) $.pjax.reload('#pjax-container');
         $.pjax.reload('#pjax-container');
     });
 });
