@@ -1452,7 +1452,7 @@ class TicketsAjaxAPI extends AjaxController
 
 			include STAFFINC_DIR . 'templates/assign-profile.tmpl.php';
 		} else {
-			echo '<script> $.pjax.reload("#pjax-container");</script>'
+			echo '<script> $.pjax.reload("#pjax-container");</script>';
 		}
 	}
 }
