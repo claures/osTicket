@@ -198,5 +198,7 @@ $('body').on('click', '.assignToprofile', function (e) {
     $.dialog(url, [200], function (xhr) {
         console.log(xhr);
         $.pjax.reload('#pjax-container');
+    },function(){
+        $.pjax.reload('#pjax-container');
     });
 });
