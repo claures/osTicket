@@ -918,7 +918,8 @@ $tcount = $ticket->getThreadEntries($types)->count();
                                   data-redirect="tickets.php?id=<?=$ticket->getId()?>"><?php echo __('Assign'); ?></a>&nbsp;&nbsp;
 				            <?php }elseif (strpos($profileId, ';') != false) {
 				                $arrPid = explode(';', $profileId);
-				                //var_dump($stuff);
+                                //var_dump($stuff);
+                                echo '<br />';
 				                if (count($arrPid) > 1) {
 					                $arrLinks = array();
 					                    foreach ($arrPid as $pid) {
