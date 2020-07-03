@@ -609,9 +609,17 @@ foreach (DynamicFormEntry::forTicket($ticket->getId()) as $form) {
                         $profileId = $v;
 						//var_dump($stuff);
 						if (count($arrPid) > 1) {
-							$arrLinks = array();
-							foreach ($arrPid as $pid) {
-								$arrLinks[] = "<span class='assignTicketToPid' data-ticketId='{$ticket->getId()}' data-profileId='$pid'>$pid</span>";
+                            $arrLinks = array();
+                            $ch = curl_init('https://service.mixvoip.com/scripts/getProfiles.php');
+	                        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	                        curl_setopt($ch, CURLOPT_POST, 1);
+	                        curl_setopt($ch, CURLOPT_POSTFIELDS, array('profiles' => $arrPid));
+	                        $output = curl_exec($ch);
+	                        curl_close($ch);
+	                        $arrProfiles = json_decode($output, true);
+							foreach ($arrPid as $pid => $companyName) {
+								$arrLinks[] = "<span class='assignTicketToPid' data-ticketId='{$ticket->getId()}' data-profileId='$pid'>$companyName</span>";
 								//var_dump($pid);
 							}
 							echo  implode(' ', $arrLinks);
@@ -922,8 +930,8 @@ $tcount = $ticket->getThreadEntries($types)->count();
                                 echo '<br /><br />';
 				                if (count($arrPid) > 1) {
 					                $arrLinks = array();
-					                    foreach ($arrPid as $pid) {
-						                        $arrLinks[] = "<span class='assignTicketToPid action-button' data-ticketId='{$ticket->getId()}' data-profileId='$pid'>$pid</span>";
+					                    foreach ($arrProfiles as $pid => $companyName) {
+						                        $arrLinks[] = "<span class='assignTicketToPid action-button' data-ticketId='{$ticket->getId()}' data-profileId='$pid'>$companyName</span>";
 					                    }
 					                echo implode(' ', $arrLinks);
                                 }
