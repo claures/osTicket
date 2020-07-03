@@ -618,10 +618,10 @@ foreach (DynamicFormEntry::forTicket($ticket->getId()) as $form) {
 	                        $output = curl_exec($ch);
 	                        curl_close($ch);
                             $arrProfiles = json_decode($output, true);
-                            if(isset($_GET['DEBUG'])){
+                           /* if(isset($_GET['DEBUG'])){
                                 var_dump($output);
                                 var_dump($arrProfiles);
-                            }
+                            }*/
 							foreach ($arrProfiles as $pid => $companyName) {
 								$arrLinks[] = "<span class='assignTicketToPid' data-ticketId='{$ticket->getId()}' data-profileId='$pid'>$companyName</span>";
 								//var_dump($pid);
