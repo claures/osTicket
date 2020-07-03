@@ -919,7 +919,7 @@ $tcount = $ticket->getThreadEntries($types)->count();
 				            <?php }elseif (strpos($profileId, ';') != false) {
 				                $arrPid = explode(';', $profileId);
                                 //var_dump($stuff);
-                                echo '<br />';
+                                echo '<br /><br />';
 				                if (count($arrPid) > 1) {
 					                $arrLinks = array();
 					                    foreach ($arrPid as $pid) {
