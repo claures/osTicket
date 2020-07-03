@@ -614,7 +614,7 @@ foreach (DynamicFormEntry::forTicket($ticket->getId()) as $form) {
 	                        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 	                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	                        curl_setopt($ch, CURLOPT_POST, 1);
-	                        curl_setopt($ch, CURLOPT_POSTFIELDS, array('profiles' => $arrPid));
+	                        curl_setopt($ch, CURLOPT_POSTFIELDS, array('profiles' => json_encode($arrPid)));
 	                        $output = curl_exec($ch);
 	                        curl_close($ch);
                             $arrProfiles = json_decode($output, true);
