@@ -1673,6 +1673,12 @@ class Ticket extends TicketModel
         return $this->duedate;
     }
 
+	function updateDueDate()
+	{
+		$this->duedate = date('Y-m-d H:i:s');
+		$this->save();
+	}
+
     function getSLADueDate()
     {
         if ($sla = $this->getSLA()) {
@@ -2343,12 +2349,18 @@ class Ticket extends TicketModel
 
         $this->onAssign($staff, $note, $alert);
 
-        global $thisstaff;
-        $data = array();
-        if ($thisstaff && $staff->getId() == $thisstaff->getId())
-            $data['claim'] = true;
-        else
-            $data['staff'] = $staff->getId();
+		global $thisstaff;
+		$data = array();
+		if ($thisstaff && $staff->getId() == $thisstaff->getId()) {
+			$data['claim'] = true;
+		} else {
+			$data['staff'] = $staff->getId();
+		}
+
+		$dueDate = $this->getDueDate();
+		if (empty($dueDate)) {
+			$this->updateDueDate();
+		}
 
         $this->logEvent('assigned', $data);
 
