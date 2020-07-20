@@ -90,6 +90,8 @@ if ($_POST && !$errors):
 					$vars['response'] = ThreadEntryBody::clean($vars['response']);
 					if (!$vars['response']) {
 						$errors['response'] = __('Response required');
+					} elseif (strlen($vars['response']) < 10 && $vars['reply_status_id'] == 7) {
+						$errors['response'] = __('Response must be at least 10 characters long');
 					}
 
 					if ($cfg->getLockTime()) {
