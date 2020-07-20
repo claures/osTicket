@@ -2380,11 +2380,14 @@ class NoteThreadEntry extends ThreadEntry {
 
     static function add($vars, &$errors=array()) {
 
-        //Check required params.
-        if (!$vars || !is_array($vars) || !$vars['threadId'])
-            $errors['err'] = __('Missing or invalid data');
-        elseif (!$vars['note'])
-            $errors['note'] = __('Note content is required');
+		//Check required params.
+		if (!$vars || !is_array($vars) || !$vars['threadId']) {
+			$errors['err'] = __('Missing or invalid data');
+		} elseif (!$vars['note']) {
+			$errors['note'] = __('Note content is required');
+		} elseif (strlen($vars['note']) < 10 && $vars['note_status_id'] == 7) {
+			$errors['note'] = __('Comment must be at least 10 characters long');
+		}
 
         if ($errors) return false;
 

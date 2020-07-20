@@ -200,24 +200,3 @@ $('body').on('click', '.assignToprofile', function (e) {
 		$.pjax.reload('#pjax-container');
 	});
 });
-
-// $(document).on('change', '#note_status_id', function () {
-// 	let status = $(this).val();
-//
-// 	if (status == 7) {
-// 		$('#internal_note').attr('required', true);
-// 	} else {
-// 		$('#internal_note').removeAttr('required');
-// 	}
-// });
-
-$(document).on('submit', '#note', function (e) {
-	let status = $('#note_status_id').val();
-	let comment = $('#internal_note').val();
-
-	if (status == 7 && comment.length < 10) {
-		e.preventDefault();
-		alert('Please add a comment, minimum 10 characters');
-		return false;
-	}
-});
