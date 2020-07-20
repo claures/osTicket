@@ -2291,10 +2291,13 @@ class MessageThreadEntry extends ThreadEntry {
 
     static function add($vars, &$errors=array()) {
 
-        if (!$vars || !is_array($vars) || !$vars['threadId'])
-            $errors['err'] = __('Missing or invalid data');
-        elseif (!$vars['message'])
-            $errors['message'] = __('Message content is required');
+		if (!$vars || !is_array($vars) || !$vars['threadId']) {
+			$errors['err'] = __('Missing or invalid data');
+		} elseif (!$vars['message']) {
+			$errors['message'] = __('Message content is required');
+		} elseif (strlen($vars['message']) < 10 && $vars['reply_status_id'] == 7) {
+			$errors['message'] = __('Message has to be at least 10 characters long');
+		}
 
         if ($errors) return false;
 
