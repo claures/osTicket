@@ -135,16 +135,18 @@ table.ticket_info.custom-data td:first-child {
 
 .assignTicketToPid {
 	height: 15px;
-	width: calc(100% - 10px);
-	padding: 5px;
-	border: 1px solid lightgray;
-	margin-bottom: 2px;
-	display: block;
-	background: white;
-	animation-fill-mode: backwards;
-	cursor: pointer;
-	text-align: center;
-
+    width: calc(100% - 10px);
+    padding: 5px;
+    border: 1px solid lightgray;
+    margin-bottom: 2px;
+    display: block;
+    background: white;
+    animation-fill-mode: backwards;
+    cursor: pointer;
+    text-align: center;
+    max-width: fit-content;
+    display: inline-block;
+}
 
 .assignTicketToPid:hover {
 	background: #00aa00;
@@ -153,4 +155,32 @@ table.ticket_info.custom-data td:first-child {
 
 table.ticket_info {
 	margin-bottom: 20px;
+}
+
+a.assignToprofile:not(.intable) {
+	background-color: red;
+    color: white;
+    animation-name: blingcolor;
+    font-size: 38px;
+    padding: 12px;
+    animation-duration: 0.5s;
+	animation-iteration-count: infinite;
+	transition: none;
+}
+
+@keyframes blingcolor {
+	0% {
+		background-color: red;
+		border: 2px dotted orange !important;
+	}
+
+	50% {
+		background-color: orange;
+		border: 2px dotted red !important;
+	}
+
+	to {
+		background-color: red;
+		border: 2px dotted orange !important;
+	}
 }

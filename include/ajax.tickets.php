@@ -1395,12 +1395,16 @@ class TicketsAjaxAPI extends AjaxController
 					$ticket->getId(),
 					($target ? "/$target" : '')),
 			);
-
+		//	try{
+			
+		//	}catch{ echo 'error';}
 			$form = new Form();
 			$fields = array();
-			$fields[] = new MXVPField(array('type' => 'text', 'label' => 'Firstname', 'id' => 'firstname', 'required' => true));
-			$fields[] = new MXVPField(array('type' => 'text', 'label' => 'Lastname', 'id' => 'lastname', 'required' => true));
-			$fields[] = new MXVPField(array('type' => 'text', 'label' => 'Number', 'id' => 'number'));
+			if(empty(trim($ticket->getProfileId()))){
+				$fields[] = new MXVPField(array('type' => 'text', 'label' => 'Firstname', 'id' => 'firstname', 'required' => true));
+				$fields[] = new MXVPField(array('type' => 'text', 'label' => 'Lastname', 'id' => 'lastname', 'required' => true));
+				$fields[] = new MXVPField(array('type' => 'text', 'label' => 'Number', 'id' => 'number'));
+			}
 			$fields[] = new MXVPField(array(
 				'type' => 'text',
 				'label' => 'Profile',
@@ -1409,13 +1413,13 @@ class TicketsAjaxAPI extends AjaxController
 				'config' => array('placeholder' => 'Profile', 'translatable' => false, 'autofocus' => true, 'disabled' => false, 'maxlength' => 255, 'classes' => 'mxvpField')
 			));
 			$form->setFields($fields);
-
 			if ($_POST) {
 			/*	ini_set('display_errors', 1);
 				ini_set('display_startup_errors', 1);
 				error_reporting(E_ALL);*/
 			//var_dump($email);
-			$_POST['email'] = $email;
+			//if(empty(trim($ticket->getProfileId()))){
+				$_POST['email'] = $email;
 				$ch = curl_init('https://service.mixvoip.com/scripts/createInternalContact.php');
 				curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -1425,7 +1429,7 @@ class TicketsAjaxAPI extends AjaxController
 				curl_close($ch);
 				//echo $output;
 				$return = json_decode($output, true);
-
+		//	}
 				if($return['success']){
 					$sql = 'UPDATE ost_ticket__cdata SET profile_id = "'.$_POST['profile_id'].'" '
 					. ' WHERE ticket_id = "'.$tid.'" ';
@@ -1442,13 +1446,11 @@ class TicketsAjaxAPI extends AjaxController
 					}else Http::response(200, 'Contact created and but not assigned to ticket');
 				}
 				else Http::response(500, 'not updated and nots assigned');
-
-
 			}
 
 			include STAFFINC_DIR . 'templates/assign-profile.tmpl.php';
 		} else {
-			Http::response(301, 'Redirect');
+			echo '<script> $.pjax.reload("#pjax-container");</script>';
 		}
 	}
 }

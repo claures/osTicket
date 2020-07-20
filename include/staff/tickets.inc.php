@@ -546,11 +546,11 @@ if (isset($_GET['debug']) && $_GET['debug'] == 1) {
 		'staff__lastname',
 		'team__name'
 	);
-	if($_GET['status'] != 'nopid') {
+//	if($_GET['status'] != 'nopid') {
 		$queue_columns['cdata__profile_id']['heading'] = 'Customer';
 		$queue_columns['cdata__profile_id']['width'] = '20';
 		$queue_columns['cdata__profile_id']['sort'] = 'cdata__profile_id';
-	}
+//}
 } else {
 	$tickets->values(
 		'lock__staff_id',
@@ -933,7 +933,7 @@ return false;">
 							   }
 							   echo implode(' ', $arrLinks);
 						   }
-					   } else echo "<a class='assignToprofile' href='#tickets/{$T['ticket_id']}/assign/profile' data-redirect='tickets.php?status=open'>Assign</a>";
+					   } else echo "<a class='assignToprofile intable' href='#tickets/{$T['ticket_id']}/assign/profile' data-redirect='tickets.php?status=open'>Assign</a>";
 
 					   ?></span>
                 </td>

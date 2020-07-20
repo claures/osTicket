@@ -321,7 +321,7 @@ if ($ticket->isOverdue()) {
             <div class="flush-left">
                 <h2><a href="tickets.php?id=<?php echo $ticket->getId(); ?>"
                        title="<?php echo __('Reload'); ?>"><i class="icon-refresh"></i>
-						<?php echo sprintf(__('Ticket #%s'), $ticket->getNumber()); ?></a> | PID: <a href='https://ssh.mixvoip.com:12663/backend2/Profile/summaryView/<?php echo trim($ticket->getProfileId());?>' target="_blank"> <?php echo trim($ticket->getProfileId());?> </a>
+						<?php echo sprintf(__('Ticket #%s'), $ticket->getNumber()); ?></a> 
                 </h2>
             </div>
         </div>
@@ -605,12 +605,25 @@ foreach (DynamicFormEntry::forTicket($ticket->getId()) as $form) {
                 </th>
                 <td><?php
 					if ($label == 'PID') {
-						$arrPid = explode(';', $v);
+                        $arrPid = explode(';', $v);
+                        $profileId = $v;
 						//var_dump($stuff);
 						if (count($arrPid) > 1) {
-							$arrLinks = array();
-							foreach ($arrPid as $pid) {
-								$arrLinks[] = "<span class='assignTicketToPid' data-ticketId='{$ticket->getId()}' data-profileId='$pid'>$pid</span>";
+                            $arrLinks = array();
+                            $ch = curl_init('https://service.mixvoip.com/scripts/getProfiles.php');
+	                        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	                        curl_setopt($ch, CURLOPT_POST, 1);
+	                        curl_setopt($ch, CURLOPT_POSTFIELDS, array('profiles' => json_encode($arrPid)));
+	                        $output = curl_exec($ch);
+	                        curl_close($ch);
+                            $arrProfiles = json_decode($output, true);
+                           /* if(isset($_GET['DEBUG'])){
+                                var_dump($output);
+                                var_dump($arrProfiles);
+                            }*/
+							foreach ($arrProfiles as $pid => $companyName) {
+								$arrLinks[] = "<span class='assignTicketToPid' data-ticketId='{$ticket->getId()}' data-profileId='$pid'>$companyName</span>";
 								//var_dump($pid);
 							}
 							echo  implode(' ', $arrLinks);
@@ -910,7 +923,30 @@ $tcount = $ticket->getThreadEntries($types)->count();
                     <p style="text-align:center;">
                         <input class="save pending" type="submit" value="<?php echo __('Post Reply'); ?>">
                         <input class="saveclose" type="button" value="<?php echo __('Post Reply & Close'); ?>">
-                        <input class="" type="reset" value="<?php echo __('Reset'); ?>">
+                        <input class="" type="reset" value="<?php echo __('Reset'); ?>"> 
+                        <?php if(isset($_GET['DEBUG'])){?>
+                            <?php if (empty(trim($profileId))) { ?>
+                            <a class="assignToprofile action-button" href="#tickets/<?php echo $ticket->getId(); ?>/assign/profile"
+                                  data-redirect="tickets.php?id=<?=$ticket->getId()?>"><?php echo __('Assign'); ?></a>&nbsp;&nbsp;
+				            <?php }elseif (strpos($profileId, ';') != false) {
+				                $arrPid = explode(';', $profileId);
+                                //var_dump($stuff);
+                                echo '<br /><br />';
+				                if (count($arrPid) > 1) {
+					                $arrLinks = array();
+					                    foreach ($arrProfiles as $pid => $companyName) {
+						                        $arrLinks[] = "<span class='assignTicketToPid action-button' data-ticketId='{$ticket->getId()}' data-profileId='$pid'>$companyName</span>";
+					                    }
+					                echo implode(' ', $arrLinks);
+                                }
+                            }else {
+                               // echo 'PID: '.$profileId;
+                                ?>
+                                <a class="assignToprofile action-button" href="#tickets/<?php echo $ticket->getId(); ?>/assign/profile"
+                                  data-redirect="tickets.php?id=<?=$ticket->getId()?>"><?php echo __('All is wrong'); ?></a>
+                                <?php
+                            } 
+                        }?>
                     </p>
                 </form>
 				<?php
