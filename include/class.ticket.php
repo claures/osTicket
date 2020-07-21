@@ -2402,15 +2402,18 @@ class Ticket extends TicketModel
         $this->save();
     }
 
-    function getEstDueDate()
-    {
-        // Real due date
-        if ($duedate = $this->getDueDate()) {
-            return $duedate;
-        }
-        // return sla due date (If ANY)
-        return $this->getSLADueDate();
-    }
+	function getEstDueDate()
+	{
+//        // Real due date
+//        if ($duedate = $this->getDueDate()) {
+//            return $duedate;
+//        }
+//
+//        // return sla due date (If ANY)
+//        return $this->getSLADueDate();
+
+		return $this->est_duedate;
+	}
 
     function getEmail()
     {
